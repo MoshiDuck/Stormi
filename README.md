@@ -61,11 +61,26 @@ Streaming HLS · Enrichissement TMDb/Spotify · Cache multi‑niveaux · Accessi
 
 ## Roadmap
 
-| Priorité | Fonctionnalité |
-|:--------:|----------------|
-| **Haute** | Sous-titres (.srt, .vtt) · Reprise d'upload · Recherche globale · Grilles images/documents |
-| **Moyenne** | Catégorie Livres · Streaming YouTube · Partage temporaire · Import depuis URL · i18n |
-| **Basse** | Mode hors ligne · Import Drive/Dropbox · Option stockage local | Adapter a tout les ecrans, telephone, tablette inclu 
+Fonctionnalités prévues, classées par priorité.
+
+### Haute priorité
+- Sous-titres (.srt, .vtt)
+- Reprise d’upload
+- Recherche globale
+- Grilles images / documents
+
+### Moyenne priorité
+- Catégorie Livres
+- Streaming YouTube
+- Partage temporaire
+- Import depuis URL
+- i18n (internationalisation)
+
+### Basse priorité
+- Mode hors ligne
+- Import Drive / Dropbox
+- Option stockage local
+- Adaptation à tous les écrans (mobile, tablette)
 
 ---
 
