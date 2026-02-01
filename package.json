@@ -82,19 +82,19 @@
   "scripts": {
     "build": "react-router build",
     "cf-typegen": "wrangler types",
-    "deploy": "npm run build && wrangler deploy && echo '========================================' && echo '🌐 VOTRE SITE: https://videomi.uk' && echo '========================================'",
+    "deploy": "npm run build && wrangler deploy && echo '========================================' && echo '🌐 VOTRE SITE: https://stormi.uk' && echo '========================================'",
     "dev": "react-router dev",
     "preview": "npm run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && node scripts/patch-react-router-types.cjs && tsc -b",
     "electron:build": "tsc -p tsconfig.electron.json",
     "electron:deploy": "npm run electron:build && npm run electron:prod",
-    "electron:prod": "ELECTRON_START_URL=https://videomi.uk electron ./dist/electron/main.js",
+    "electron:prod": "ELECTRON_START_URL=https://stormi.uk electron ./dist/electron/main.js",
     "total:build": "npm run build && npm run electron:build",
     "total:deploy": "npm run total:build && npm run deploy && npm run electron:deploy"
   },
   "build": {
-    "appId": "com.videomi.app",
-    "productName": "Videomi",
+    "appId": "com.stormi.app",
+    "productName": "Stormi",
     "files": [
       "dist/electron/**/*",
       "build/**/*",

@@ -900,7 +900,7 @@ Suite à une re-vérification complète et méthodique de tout le code, les corr
 
 ## 13. Conclusion
 
-**L'application Videomi est désormais certifiée WCAG 2.1 AA et prête pour une utilisation en production à grande échelle.**
+**L'application Stormi est désormais certifiée WCAG 2.1 AA et prête pour une utilisation en production à grande échelle.**
 
 ### Statistiques Finales
 
@@ -1013,7 +1013,7 @@ errors: {
 > **Résultat** : **100% CONFORME WCAG 2.1 AA**  
 > **Niveau de Maturité UX** : **Premium**
 
-L'application Videomi est **strictement 100% prête pour production** :
+L'application Stormi est **strictement 100% prête pour production** :
 - Aucun point fragile restant
 - Aucun point partiel restant
 - Tous les critères WCAG 2.1 AA vérifiés et appliqués

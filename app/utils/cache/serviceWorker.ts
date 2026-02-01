@@ -64,7 +64,7 @@ export async function setServiceWorkerUserId(userId: string | null): Promise<voi
 /**
  * Vide le cache du Service Worker.
  * @param userId - L'utilisateur dont vider le cache (ou null pour courant)
- * @param clearAll - Si true, vide TOUS les caches videomi (logout)
+ * @param clearAll - Si true, vide TOUS les caches stormi (logout)
  */
 export async function clearServiceWorkerCache(userId?: string | null, clearAll = true): Promise<void> {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {

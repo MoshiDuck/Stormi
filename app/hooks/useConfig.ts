@@ -66,7 +66,7 @@ export function useConfig() {
                     googleClientId: clientId,
                     baseUrl: window.location.origin,
                     redirectUri: isElectron
-                        ? 'https://videomi.uk/oauth-callback'
+                        ? 'https://stormi.uk/oauth-callback'
                         : window.location.origin,
                     tmdbApiKey: tmdbApiKey,
                     omdbApiKey: omdbApiKey,

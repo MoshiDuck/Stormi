@@ -1,4 +1,4 @@
-# Référence des Composants React — Videomi
+# Référence des Composants React — Stormi
 
 > **Date de mise à jour** : 24 janvier 2026  
 > **Version** : 1.0  
@@ -644,7 +644,7 @@ interface RatingModalProps {
 
 #### Comportement
 
-- Affiche le logo Videomi
+- Affiche le logo Stormi
 - Redirection automatique vers `/home` après 2 secondes
 
 #### Accessibilité
@@ -652,7 +652,7 @@ interface RatingModalProps {
 | Attribut | Valeur | Élément |
 |----------|--------|---------|
 | `role` | `"banner"` | Container |
-| `aria-label` | `"Écran de démarrage Videomi"` | Container |
+| `aria-label` | `"Écran de démarrage Stormi"` | Container |
 
 #### Animations
 

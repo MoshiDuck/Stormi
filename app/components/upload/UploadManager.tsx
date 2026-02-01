@@ -120,7 +120,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
         fileCreatedAt?: number | null
     ): Promise<{ fileId: string; exists: boolean; url?: string }> => {
         // Utiliser le nom original du fichier sans aucun filtrage
-        const token = localStorage.getItem('videomi_token');
+        const token = localStorage.getItem('stormi_token');
         const fileSize = file instanceof File ? file.size : file.byteLength;
         const mimeType = isTranscodedFile ? 'video/mp4' : (file instanceof File ? file.type : 'application/octet-stream');
         
@@ -202,7 +202,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
 
     const checkFileExists = async (hash: string): Promise<{ exists: boolean; fileId: string | null }> => {
         try {
-            const token = localStorage.getItem('videomi_token');
+            const token = localStorage.getItem('stormi_token');
             const baseUrl = window.location.origin;
             const response = await fetch(`${baseUrl}/api/upload/check`, {
                 method: 'POST',
@@ -232,7 +232,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
         filename?: string,
         hash?: string
     ): Promise<InitiateMultipartUploadResponse> => {
-        const token = localStorage.getItem('videomi_token');
+        const token = localStorage.getItem('stormi_token');
         const baseUrl = window.location.origin;
         const response = await fetch(`${baseUrl}/api/upload/init`, {
             method: 'POST',
@@ -278,7 +278,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
                     await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
                 }
 
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 const controller = new AbortController();
                 abortControllers.current.set(`${fileId}_${partNumber}`, controller);
 
@@ -342,7 +342,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
         basicMetadata?: BaseAudioMetadata | BaseVideoMetadata | null,
         fileCreatedAt?: number | null
     ): Promise<{ success: boolean; fileId: string; size: number; url: string }> => {
-        const token = localStorage.getItem('videomi_token');
+        const token = localStorage.getItem('stormi_token');
         const baseUrl = window.location.origin;
         
         // IMPORTANT: Inclure basicMetadata directement dans le body
@@ -391,7 +391,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
             return;
         }
 
-        const token = localStorage.getItem('videomi_token');
+        const token = localStorage.getItem('stormi_token');
         if (!token) {
             console.warn(`⚠️ [METADATA] Token manquant pour stocker métadonnées de ${fileId}`);
             return;
@@ -476,10 +476,10 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
     // Invalider le cache des stats après un upload (D1 a été mis à jour)
     const invalidateStatsCache = () => {
         if (user?.id) {
-            const cacheKey = `videomi_stats_${user.id}`;
+            const cacheKey = `stormi_stats_${user.id}`;
             sessionStorage.removeItem(cacheKey);
             // Dispatcher un événement pour notifier que les stats doivent être rechargées
-            window.dispatchEvent(new CustomEvent('videomi:stats-invalidated', { detail: { userId: user.id } }));
+            window.dispatchEvent(new CustomEvent('stormi:stats-invalidated', { detail: { userId: user.id } }));
         }
     };
 
@@ -731,7 +731,7 @@ export const UploadManager = forwardRef<UploadManagerHandle, UploadManagerProps>
                 // Le fichier existe déjà (même hash), juste rattacher l'utilisateur
                 // Utiliser directement l'API pour créer la liaison (sans passer par linkUserToFile qui peut échouer)
                 const existingFileId = checkResult.fileId;
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 
                 if (token && user?.id) {
                     // Créer la liaison avec retry pour éviter les race conditions

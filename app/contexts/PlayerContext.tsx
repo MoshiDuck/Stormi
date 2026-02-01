@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from 'react';
 
 // Clé pour le stockage de session
-const PLAYER_STATE_KEY = 'videomi_player_state';
+const PLAYER_STATE_KEY = 'stormi_player_state';
 
 // Structure de l'état persisté
 interface PersistedPlayerState {
@@ -406,7 +406,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const playTrackAtIndex = useCallback((index: number) => {
         if (index >= 0 && index < state.playlist.length) {
             const track = state.playlist[index];
-            const fileUrl = `https://videomi.uk/api/files/${track.category}/${track.file_id}`;
+            const fileUrl = `https://stormi.uk/api/files/${track.category}/${track.file_id}`;
             
             let artist: string | null = null;
             let thumbnail: string | null = null;

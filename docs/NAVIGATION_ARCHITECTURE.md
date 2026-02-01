@@ -1,4 +1,4 @@
-# Architecture de navigation — Videomi
+# Architecture de navigation — Stormi
 
 Ce document décrit l’architecture de navigation de l’application : routing, layouts, transitions, gestion d’état et bonnes pratiques.
 
@@ -132,7 +132,7 @@ Les fichiers de layout préfixés par `_` sont des **pathless layout routes** : 
 ## 10. Stratégie cache et révalidation
 
 - **clientLoader** : la page `/home` utilise un `clientLoader` pour charger les stats (nombre de fichiers, taille) avec mise en cache locale. Les données sont fournies à la route via `useLoaderData()` et initialisent l’état du composant pour éviter un flash de chargement.
-- **Révalidation** : la page home écoute l’événement personnalisé `videomi:stats-invalidated` et appelle `useRevalidator()` pour réexécuter le `clientLoader` et rafraîchir les stats. Cet événement est émis par :
+- **Révalidation** : la page home écoute l’événement personnalisé `stormi:stats-invalidated` et appelle `useRevalidator()` pour réexécuter le `clientLoader` et rafraîchir les stats. Cet événement est émis par :
   - `UploadManager` après un upload réussi ;
   - `handleCacheInvalidation({ type: 'stats:update', userId })` dans `app/utils/cache/cacheInvalidation.ts`.
 - **Utilitaire** : `invalidateStats(userId)` dans `app/utils/cache/cacheInvalidation.ts` permet à n’importe quel module de déclencher la mise à jour des stats de la page d’accueil sans connaître le nom de l’événement. À utiliser après une action qui modifie le nombre ou la taille des fichiers (upload, suppression, etc.).

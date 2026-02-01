@@ -265,7 +265,7 @@ finally {
 {!loadingStats && hasLoadedOnce && stats.fileCount === 0 && (
     <div style={{ /* card styles */ }}>
         <div style={{ fontSize: '64px' }}>🚀</div>
-        <h2>{t('home.emptyTitle') || 'Bienvenue sur Videomi !'}</h2>
+        <h2>{t('home.emptyTitle') || 'Bienvenue sur Stormi !'}</h2>
         <p>{t('home.emptyDescription') || 'Commencez par uploader vos fichiers...'}</p>
         <button onClick={() => navigate('/upload')}>
             <span>📤</span>

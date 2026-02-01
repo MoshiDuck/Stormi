@@ -57,7 +57,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             e.currentTarget.style.opacity = '1';
                         }}
                     >
-                        Videomi
+                        Stormi
                     </Link>
 
                     <div style={{ display: 'flex', gap: '20px' }}>

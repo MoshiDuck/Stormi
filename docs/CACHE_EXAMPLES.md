@@ -21,12 +21,12 @@ export default function FilmsRoute() {
         setLoading(true);
         
         fetchCached<{ files: FileItem[] }>(
-            `https://videomi.uk/api/upload/user/${user.id}?category=videos`,
+            `https://stormi.uk/api/upload/user/${user.id}?category=videos`,
             {
                 resource: 'files',
                 params: { category: 'videos' },
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
                 },
             }
         )
@@ -48,8 +48,8 @@ export default function FilmsRoute() {
             }
         };
 
-        window.addEventListener('videomi:cache-invalidate', handler);
-        return () => window.removeEventListener('videomi:cache-invalidate', handler);
+        window.addEventListener('stormi:cache-invalidate', handler);
+        return () => window.removeEventListener('stormi:cache-invalidate', handler);
     }, [user?.id]);
 
     return (
@@ -119,7 +119,7 @@ export default function HomeRoute() {
                 params: { userId: user.id },
                 ttl: 300, // 5 minutes
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
                 },
             }
         )
@@ -139,8 +139,8 @@ export default function HomeRoute() {
             }
         };
 
-        window.addEventListener('videomi:stats-invalidated', handler);
-        return () => window.removeEventListener('videomi:stats-invalidated', handler);
+        window.addEventListener('stormi:stats-invalidated', handler);
+        return () => window.removeEventListener('stormi:stats-invalidated', handler);
     }, [user?.id, invalidateStats]);
 
     return (
@@ -166,7 +166,7 @@ interface ThumbnailProps {
 
 export function Thumbnail({ fileId, category, alt }: ThumbnailProps) {
     const [error, setError] = useState(false);
-    const thumbnailUrl = `https://videomi.uk/api/files/${category}/${fileId}/thumbnail`;
+    const thumbnailUrl = `https://stormi.uk/api/files/${category}/${fileId}/thumbnail`;
 
     // Le Service Worker met automatiquement en cache l'image
     // Pas besoin de code supplémentaire !
@@ -206,8 +206,8 @@ export function useAuth() {
         await clearServiceWorkerCache();
         
         // Nettoyer localStorage
-        localStorage.removeItem('videomi_token');
-        localStorage.removeItem('videomi_user');
+        localStorage.removeItem('stormi_token');
+        localStorage.removeItem('stormi_user');
         
         setUser(null);
         navigate('/login');
@@ -260,7 +260,7 @@ export default function InfoRoute() {
         await fetch(`/api/files/${category}/${fileId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
             },
         });
         
@@ -295,7 +295,7 @@ export function useFilesPreloader({ userId, enabled = true }: Options) {
         if (!userId || !enabled) return;
         
         // Vérifier le cache d'abord
-        const cacheKey = `videomi_files_${userId}_${category}`;
+        const cacheKey = `stormi_files_${userId}_${category}`;
         const cached = localStorage.getItem(cacheKey);
         
         if (cached) {
@@ -306,9 +306,9 @@ export function useFilesPreloader({ userId, enabled = true }: Options) {
         }
         
         // Précharger en arrière-plan
-        fetch(`https://videomi.uk/api/upload/user/${userId}?category=${category}`, {
+        fetch(`https://stormi.uk/api/upload/user/${userId}?category=${category}`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
             },
         }).then(response => {
             if (response.ok) {

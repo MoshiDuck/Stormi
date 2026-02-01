@@ -25,8 +25,8 @@ export function useAuth() {
 
     // Charger l'utilisateur depuis localStorage au démarrage
     useEffect(() => {
-        const storedUser = localStorage.getItem('videomi_user');
-        const storedToken = localStorage.getItem('videomi_token');
+        const storedUser = localStorage.getItem('stormi_user');
+        const storedToken = localStorage.getItem('stormi_token');
 
         if (storedUser && storedToken) {
             try {
@@ -40,8 +40,8 @@ export function useAuth() {
                 }
             } catch (e) {
                 // Nettoyer les données corrompues
-                localStorage.removeItem('videomi_token');
-                localStorage.removeItem('videomi_user');
+                localStorage.removeItem('stormi_token');
+                localStorage.removeItem('stormi_user');
                 setUser(null);
             }
         }
@@ -78,8 +78,8 @@ export function useAuth() {
                 email_verified: data.user?.email_verified
             };
 
-            localStorage.setItem('videomi_user', JSON.stringify(completeUser));
-            localStorage.setItem('videomi_token', data.token);
+            localStorage.setItem('stormi_user', JSON.stringify(completeUser));
+            localStorage.setItem('stormi_token', data.token);
             setUser(completeUser);
 
             // ISOLATION STRICTE : Envoyer le userId au Service Worker après login
@@ -120,14 +120,14 @@ export function useAuth() {
         }
         
         // Nettoyer localStorage
-        localStorage.removeItem('videomi_token');
-        localStorage.removeItem('videomi_user');
+        localStorage.removeItem('stormi_token');
+        localStorage.removeItem('stormi_user');
         
         // Nettoyer sessionStorage (stats cache)
         if (typeof window !== 'undefined') {
             const keys = Object.keys(sessionStorage);
             keys.forEach(key => {
-                if (key.startsWith('videomi_')) {
+                if (key.startsWith('stormi_')) {
                     sessionStorage.removeItem(key);
                 }
             });

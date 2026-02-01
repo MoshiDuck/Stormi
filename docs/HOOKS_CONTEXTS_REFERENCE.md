@@ -1,4 +1,4 @@
-# Référence des Hooks et Contextes — Videomi
+# Référence des Hooks et Contextes — Stormi
 
 > **Date de mise à jour** : 24 janvier 2026  
 > **Version** : 1.0  
@@ -83,8 +83,8 @@ function useAuth(): {
 
 | Clé localStorage | Description |
 |------------------|-------------|
-| `videomi_user` | Objet utilisateur (JSON) |
-| `videomi_token` | JWT token |
+| `stormi_user` | Objet utilisateur (JSON) |
+| `stormi_token` | JWT token |
 
 #### Flux d'authentification
 
@@ -318,7 +318,7 @@ interface UseFilesReturn {
 | Niveau | Durée | Clé |
 |--------|-------|-----|
 | Mémoire (Map) | 24h | `${userId}_${category}` |
-| localStorage | 24h | `videomi_files_${userId}_${category}` |
+| localStorage | 24h | `stormi_files_${userId}_${category}` |
 
 #### Fonctions d'invalidation exportées
 
@@ -759,11 +759,11 @@ type Language = 'fr' | 'en' | 'es' | 'de';
 
 | Clé localStorage | Description |
 |------------------|-------------|
-| `videomi_language` | Code langue |
+| `stormi_language` | Code langue |
 
 #### Détection automatique
 
-1. `localStorage.getItem('videomi_language')`
+1. `localStorage.getItem('stormi_language')`
 2. `navigator.language.split('-')[0]`
 3. Défaut : `'fr'`
 
@@ -858,8 +858,8 @@ interface PlaylistTrack {
 
 | Clé | Description |
 |-----|-------------|
-| `videomi_player_state` | État du lecteur |
-| `videomi_player_timestamp` | Timestamp sauvegarde |
+| `stormi_player_state` | État du lecteur |
+| `stormi_player_timestamp` | Timestamp sauvegarde |
 
 #### Conditions de restauration
 
@@ -936,7 +936,7 @@ function VideoPlayer() {
 
 ```
 useAuth
-    ├── localStorage (videomi_user, videomi_token)
+    ├── localStorage (stormi_user, stormi_token)
     ├── clearLocalCache (localCache.ts)
     ├── clearServiceWorkerCache (serviceWorker.ts)
     ├── setServiceWorkerUserId (serviceWorker.ts)
@@ -944,7 +944,7 @@ useAuth
 
 useFiles
     ├── window.__fileCache (cache mémoire)
-    ├── localStorage (videomi_files_*)
+    ├── localStorage (stormi_files_*)
     └── API /api/upload/user/:userId
 
 useFilesPreloader

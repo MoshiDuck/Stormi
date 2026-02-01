@@ -51,7 +51,7 @@
 
 | # | Exigence doc | Référence code | Statut | Commentaire |
 |---|----------------|----------------|--------|-------------|
-| 22 | IndexedDB par utilisateur : `videomi_cache_${userId}` | `localCache.ts` `initDB` : `DB_NAME` + `_` + userId | **Conforme** | DB isolée par userId. |
+| 22 | IndexedDB par utilisateur : `stormi_cache_${userId}` | `localCache.ts` `initDB` : `DB_NAME` + `_` + userId | **Conforme** | DB isolée par userId. |
 | 23 | TTL métadonnées 1 h, stats 5 min, thumbnails 7 j | `LOCAL_CACHE_TTL` dans `localCache.ts` | **Conforme** | |
 | 24 | Clé locale sans userId dans la clé | `generateLocalCacheKey` : resource + params triés | **Conforme** | Isolation par DB (userId), pas par clé. |
 | 25 | Cleanup automatique | `cleanupExpiredCache` ; `getFromLocalCache` supprime si expiré | **Conforme** | |
@@ -67,14 +67,14 @@
 | 30 | Edge : userId dans clé | `generateCacheKey` ; toutes les routes user-scoped | **Conforme** | |
 | 31 | Pas de cache auth / watch-progress / billing | canCache + SW (cf. ci‑dessus) | **Conforme** | |
 | 32 | Logout : vider IndexedDB | `useAuth` logout : `clearLocalCache(userId)` | **Conforme** | |
-| 33 | Logout : vider Cache Storage | `clearServiceWorkerCache` → message CLEAR_CACHE + `clearAll` ; SW `clearAllVideomiCaches` | **Conforme** | Correction : purge de tous les caches `videomi-images-*` au logout. |
+| 33 | Logout : vider Cache Storage | `clearServiceWorkerCache` → message CLEAR_CACHE + `clearAll` ; SW `clearAllStormiCaches` | **Conforme** | Correction : purge de tous les caches `stormi-images-*` au logout. |
 | 34 | Pas de fuite cross-user (SW) | Fetch utilise `getCacheName(null)` → public ; logout vide tous les caches | **Conforme** | Risque résiduel : partage temporaire si multi‑user même navigateur avant logout. Acceptable. |
 
 ### 2.5 Invalidation côté client
 
 | # | Exigence doc | Référence code | Statut | Commentaire |
 |---|----------------|----------------|--------|-------------|
-| 35 | Événements `videomi:cache-invalidate` | `cacheInvalidation.ts` : dispatch selon type | **Conforme** | |
+| 35 | Événements `stormi:cache-invalidate` | `cacheInvalidation.ts` : dispatch selon type | **Conforme** | |
 | 36 | Upload → invalidation | `UploadManager` après succès : `handleCacheInvalidation` file:upload | **Conforme** | |
 | 37 | Delete → invalidation | Aucun appel client à `handleCacheInvalidation({ type: 'file:delete', ... })` | **Écart** | Backend Edge invalidé ; pas d’appel client. Aucune UI de suppression de fichier trouvée. À lier quand feature delete existera. |
 | 38 | Metadata update → invalidation | Pas d’appel client explicite après POST metadata | **Partiel** | Edge invalidé côté worker ; invalidation locale/events dépend des usages (match, etc.). |
@@ -106,7 +106,7 @@
 
 4. **Logout SW** (`serviceWorker.ts` + `sw.js`)  
    - `clearServiceWorkerCache(..., clearAll: true)` par défaut.  
-   - Message `CLEAR_CACHE` + `clearAll` → `clearAllVideomiCaches()` supprime tous les caches `videomi-images-*`.
+   - Message `CLEAR_CACHE` + `clearAll` → `clearAllStormiCaches()` supprime tous les caches `stormi-images-*`.
 
 5. **Fallback offline** (`localCache.ts`)  
    - `getStaleFromLocalCache` pour accepter le stale.  

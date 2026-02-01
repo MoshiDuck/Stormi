@@ -6,18 +6,18 @@ dotenv.config();
 
 // Constantes exportées
 export const IS_DEV = Boolean(process.env.ELECTRON_START_URL);
-export const START_URL = process.env.ELECTRON_START_URL || 'https://videomi.uk';
+export const START_URL = process.env.ELECTRON_START_URL || 'https://stormi.uk';
 export const PRELOAD_PATH = path.join(process.cwd(), 'dist', 'electron', 'preload.js');
 export const WORKER_URL = process.env.WORKER_URL || 'https://your-worker.your-account.workers.dev';
 
 // Configuration CSP
 export const MAIN_WINDOW_CSP = [
-    "default-src 'self' https://videomi.uk https://accounts.google.com https://www.googleapis.com",
+    "default-src 'self' https://stormi.uk https://accounts.google.com https://www.googleapis.com",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://www.gstatic.com https://apis.google.com",
     "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com https://www.gstatic.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://videomi.uk https://accounts.google.com https://www.googleapis.com",
+    "connect-src 'self' https://stormi.uk https://accounts.google.com https://www.googleapis.com",
     "frame-src 'self' https://accounts.google.com",
     "worker-src 'self' blob:",
     "child-src 'self' blob:"

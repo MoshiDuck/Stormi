@@ -1,7 +1,7 @@
 // INFO : wrangler.jsonc
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "videomi",
+  "name": "stormi",
   "compatibility_date": "2025-10-08",
   "main": "./workers/app.ts",
   "observability": {
@@ -10,14 +10,14 @@
   "upload_source_maps": true,
   "routes": [
     {
-      "pattern": "videomi.uk",
+      "pattern": "stormi.uk",
       "custom_domain": true
     }
   ],
   "r2_buckets": [
     {
       "binding": "STORAGE",
-      "bucket_name": "videomi"
+      "bucket_name": "stormi"
     }
   ],
   "d1_databases": [

@@ -14,13 +14,13 @@ let currentUserId = null;
 /**
  * Génère un nom de cache isolé par utilisateur
  * STRICT : Retourne null si pas de userId (pas de cache public)
- * Format doc : videomi_${userId}_images (conforme à CACHE_ARCHITECTURE.md)
+ * Format doc : stormi_${userId}_images (conforme à CACHE_ARCHITECTURE.md)
  */
 function getCacheName(userId) {
     if (!userId) {
         return null; // STRICT : Pas de cache sans userId
     }
-    return `videomi_${userId}_images_v1`;
+    return `stormi_${userId}_images_v1`;
 }
 
 /**
@@ -31,8 +31,8 @@ async function cleanupExpiredCaches() {
     const currentTime = Date.now();
 
     for (const cacheName of cacheNames) {
-        // Match nouveau format (videomi_userId_) et ancien format (videomi-images-)
-        if (cacheName.startsWith('videomi_') || cacheName.startsWith('videomi-images-')) {
+        // Match nouveau format (stormi_userId_) et ancien format (videomi-images- / stormi-images-)
+        if (cacheName.startsWith('stormi_') || cacheName.startsWith('videomi_') || cacheName.startsWith('videomi-images-') || cacheName.startsWith('stormi-images-')) {
             const cache = await caches.open(cacheName);
             const requests = await cache.keys();
 
@@ -60,7 +60,7 @@ async function cleanupLegacyCaches() {
     try {
         const cacheNames = await caches.keys();
         const legacyCaches = cacheNames.filter(name => 
-            name.startsWith('videomi-images-') // Ancien format avec tirets
+            name.startsWith('videomi-images-') || name.startsWith('stormi-images-') // Anciens formats avec tirets
         );
         
         for (const cacheName of legacyCaches) {
@@ -87,7 +87,7 @@ self.addEventListener('activate', (event) => {
     console.log('[SW] Service Worker activé (isolation stricte, format doc)');
     event.waitUntil(
         Promise.all([
-            cleanupLegacyCaches(), // Supprimer caches ancien format (videomi-images-*)
+            cleanupLegacyCaches(), // Supprimer caches ancien format (videomi-images-*, stormi-images-*)
             cleanupExpiredCaches(),
             self.clients.claim(),
         ])
@@ -223,18 +223,18 @@ async function revalidateInBackground(request, cache, userId) {
 }
 
 /**
- * Vide tous les caches videomi (logout complet)
- * Gère les deux formats : nouveau (videomi_) et legacy (videomi-images-)
+ * Vide tous les caches stormi (logout complet)
+ * Gère les formats : stormi_, videomi_ (migration) et legacy (videomi-images-, stormi-images-)
  */
-async function clearAllVideomiCaches() {
+async function clearAllStormiCaches() {
     const names = await caches.keys();
-    const videomiCaches = names.filter((n) => 
-        n.startsWith('videomi_') || n.startsWith('videomi-images-')
+    const stormiCaches = names.filter((n) => 
+        n.startsWith('stormi_') || n.startsWith('videomi_') || n.startsWith('videomi-images-') || n.startsWith('stormi-images-')
     );
-    await Promise.all(videomiCaches.map((n) => caches.delete(n)));
+    await Promise.all(stormiCaches.map((n) => caches.delete(n)));
     // Reset userId au logout
     currentUserId = null;
-    console.log(`[SW] ${videomiCaches.length} caches videomi vidés + userId reset`);
+    console.log(`[SW] ${stormiCaches.length} caches stormi vidés + userId reset`);
 }
 
 /**
@@ -262,7 +262,7 @@ self.addEventListener('message', (event) => {
     // CLEAR_CACHE : Vider le cache
     if (event.data && event.data.type === 'CLEAR_CACHE') {
         if (event.data.clearAll) {
-            event.waitUntil(clearAllVideomiCaches());
+            event.waitUntil(clearAllStormiCaches());
             return;
         }
         const userId = event.data.userId || currentUserId;

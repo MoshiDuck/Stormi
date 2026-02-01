@@ -1,4 +1,4 @@
-# Audit Final de Documentation — Videomi
+# Audit Final de Documentation — Stormi
 
 > **Date** : 24 janvier 2026  
 > **Version** : 1.0  
@@ -324,7 +324,7 @@
 
 ### ✅ DOCUMENTATION 100% CONFORME
 
-**L'intégralité de la documentation projet Videomi est :**
+**L'intégralité de la documentation projet Stormi est :**
 
 1. ✅ **Méthodique** : Chaque document suit une structure claire
 2. ✅ **Exhaustive** : Tous les fichiers et fonctions sont couverts

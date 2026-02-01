@@ -5,13 +5,13 @@
 ### Problème 1 : Erreur 403 lors de l'upload des assets
 Erreur `403 Forbidden` lors de l'upload des assets Cloudflare Workers :
 ```
-POST /accounts/.../workers/scripts/videomi/assets-upload-session -> 403 Forbidden
+POST /accounts/.../workers/scripts/stormi/assets-upload-session -> 403 Forbidden
 ```
 
 ### Problème 2 : Erreur 403 lors de la configuration du domaine custom
 Erreur `403 Forbidden` lors de la configuration du domaine personnalisé :
 ```
-POST /accounts/.../workers/scripts/videomi/domains/changeset -> 403 Forbidden
+POST /accounts/.../workers/scripts/stormi/domains/changeset -> 403 Forbidden
 ```
 
 **Solution rapide** : Retirer temporairement la configuration `routes` dans `wrangler.jsonc` et configurer le domaine manuellement dans le dashboard Cloudflare.
@@ -44,7 +44,7 @@ Pour créer un nouveau token avec les bonnes permissions :
 
 **Note** : Si vous avez des problèmes avec les domaines custom, vous pouvez :
 - Retirer temporairement la section `routes` de `wrangler.jsonc`
-- Configurer le domaine manuellement dans Cloudflare Dashboard : Workers & Pages > videomi > Custom Domains
+- Configurer le domaine manuellement dans Cloudflare Dashboard : Workers & Pages > stormi > Custom Domains
 
 ### 3. Vérifier la configuration wrangler
 
@@ -52,7 +52,7 @@ Assurez-vous que `wrangler.jsonc` est correctement configuré :
 
 ```jsonc
 {
-  "name": "videomi",
+  "name": "stormi",
   "compatibility_date": "2025-10-08",
   "main": "./workers/app.ts",
   // ... autres configs

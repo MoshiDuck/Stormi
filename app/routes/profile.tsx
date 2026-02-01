@@ -8,8 +8,8 @@ import { replacePlaceholders } from '~/utils/i18n';
 
 export function meta() {
     return [
-        { title: 'Profil | Videomi' },
-        { name: 'description', content: 'Gérez votre profil Videomi, langue et compte.' },
+        { title: 'Profil | Stormi' },
+        { name: 'description', content: 'Gérez votre profil Stormi, langue et compte.' },
     ];
 }
 
@@ -409,8 +409,8 @@ export default function ProfileRoute() {
                                     <button
                                         onClick={() => {
                                             if (window.confirm('Êtes-vous sûr de vouloir supprimer toutes vos données locales ?')) {
-                                                localStorage.removeItem('videomi_token');
-                                                localStorage.removeItem('videomi_user');
+                                                localStorage.removeItem('stormi_token');
+                                                localStorage.removeItem('stormi_user');
                                                 window.location.reload();
                                             }
                                         }}
@@ -469,7 +469,7 @@ export default function ProfileRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Videomi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
                         </p>
                     </div>
                 </footer>

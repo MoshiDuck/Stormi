@@ -17,7 +17,7 @@ import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
 
 export function meta() {
     return [
-        { title: 'Séries | Videomi' },
+        { title: 'Séries | Stormi' },
         { name: 'description', content: 'Vos séries en streaming. Parcourir par genre, continuer où vous en étiez.' },
     ];
 }
@@ -143,11 +143,11 @@ export default function SeriesRoute() {
             setError(null);
 
             try {
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 
                 // Récupérer les fichiers
                 const response = await fetch(
-                    `https://videomi.uk/api/upload/user/${user.id}?category=videos`,
+                    `https://stormi.uk/api/upload/user/${user.id}?category=videos`,
                     { headers: { 'Authorization': `Bearer ${token}` } }
                 );
 
@@ -160,7 +160,7 @@ export default function SeriesRoute() {
                 let progressions: Array<{ file_id: string; progress_percent: number; current_time: number }> = [];
                 try {
                     const progressResponse = await fetch(
-                        `https://videomi.uk/api/watch-progress/user/${user.id}`,
+                        `https://stormi.uk/api/watch-progress/user/${user.id}`,
                         { headers: { 'Authorization': `Bearer ${token}` } }
                     );
                     if (progressResponse.ok) {
@@ -388,8 +388,8 @@ export default function SeriesRoute() {
         if (!user?.id) return;
         
         try {
-            const token = localStorage.getItem('videomi_token');
-            const response = await fetch(`https://videomi.uk/api/ratings/top10?category=videos&groupBySeries=true`, {
+            const token = localStorage.getItem('stormi_token');
+            const response = await fetch(`https://stormi.uk/api/ratings/top10?category=videos&groupBySeries=true`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -481,7 +481,7 @@ export default function SeriesRoute() {
     const getThumbnailUrl = useCallback((file: FileItem): string | null => {
         if (file.thumbnail_r2_path) {
             const match = file.thumbnail_r2_path.match(/thumbnail\.(\w+)$/);
-            if (match) return `https://videomi.uk/api/files/videos/${file.file_id}/thumbnail.${match[1]}`;
+            if (match) return `https://stormi.uk/api/files/videos/${file.file_id}/thumbnail.${match[1]}`;
         }
         return file.thumbnail_url || null;
     }, []);

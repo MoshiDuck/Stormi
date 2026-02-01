@@ -1,5 +1,5 @@
 // INFO : app/components/ui/SplashScreen.tsx
-// Affiche uniquement "Videomi" sans charger de données utilisateur.
+// Affiche uniquement "Stormi" sans charger de données utilisateur.
 // Si connecté → /home après 2s. Si non connecté → /login immédiatement (évite le layout _app et les timeouts).
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
@@ -21,7 +21,7 @@ export function SplashScreen() {
             }, 1500);
             return () => clearTimeout(timer);
         } else {
-            // Non connecté : courte pause pour afficher "Videomi" puis /login (évite layout _app, home loader)
+            // Non connecté : courte pause pour afficher "Stormi" puis /login (évite layout _app, home loader)
             const timer = setTimeout(() => {
                 navigate('/login', { replace: true });
             }, 800);
@@ -45,7 +45,7 @@ export function SplashScreen() {
                 zIndex: 9999
             }}
             role="banner"
-            aria-label="Écran de démarrage Videomi"
+            aria-label="Écran de démarrage Stormi"
         >
             {/* Effet de gradient animé en arrière-plan */}
             <div 
@@ -99,11 +99,11 @@ export function SplashScreen() {
                         lineHeight: 1,
                         fontFamily: 'system-ui, -apple-system, sans-serif'
                     }}
-                    aria-label="Videomi"
+                    aria-label="Stormi"
                 >
-                    {/* Partie "Video" en blanc avec ombre subtile */}
+                    {/* Partie "Storm" en blanc avec ombre subtile */}
                     <span 
-                        className="splash-video"
+                        className="splash-storm"
                         style={{
                             display: 'inline-block',
                             color: darkTheme.text.primary,
@@ -112,12 +112,12 @@ export function SplashScreen() {
                             fontWeight: 700
                         }}
                     >
-                        Video
+                        Storm
                     </span>
                     
-                    {/* Partie "Mi" en doré scintillant avec effet premium */}
+                    {/* Partie "i" en doré scintillant avec effet premium */}
                     <span 
-                        className="splash-mi"
+                        className="splash-i"
                         style={{
                             display: 'inline-block',
                             background: 'linear-gradient(135deg, #fbbf24 0%, #fde047 25%, #fbbf24 50%, #f59e0b 75%, #fbbf24 100%)',
@@ -130,7 +130,7 @@ export function SplashScreen() {
                             fontWeight: 800
                         }}
                     >
-                        Mi
+                        i
                     </span>
                 </h1>
             </div>
@@ -190,13 +190,13 @@ export function SplashScreen() {
                     animation: gradientFade 1.5s ease-out forwards;
                 }
 
-                .splash-video {
+                .splash-storm {
                     animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
                     opacity: 0;
                     transform: scale(0.85);
                 }
 
-                .splash-mi {
+                .splash-i {
                     animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards, 
                                shimmer 4s ease-in-out infinite 1s,
                                sparkle 3s ease-in-out infinite 1s;
@@ -219,8 +219,8 @@ export function SplashScreen() {
                 }
 
                 @media (prefers-reduced-motion: reduce) {
-                    .splash-video,
-                    .splash-mi,
+                    .splash-storm,
+                    .splash-i,
                     .splash-gradient-bg,
                     .splash-particle {
                         animation: fadeInScale 0.3s ease-out forwards !important;
@@ -228,7 +228,7 @@ export function SplashScreen() {
                         transform: scale(1) !important;
                     }
                     
-                    .splash-mi {
+                    .splash-i {
                         animation: fadeInScale 0.3s ease-out 0.1s forwards !important;
                     }
                 }

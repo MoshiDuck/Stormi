@@ -105,8 +105,8 @@ export default function InfoRoute() {
 
             try {
                 // Récupérer les infos du fichier
-                const token = localStorage.getItem('videomi_token');
-                const response = await fetch(`https://videomi.uk/api/upload/user/${user.id}`, {
+                const token = localStorage.getItem('stormi_token');
+                const response = await fetch(`https://stormi.uk/api/upload/user/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -192,7 +192,7 @@ export default function InfoRoute() {
 
                 // Récupérer la progression de lecture
                 try {
-                    const progressResponse = await fetch(`https://videomi.uk/api/watch-progress/${fileId}`, {
+                    const progressResponse = await fetch(`https://stormi.uk/api/watch-progress/${fileId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -248,8 +248,8 @@ export default function InfoRoute() {
             if (!user?.id || !fileId) return;
             
             try {
-                const token = localStorage.getItem('videomi_token');
-                const response = await fetch(`https://videomi.uk/api/ratings/${fileId}?user_id=${user.id}`, {
+                const token = localStorage.getItem('stormi_token');
+                const response = await fetch(`https://stormi.uk/api/ratings/${fileId}?user_id=${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -273,8 +273,8 @@ export default function InfoRoute() {
         if (!user?.id || !fileId) return;
         
         try {
-            const token = localStorage.getItem('videomi_token');
-            const response = await fetch(`https://videomi.uk/api/ratings/${fileId}`, {
+            const token = localStorage.getItem('stormi_token');
+            const response = await fetch(`https://stormi.uk/api/ratings/${fileId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ export default function InfoRoute() {
     const getThumbnailUrl = (file: FileItem): string | null => {
         if (file.thumbnail_r2_path) {
             const match = file.thumbnail_r2_path.match(/thumbnail\.(\w+)$/);
-            if (match) return `https://videomi.uk/api/files/videos/${file.file_id}/thumbnail.${match[1]}`;
+            if (match) return `https://stormi.uk/api/files/videos/${file.file_id}/thumbnail.${match[1]}`;
         }
         return file.thumbnail_url || null;
     };
@@ -323,8 +323,8 @@ export default function InfoRoute() {
                 // Récupérer la progression spécifique du premier épisode
                 let episodeProgress: WatchProgress | null = null;
                 try {
-                    const token = localStorage.getItem('videomi_token');
-                    const progressResponse = await fetch(`https://videomi.uk/api/watch-progress/${firstEpisode.file.file_id}`, {
+                    const token = localStorage.getItem('stormi_token');
+                    const progressResponse = await fetch(`https://stormi.uk/api/watch-progress/${firstEpisode.file.file_id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

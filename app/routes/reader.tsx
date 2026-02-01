@@ -161,7 +161,7 @@ export default function ReaderRoute() {
             try {
                 if (typeof window === 'undefined') return;
                 
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 if (!token) {
                     setError('Non authentifié');
                     setLoading(false);
@@ -171,7 +171,7 @@ export default function ReaderRoute() {
                 // Récupérer les infos du fichier (titre, nom, album, artiste)
                 try {
                     const infoResponse = await fetch(
-                        `https://videomi.uk/api/files/${category}/${fileId}/info`,
+                        `https://stormi.uk/api/files/${category}/${fileId}/info`,
                         { headers: { 'Authorization': `Bearer ${token}` } }
                     );
                     if (infoResponse.ok) {
@@ -202,12 +202,12 @@ export default function ReaderRoute() {
                 // Pour les autres fichiers, on peut télécharger le blob
                 if (category === 'videos' || category === 'musics') {
                     // Utiliser l'URL directe pour streaming
-                    const streamUrl = `https://videomi.uk/api/files/${category}/${fileId}`;
+                    const streamUrl = `https://stormi.uk/api/files/${category}/${fileId}`;
                     setBlobUrl(streamUrl);
                     setLoading(false);
                 } else {
                     // Pour les autres fichiers (images, docs), télécharger en blob
-                    const fileUrl = `https://videomi.uk/api/files/${category}/${fileId}`;
+                    const fileUrl = `https://stormi.uk/api/files/${category}/${fileId}`;
                     const response = await fetch(fileUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -372,7 +372,7 @@ export default function ReaderRoute() {
         // Sauvegarder la progression finale avant de quitter
         if (category === 'videos' && currentProgress && user?.id) {
             const token = localStorage.getItem('auth_token');
-            fetch(`https://videomi.uk/api/watch-progress/${fileId}`, {
+            fetch(`https://stormi.uk/api/watch-progress/${fileId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -452,7 +452,7 @@ export default function ReaderRoute() {
     }
 
     if (error || !category || !fileId) {
-        const downloadUrl = blobUrl || (category && fileId ? `https://videomi.uk/api/files/${category}/${fileId}` : null);
+        const downloadUrl = blobUrl || (category && fileId ? `https://stormi.uk/api/files/${category}/${fileId}` : null);
         return (
             <>
                 <main style={{
@@ -612,7 +612,7 @@ export default function ReaderRoute() {
                                             Math.abs(current_time - lastSavedProgress.current * duration / 100) >= 5) {
                                             try {
                                                 const token = localStorage.getItem('auth_token');
-                                                await fetch(`https://videomi.uk/api/watch-progress/${fileId}`, {
+                                                await fetch(`https://stormi.uk/api/watch-progress/${fileId}`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json',

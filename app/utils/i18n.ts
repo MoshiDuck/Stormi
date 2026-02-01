@@ -179,7 +179,7 @@ const translations: Record<Language, Translations> = {
             close: 'Fermer'
         },
         login: {
-            title: 'Videomi',
+            title: 'Stormi',
             subtitle: 'Connectez-vous pour accéder à votre espace',
             connectWithGoogle: 'Se connecter avec Google :',
             electronMode: 'Mode Electron actif - L\'authentification s\'ouvrira dans une fenêtre Electron',
@@ -322,7 +322,7 @@ const translations: Record<Language, Translations> = {
             close: 'Close'
         },
         login: {
-            title: 'Videomi',
+            title: 'Stormi',
             subtitle: 'Sign in to access your space',
             connectWithGoogle: 'Sign in with Google:',
             electronMode: 'Electron mode active - Authentication will open in an Electron window',
@@ -463,7 +463,7 @@ const translations: Record<Language, Translations> = {
             close: 'Cerrar'
         },
         login: {
-            title: 'Videomi',
+            title: 'Stormi',
             subtitle: 'Inicia sesión para acceder a tu espacio',
             connectWithGoogle: 'Iniciar sesión con Google:',
             electronMode: 'Modo Electron activo - La autenticación se abrirá en una ventana Electron',
@@ -606,7 +606,7 @@ const translations: Record<Language, Translations> = {
             close: 'Schließen'
         },
         login: {
-            title: 'Videomi',
+            title: 'Stormi',
             subtitle: 'Melden Sie sich an, um auf Ihren Bereich zuzugreifen',
             connectWithGoogle: 'Mit Google anmelden:',
             electronMode: 'Electron-Modus aktiv - Die Authentifizierung wird in einem Electron-Fenster geöffnet',
@@ -742,7 +742,7 @@ export function detectLanguage(): Language {
 
     // 1. Vérifier localStorage (préférence utilisateur)
     try {
-        const stored = localStorage.getItem('videomi_language');
+        const stored = localStorage.getItem('stormi_language');
         if (stored && (stored === 'fr' || stored === 'en' || stored === 'es' || stored === 'de')) {
             return stored as Language;
         }

@@ -48,8 +48,8 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures par défaut (long terme
 const ACTIVE_FETCHES = new Map<string, Promise<FileItem[]>>(); // Évite les appels simultanés
 
 // Flag pour le premier chargement de l'app
-const FIRST_LOAD_KEY = 'videomi_first_load_done';
-const CACHE_VERSION_KEY = 'videomi_cache_version';
+const FIRST_LOAD_KEY = 'stormi_first_load_done';
+const CACHE_VERSION_KEY = 'stormi_cache_version';
 const CURRENT_CACHE_VERSION = '1.0';
 
 // Vérifier si c'est le premier chargement de l'app
@@ -77,7 +77,7 @@ function isFirstLoad(): boolean {
 
 // Cache persistant dans localStorage
 function getPersistentCacheKey(userId: string, category: FileCategory): string {
-    return `videomi_files_${userId}_${category}`;
+    return `stormi_files_${userId}_${category}`;
 }
 
 function saveToPersistentCache(userId: string, category: FileCategory, data: FileItem[]): void {
@@ -128,7 +128,7 @@ function invalidatePersistentCache(): void {
     try {
         const keys = Object.keys(localStorage);
         keys.forEach(key => {
-            if (key.startsWith('videomi_files_')) {
+            if (key.startsWith('stormi_files_')) {
                 localStorage.removeItem(key);
             }
         });
@@ -222,9 +222,9 @@ export function useFiles({ category, userId, enabled = true, refetchInterval }: 
                 }
                 setError(null);
 
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 const response = await fetch(
-                    `https://videomi.uk/api/upload/user/${userId}?category=${category}`,
+                    `https://stormi.uk/api/upload/user/${userId}?category=${category}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`

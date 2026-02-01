@@ -68,9 +68,9 @@ export default function ArchivesRoute() {
 
         try {
             if (typeof window === 'undefined') return;
-            const token = localStorage.getItem('videomi_token');
+            const token = localStorage.getItem('stormi_token');
             const response = await fetch(
-                `https://videomi.uk/api/upload/user/${user.id}?category=archives`,
+                `https://stormi.uk/api/upload/user/${user.id}?category=archives`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -101,7 +101,7 @@ export default function ArchivesRoute() {
     useRefetchOnCacheInvalidation(user?.id ?? null, 'archives', fetchFiles);
 
     const getFileUrl = (file: FileItem): string => {
-        return `https://videomi.uk/api/files/${file.category}/${file.file_id}`;
+        return `https://stormi.uk/api/files/${file.category}/${file.file_id}`;
     };
 
     // Afficher le spinner uniquement au chargement initial (pas de données)

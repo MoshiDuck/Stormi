@@ -71,7 +71,7 @@
 | 1.30 | Nouveau rating → invalide ratings fichier, top10 | `app/utils/cache/cacheInvalidation.ts:89-107` type `rating:new` + `app/routes/info.tsx:297-301` | ✅ Conforme |
 | 1.31 | Logout → vide tout cache local (IndexedDB + Cache Storage) | `app/utils/cache/cacheInvalidation.ts:110-124` type `user:logout` + `app/hooks/useAuth.ts:104,117` | ✅ Conforme |
 | 1.32 | Edge : pas d'action au logout (expiration naturelle) | Pas de purge Edge explicite au logout | ✅ Conforme |
-| 1.33 | Client : événements personnalisés `videomi:cache-invalidate` | `app/utils/cache/cacheInvalidation.ts:30-39,53-63,75-84,96-105` `window.dispatchEvent(new CustomEvent(...))` | ✅ Conforme |
+| 1.33 | Client : événements personnalisés `stormi:cache-invalidate` | `app/utils/cache/cacheInvalidation.ts:30-39,53-63,75-84,96-105` `window.dispatchEvent(new CustomEvent(...))` | ✅ Conforme |
 | 1.34 | Client : Service Worker pour invalidation Cache Storage | `app/utils/cache/serviceWorker.ts:92-109` `invalidateServiceWorkerCache()` | ✅ Conforme |
 | 1.35 | Client : Dexie pour nettoyage IndexedDB | `app/utils/cache/localCache.ts:264-297` `invalidateLocalCache()` (IDBDatabase natif, pas Dexie) | ✅ Conforme (IDB natif équivalent) |
 | 1.36 | Edge : Headers Cache-Tags pour invalidation par tag | `workers/cache.ts:148-151` `putInCache()` ajoute Cache-Tags | ✅ Conforme |
@@ -83,9 +83,9 @@
 | # | Exigence Doc (ligne) | Implémentation | Statut |
 |---|---------------------|----------------|--------|
 | 1.39 | Clés cache Edge : inclure userId, format `user:${userId}:${resource}:${params}` (147-148) | `workers/cache.ts:33-61` `generateCacheKey()` | ✅ Conforme |
-| 1.40 | IndexedDB : nom `videomi_cache_${userId}` (ligne 151) | `app/utils/cache/localCache.ts:34` `const dbName = \`${DB_NAME}_${userId}\`` avec `DB_NAME='videomi_cache'` | ✅ Conforme |
+| 1.40 | IndexedDB : nom `stormi_cache_${userId}` (ligne 151) | `app/utils/cache/localCache.ts:34` `const dbName = \`${DB_NAME}_${userId}\`` avec `DB_NAME='stormi_cache'` | ✅ Conforme |
 | 1.41 | IndexedDB : nettoyage auto au logout (ligne 152) | `app/hooks/useAuth.ts:104` `clearLocalCache(userId)` | ✅ Conforme |
-| 1.42 | Cache Storage : préfixe `videomi_${userId}_` (ligne 155) | `public/sw.js:19-24` `getCacheName()` retourne `videomi_${userId}_images_v1` | ✅ Conforme |
+| 1.42 | Cache Storage : préfixe `stormi_${userId}_` (ligne 155) | `public/sw.js:19-24` `getCacheName()` retourne `stormi_${userId}_images_v1` | ✅ Conforme |
 | 1.43 | Jamais cache Edge : Tokens auth (ligne 160) | `workers/cache.ts:219-221` `canCache()` exclut `/api/auth/` | ✅ Conforme |
 | 1.44 | Jamais cache Edge : Données profil privées (ligne 161) | Pas de route `/api/profile` avec données sensibles exposée | ✅ Conforme (hors périmètre) |
 | 1.45 | Jamais cache Edge : Watch progress (ligne 162) | `workers/cache.ts:224-227` `canCache()` exclut `/api/watch-progress/` | ✅ Conforme |

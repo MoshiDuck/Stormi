@@ -81,7 +81,7 @@ export default function MatchRoute() {
 
     const loadFileInfo = async () => {
         try {
-            const token = localStorage.getItem('videomi_token');
+            const token = localStorage.getItem('stormi_token');
             const baseUrl = window.location.origin;
             const response = await fetch(`${baseUrl}/api/files/${category}/${fileId}/info`, {
                 headers: {
@@ -450,7 +450,7 @@ export default function MatchRoute() {
             }
             
             // Enregistrer la correspondance dans D1
-            const token = localStorage.getItem('videomi_token');
+            const token = localStorage.getItem('stormi_token');
             const baseUrl = window.location.origin;
             const metadata: any = {
                 thumbnail_url: thumbnailUrl,

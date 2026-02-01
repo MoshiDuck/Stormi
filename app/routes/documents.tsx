@@ -125,9 +125,9 @@ export default function DocumentsRoute() {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('videomi_token');
+            const token = localStorage.getItem('stormi_token');
             const response = await fetch(
-                `https://videomi.uk/api/upload/user/${user.id}?category=documents`,
+                `https://stormi.uk/api/upload/user/${user.id}?category=documents`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (!response.ok) throw new Error(t('errors.fetchFailed'));
@@ -148,7 +148,7 @@ export default function DocumentsRoute() {
     useRefetchOnCacheInvalidation(user?.id ?? null, 'documents', fetchFiles);
 
     const getFileUrl = (file: FileItem): string =>
-        `https://videomi.uk/api/files/${file.category}/${file.file_id}`;
+        `https://stormi.uk/api/files/${file.category}/${file.file_id}`;
 
     const masonrySections = useMemo(() => groupByMonthAsSections(documents), [documents]);
 
@@ -204,7 +204,7 @@ export default function DocumentsRoute() {
                             <div style={{ width: '100%', pointerEvents: 'none' }}>
                                 <PdfPreviewClient
                                     url={getFileUrl(doc)}
-                                    token={typeof window !== 'undefined' ? localStorage.getItem('videomi_token') : null}
+                                    token={typeof window !== 'undefined' ? localStorage.getItem('stormi_token') : null}
                                     width={width}
                                     height={previewHeight}
                                 />

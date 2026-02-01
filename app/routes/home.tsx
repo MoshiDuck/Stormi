@@ -12,7 +12,7 @@ import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 /** Données préchargées par le loader (user depuis localStorage, stats API ou cache). */
 export async function clientLoader() {
     if (typeof window === 'undefined') return { stats: null as StatsPayload | null, userId: null as string | null };
-    const storedUser = localStorage.getItem('videomi_user');
+    const storedUser = localStorage.getItem('stormi_user');
     if (!storedUser) return { stats: null, userId: null };
     let user: { id: string };
     try {
@@ -20,7 +20,7 @@ export async function clientLoader() {
     } catch {
         return { stats: null, userId: null };
     }
-    const cacheKey = `videomi_stats_${user.id}`;
+    const cacheKey = `stormi_stats_${user.id}`;
     const cached = sessionStorage.getItem(cacheKey);
     if (cached) {
         try {
@@ -30,7 +30,7 @@ export async function clientLoader() {
             sessionStorage.removeItem(cacheKey);
         }
     }
-    const token = localStorage.getItem('videomi_token');
+    const token = localStorage.getItem('stormi_token');
     const res = await fetch(`/api/stats?userId=${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -49,7 +49,7 @@ type StatsPayload = { fileCount: number; totalSizeGB: number; billableGB: number
 
 export function meta() {
     return [
-        { title: 'Accueil | Videomi' },
+        { title: 'Accueil | Stormi' },
         { name: 'description', content: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.' },
     ];
 }
@@ -87,7 +87,7 @@ export default function HomeRoute() {
             if (!user?.id) return;
             setStatsError(null);
             if (typeof window === 'undefined') return;
-            const cacheKey = `videomi_stats_${user.id}`;
+            const cacheKey = `stormi_stats_${user.id}`;
             if (!skipCache) {
                 const cachedStats = sessionStorage.getItem(cacheKey);
                 if (cachedStats) {
@@ -103,7 +103,7 @@ export default function HomeRoute() {
                 }
             }
             try {
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 const response = await fetch(`/api/stats?userId=${user.id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -142,12 +142,12 @@ export default function HomeRoute() {
             const customEvent = event as CustomEvent<{ userId: string }>;
             const userId = customEvent.detail?.userId;
             if (userId && userId === user?.id) {
-                sessionStorage.removeItem(`videomi_stats_${userId}`);
+                sessionStorage.removeItem(`stormi_stats_${userId}`);
                 revalidator.revalidate();
             }
         };
-        window.addEventListener('videomi:stats-invalidated', handleStatsInvalidated);
-        return () => window.removeEventListener('videomi:stats-invalidated', handleStatsInvalidated);
+        window.addEventListener('stormi:stats-invalidated', handleStatsInvalidated);
+        return () => window.removeEventListener('stormi:stats-invalidated', handleStatsInvalidated);
     }, [user?.id, revalidator]);
 
     return (
@@ -392,7 +392,7 @@ export default function HomeRoute() {
                                 color: darkTheme.text.primary,
                                 marginBottom: '12px'
                             }}>
-                                {t('home.emptyTitle') || 'Bienvenue sur Videomi !'}
+                                {t('home.emptyTitle') || 'Bienvenue sur Stormi !'}
                             </h2>
                             <p style={{
                                 fontSize: '16px',
@@ -475,7 +475,7 @@ export default function HomeRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Videomi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
                         </p>
                     </div>
                 </footer>

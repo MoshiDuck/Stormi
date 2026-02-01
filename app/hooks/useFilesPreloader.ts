@@ -27,9 +27,9 @@ export function useFilesPreloader({ userId, enabled = true, preloadOnHover = tru
             ALL_CATEGORIES.forEach(category => {
                 // Créer une instance silencieuse du hook pour chaque catégorie
                 // Le cache sera rempli automatiquement
-                fetch(`https://videomi.uk/api/upload/user/${userId}?category=${category}`, {
+                fetch(`https://stormi.uk/api/upload/user/${userId}?category=${category}`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('videomi_token') || ''}`
+                        'Authorization': `Bearer ${localStorage.getItem('stormi_token') || ''}`
                     }
                 }).catch(() => {
                     // Ignorer silencieusement les erreurs de préchargement
@@ -47,7 +47,7 @@ export function useFilesPreloader({ userId, enabled = true, preloadOnHover = tru
         if (!userId || !enabled) return;
 
         // Vérifier si la catégorie est déjà en cache (mémoire ou localStorage)
-        const cacheKey = `videomi_files_${userId}_${category}`;
+        const cacheKey = `stormi_files_${userId}_${category}`;
         const memoryCacheKey = `files_${userId}_${category}`;
         
         // Vérifier le cache mémoire global
@@ -74,9 +74,9 @@ export function useFilesPreloader({ userId, enabled = true, preloadOnHover = tru
         }
 
         // Précharger la catégorie en arrière-plan
-        fetch(`https://videomi.uk/api/upload/user/${userId}?category=${category}`, {
+        fetch(`https://stormi.uk/api/upload/user/${userId}?category=${category}`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('videomi_token') || ''}`
+                'Authorization': `Bearer ${localStorage.getItem('stormi_token') || ''}`
             }
         } as RequestInit).then(response => {
             if (response.ok) {

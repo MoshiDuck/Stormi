@@ -178,7 +178,7 @@ export function shouldTranscode(category: FileCategory): boolean {
 
 export function getR2Path(category: FileCategory, fileId: string, filename?: string): string {
     if (filename) {
-        return `videomi/${category}/${fileId}/${filename}`;
+        return `stormi/${category}/${fileId}/${filename}`;
     }
-    return `videomi/${category}/${fileId}`;
+    return `stormi/${category}/${fileId}`;
 }

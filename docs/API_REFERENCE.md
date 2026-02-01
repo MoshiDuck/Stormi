@@ -1,4 +1,4 @@
-# Référence API Videomi — Workers Cloudflare
+# Référence API Stormi — Workers Cloudflare
 
 > **Date de mise à jour** : 24 janvier 2026  
 > **Version** : 1.0  
@@ -36,7 +36,7 @@ L'API est déployée sur Cloudflare Workers avec :
 ### Base URL
 
 ```
-Production : https://videomi.uk
+Production : https://stormi.uk
 ```
 
 ### Format des réponses

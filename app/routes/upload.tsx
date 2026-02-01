@@ -9,8 +9,8 @@ import { useLanguage } from '~/contexts/LanguageContext';
 
 export function meta() {
     return [
-        { title: 'Upload | Videomi' },
-        { name: 'description', content: 'Téléversez vos fichiers vers le cloud Videomi. Stockage sécurisé et streaming.' },
+        { title: 'Upload | Stormi' },
+        { name: 'description', content: 'Téléversez vos fichiers vers le cloud Stormi. Stockage sécurisé et streaming.' },
     ];
 }
 
@@ -641,7 +641,7 @@ export default function UploadRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Videomi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
                             <span style={{ marginLeft: '20px', color: '#888' }}>
                                 Espace utilisé : {formatFileSize(0)} / Illimité
                             </span>

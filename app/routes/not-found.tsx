@@ -8,7 +8,7 @@ import { darkTheme } from '~/utils/ui/theme';
 
 export function meta() {
     return [
-        { title: 'Page non trouvée | Videomi' },
+        { title: 'Page non trouvée | Stormi' },
         { name: 'robots', content: 'noindex' },
     ];
 }

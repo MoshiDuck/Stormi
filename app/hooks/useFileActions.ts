@@ -34,9 +34,9 @@ export function useFileActions({
             }
 
             try {
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 const response = await fetch(
-                    `https://videomi.uk/api/files/${item.category}/${item.file_id}?userId=${userId}`,
+                    `https://stormi.uk/api/files/${item.category}/${item.file_id}?userId=${userId}`,
                     {
                         method: 'DELETE',
                         headers: {

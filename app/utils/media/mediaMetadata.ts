@@ -259,7 +259,7 @@ export async function downloadAndStoreThumbnail(
     category: FileCategory,
     maxRetries: number = 10
 ): Promise<string | null> {
-    const baseUrl = 'https://videomi.uk/api/media/thumbnail';
+    const baseUrl = 'https://stormi.uk/api/media/thumbnail';
     const preview = imageUrl.substring(0, 80) + (imageUrl.length > 80 ? '...' : '');
     
     for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -1154,7 +1154,7 @@ async function searchMusicBrainzComplete(
             
             const searchResponse = await fetch(searchUrl, {
                 headers: {
-                    'User-Agent': 'Videomi/1.0 (https://videomi.uk)',
+                    'User-Agent': 'Stormi/1.0 (https://stormi.uk)',
                     'Accept': 'application/json'
                 }
             });
@@ -1381,7 +1381,7 @@ async function searchDiscogsComplete(
             
             // Construire les headers avec authentification si un token est fourni
             const headers: Record<string, string> = {
-                'User-Agent': 'Videomi/1.0 (https://videomi.uk)',
+                'User-Agent': 'Stormi/1.0 (https://stormi.uk)',
                 'Accept': 'application/json'
             };
             
@@ -1922,7 +1922,7 @@ export async function enrichWithCompleteMetadata(
                     
                     const mbResponse = await fetch(searchUrl, {
                         headers: {
-                            'User-Agent': 'Videomi/1.0 (https://videomi.uk)',
+                            'User-Agent': 'Stormi/1.0 (https://stormi.uk)',
                             'Accept': 'application/json'
                         }
                     });
@@ -2002,7 +2002,7 @@ export async function enrichWithCompleteMetadata(
                         
                         const mbResponse = await fetch(searchUrl, {
                             headers: {
-                                'User-Agent': 'Videomi/1.0 (https://videomi.uk)',
+                                'User-Agent': 'Stormi/1.0 (https://stormi.uk)',
                                 'Accept': 'application/json'
                             }
                         });

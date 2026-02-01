@@ -22,7 +22,7 @@ interface CachedItem<T> {
     version: string;
 }
 
-const DB_NAME = 'videomi_cache';
+const DB_NAME = 'stormi_cache';
 const DB_VERSION = 1;
 const STORE_NAME = 'cache';
 

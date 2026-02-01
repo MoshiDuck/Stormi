@@ -32,7 +32,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             // Émettre un événement personnalisé pour le cache navigateur
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:cache-invalidate', {
+                    new CustomEvent('stormi:cache-invalidate', {
                         detail: {
                             type: 'file:upload',
                             category: event.category,
@@ -56,7 +56,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:cache-invalidate', {
+                    new CustomEvent('stormi:cache-invalidate', {
                         detail: {
                             type: 'file:delete',
                             fileId: event.fileId,
@@ -78,7 +78,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:cache-invalidate', {
+                    new CustomEvent('stormi:cache-invalidate', {
                         detail: {
                             type: 'file:metadata:update',
                             fileId: event.fileId,
@@ -99,7 +99,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:cache-invalidate', {
+                    new CustomEvent('stormi:cache-invalidate', {
                         detail: {
                             type: 'rating:new',
                             fileId: event.fileId,
@@ -118,7 +118,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:cache-invalidate', {
+                    new CustomEvent('stormi:cache-invalidate', {
                         detail: {
                             type: 'user:logout',
                             userId: event.userId,
@@ -135,7 +135,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
             
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(
-                    new CustomEvent('videomi:stats-invalidated', {
+                    new CustomEvent('stormi:stats-invalidated', {
                         detail: {
                             userId: event.userId,
                         },
@@ -149,13 +149,13 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
 
 /**
  * Invalide les stats affichées sur la page d'accueil (client-side).
- * Déclenche la réexécution du clientLoader de /home via l'événement videomi:stats-invalidated.
+ * Déclenche la réexécution du clientLoader de /home via l'événement stormi:stats-invalidated.
  * À appeler après un upload, une suppression ou toute action modifiant le nombre/taille des fichiers.
  */
 export function invalidateStats(userId: string): void {
     if (typeof window === 'undefined') return;
     window.dispatchEvent(
-        new CustomEvent('videomi:stats-invalidated', {
+        new CustomEvent('stormi:stats-invalidated', {
             detail: { userId },
         })
     );
@@ -181,16 +181,16 @@ export function setupCacheInvalidationListener(
         }
     };
 
-    window.addEventListener('videomi:cache-invalidate', handler);
+    window.addEventListener('stormi:cache-invalidate', handler);
 
     return () => {
-        window.removeEventListener('videomi:cache-invalidate', handler);
+        window.removeEventListener('stormi:cache-invalidate', handler);
     };
 }
 
 /**
  * Hook React pour refetch automatiquement les fichiers d'une catégorie
- * quand un upload/delete invalide le cache (événement videomi:cache-invalidate).
+ * quand un upload/delete invalide le cache (événement stormi:cache-invalidate).
  * Conforme CACHE_ARCHITECTURE.md § Stratégie d'Invalidation.
  */
 export function useRefetchOnCacheInvalidation(
@@ -212,8 +212,8 @@ export function useRefetchOnCacheInvalidation(
             }
         };
 
-        window.addEventListener('videomi:cache-invalidate', handler);
-        return () => window.removeEventListener('videomi:cache-invalidate', handler);
+        window.addEventListener('stormi:cache-invalidate', handler);
+        return () => window.removeEventListener('stormi:cache-invalidate', handler);
     }, [userId, category, refetch]);
 }
 
@@ -234,8 +234,8 @@ export function useCacheInvalidationTrigger(userId: string | null, category: str
                 setTrigger((t) => t + 1);
             }
         };
-        window.addEventListener('videomi:cache-invalidate', handler);
-        return () => window.removeEventListener('videomi:cache-invalidate', handler);
+        window.addEventListener('stormi:cache-invalidate', handler);
+        return () => window.removeEventListener('stormi:cache-invalidate', handler);
     }, [userId, category]);
     return trigger;
 }

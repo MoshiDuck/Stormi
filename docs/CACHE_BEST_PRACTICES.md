@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Ce guide explique comment utiliser efficacement le système de cache multi-niveaux de Videomi.
+Ce guide explique comment utiliser efficacement le système de cache multi-niveaux de Stormi.
 
 ## Architecture en Bref
 
@@ -27,13 +27,13 @@ function MyComponent() {
         if (!user?.id) return;
 
         fetchCached<{ files: FileItem[] }>(
-            `https://videomi.uk/api/upload/user/${user.id}?category=videos`,
+            `https://stormi.uk/api/upload/user/${user.id}?category=videos`,
             {
                 resource: 'files',
                 params: { category: 'videos' },
                 ttl: 3600, // 1 heure
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
                 },
             }
         ).then(data => {
@@ -93,8 +93,8 @@ useEffect(() => {
         }
     };
 
-    window.addEventListener('videomi:cache-invalidate', handler);
-    return () => window.removeEventListener('videomi:cache-invalidate', handler);
+    window.addEventListener('stormi:cache-invalidate', handler);
+    return () => window.removeEventListener('stormi:cache-invalidate', handler);
 }, [user?.id]);
 ```
 
@@ -251,12 +251,12 @@ export default function FilmsRoute() {
         setLoading(true);
         
         fetchCached<{ files: FileItem[] }>(
-            `https://videomi.uk/api/upload/user/${user.id}?category=videos`,
+            `https://stormi.uk/api/upload/user/${user.id}?category=videos`,
             {
                 resource: 'files',
                 params: { category: 'videos' },
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
                 },
             }
         )
@@ -284,8 +284,8 @@ export default function FilmsRoute() {
             }
         };
 
-        window.addEventListener('videomi:cache-invalidate', handler);
-        return () => window.removeEventListener('videomi:cache-invalidate', handler);
+        window.addEventListener('stormi:cache-invalidate', handler);
+        return () => window.removeEventListener('stormi:cache-invalidate', handler);
     }, [user?.id]);
 
     // ... reste du composant

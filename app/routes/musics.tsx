@@ -15,7 +15,7 @@ import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
 
 export function meta() {
     return [
-        { title: 'Musiques | Videomi' },
+        { title: 'Musiques | Stormi' },
         { name: 'description', content: 'Vos musiques par artiste et album. Écoutez en streaming.' },
     ];
 }
@@ -159,9 +159,9 @@ export default function MusicsRoute() {
             setError(null);
 
             try {
-                const token = localStorage.getItem('videomi_token');
+                const token = localStorage.getItem('stormi_token');
                 const response = await fetch(
-                    `https://videomi.uk/api/upload/user/${user.id}?category=musics`,
+                    `https://stormi.uk/api/upload/user/${user.id}?category=musics`,
                     { headers: { 'Authorization': `Bearer ${token}` } }
                 );
 

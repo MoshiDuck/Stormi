@@ -1,4 +1,4 @@
-# Système de Cache Multi-Niveaux - Videomi
+# Système de Cache Multi-Niveaux - Stormi
 
 ## 📋 Résumé
 
@@ -52,12 +52,12 @@ function MyComponent() {
         if (!user?.id) return;
 
         fetchCached<{ files: FileItem[] }>(
-            `https://videomi.uk/api/upload/user/${user.id}?category=videos`,
+            `https://stormi.uk/api/upload/user/${user.id}?category=videos`,
             {
                 resource: 'files',
                 params: { category: 'videos' },
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('videomi_token')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('stormi_token')}`,
                 },
             }
         ).then(data => {
@@ -175,7 +175,3 @@ await clearServiceWorkerCache();
 3. **Isolation utilisateur** :
    - Toujours inclure `userId` dans les clés de cache
    - Nettoyer le cache au logout
-
-## 🆘 Support
-
-Pour toute question, consulter la documentation dans `docs/` ou les commentaires dans le code source.

@@ -1,4 +1,4 @@
-# Architecture de Cache Multi-Niveaux - Videomi
+# Architecture de Cache Multi-Niveaux - Stormi
 
 ## Vue d'ensemble
 
@@ -130,7 +130,7 @@ Cette architecture implémente une stratégie de cache à 3 niveaux pour optimis
 ### Mécanisme d'invalidation
 
 **Côté Client** :
-- Événements personnalisés (`videomi:cache-invalidate`)
+- Événements personnalisés (`stormi:cache-invalidate`)
 - Service Worker pour invalidation Cache Storage
 - Dexie pour nettoyage IndexedDB
 
@@ -148,11 +148,11 @@ Cette architecture implémente une stratégie de cache à 3 niveaux pour optimis
   - Exemple : `user:abc123:files:videos`
 
 - **IndexedDB** : Base de données par utilisateur
-  - Nom : `videomi_cache_${userId}`
+  - Nom : `stormi_cache_${userId}`
   - Nettoyage automatique au logout
 
 - **Cache Storage** : Namespace par utilisateur
-  - Préfixe : `videomi_${userId}_`
+  - Préfixe : `stormi_${userId}_`
 
 ### Données sensibles
 

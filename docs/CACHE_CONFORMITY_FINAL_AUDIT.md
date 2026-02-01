@@ -35,9 +35,9 @@
 
 | Fichier | Ancien Format | Nouveau Format (Doc) |
 |---------|---------------|---------------------|
-| `public/sw.js` | `videomi-images-${userId}-v1` | `videomi_${userId}_images_v1` |
+| `public/sw.js` | `stormi-images-${userId}-v1` | `stormi_${userId}_images_v1` |
 
-**Référence documentation** : `docs/CACHE_ARCHITECTURE.md` ligne 155 : `Préfixe : videomi_${userId}_`
+**Référence documentation** : `docs/CACHE_ARCHITECTURE.md` ligne 155 : `Préfixe : stormi_${userId}_`
 
 ### 2.3 Intégration Client
 
@@ -84,8 +84,8 @@
 | 16 | TTL USER_STATS : 5 min | `LOCAL_CACHE_TTL.USER_STATS = 300` | ✅ **Conforme** |
 | 17 | TTL FILE_INFO : 1 heure | `LOCAL_CACHE_TTL.FILE_INFO = 3600` | ✅ **Conforme** |
 | 18 | TTL THUMBNAIL_URL : 7 jours | `LOCAL_CACHE_TTL.THUMBNAIL_URL = 604800` | ✅ **Conforme** |
-| 19 | IndexedDB : `videomi_cache_${userId}` | `initDB()` crée DB isolée | ✅ **Conforme** |
-| 20 | Cache Storage : `videomi_${userId}_` | `getCacheName()` → `videomi_${userId}_images_v1` | ✅ **Conforme** |
+| 19 | IndexedDB : `stormi_cache_${userId}` | `initDB()` crée DB isolée | ✅ **Conforme** |
+| 20 | Cache Storage : `stormi_${userId}_` | `getCacheName()` → `stormi_${userId}_images_v1` | ✅ **Conforme** |
 | 21 | Isolation stricte SW | `currentUserId` + refus cache si null | ✅ **Conforme** |
 
 ### 3.4 Invalidation
@@ -97,15 +97,15 @@
 | 24 | Update metadata → invalide métadonnées | `invalidateCache()` file:info | ✅ **Conforme** |
 | 25 | Rating → invalide ratings + top10 | `handleCacheInvalidation({ type: 'rating:new' })` | ✅ **Conforme** |
 | 26 | Logout → vide tout cache local | `clearLocalCache()` + `clearServiceWorkerCache()` | ✅ **Conforme** |
-| 27 | Logout → reset userId SW | `clearAllVideomiCaches()` reset `currentUserId = null` | ✅ **Conforme** |
+| 27 | Logout → reset userId SW | `clearAllStormiCaches()` reset `currentUserId = null` | ✅ **Conforme** |
 
 ### 3.5 Isolation par Utilisateur (Sécurité Critique)
 
 | # | Exigence Documentation | Code | Statut |
 |---|------------------------|------|--------|
 | 28 | Clés Edge : `user:${userId}:...` | `generateCacheKey()` | ✅ **Conforme** |
-| 29 | IndexedDB : `videomi_cache_${userId}` | `initDB()` | ✅ **Conforme** |
-| 30 | Cache Storage : `videomi_${userId}_` | `getCacheName()` format exact | ✅ **Conforme** |
+| 29 | IndexedDB : `stormi_cache_${userId}` | `initDB()` | ✅ **Conforme** |
+| 30 | Cache Storage : `stormi_${userId}_` | `getCacheName()` format exact | ✅ **Conforme** |
 | 31 | Pas de cache public SW | `getCacheName(null)` retourne `null` | ✅ **Conforme** |
 | 32 | SW refuse cache sans userId | `handleImageRequest()` → requête directe | ✅ **Conforme** |
 | 33 | Login envoie userId au SW | `setServiceWorkerUserId()` appelé | ✅ **Conforme** |
@@ -146,7 +146,7 @@ function getCacheName(userId) {
     if (!userId) {
         return null; // STRICT : Pas de cache sans userId
     }
-    return `videomi_${userId}_images_v1`;
+    return `stormi_${userId}_images_v1`;
 }
 
 async function handleImageRequest(request, userId) {
@@ -177,12 +177,12 @@ async function handleImageRequest(request, userId) {
 2. Utilisateur se connecte
    → useAuth.ts : handleAuthWithToken() → setServiceWorkerUserId(userId)
    → SW : currentUserId = userId
-   → SW : getCacheName(userId) = "videomi_${userId}_images_v1"
+   → SW : getCacheName(userId) = "stormi_${userId}_images_v1"
    → SW : Cache isolé par utilisateur
    
 3. Utilisateur se déconnecte
    → useAuth.ts : logout() → clearServiceWorkerCache(userId, true)
-   → SW : clearAllVideomiCaches() + currentUserId = null
+   → SW : clearAllStormiCaches() + currentUserId = null
    → SW : Tous les caches supprimés, retour à l'état non connecté
 ```
 
@@ -225,7 +225,7 @@ async function handleImageRequest(request, userId) {
 **Tous les points de la documentation cache sont maintenant strictement conformes :**
 
 1. ✅ **Isolation complète** : Pas de cache "public", tout est isolé par `userId`
-2. ✅ **Format exact** : Namespace `videomi_${userId}_` conforme à la doc
+2. ✅ **Format exact** : Namespace `stormi_${userId}_` conforme à la doc
 3. ✅ **Comportement strict** : SW refuse de cacher sans utilisateur authentifié
 4. ✅ **Invalidation complète** : Toutes les mutations déclenchent l'invalidation
 5. ✅ **Sécurité** : Aucune donnée sensible en cache, isolation garantie

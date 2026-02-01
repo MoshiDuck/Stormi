@@ -32,7 +32,7 @@ if (typeof window !== 'undefined') {
     
     // Au chargement de l'app, vérifier si c'est le premier chargement
     // et invalider les caches si nécessaire
-    const firstLoadKey = 'videomi_first_load_done';
+    const firstLoadKey = 'stormi_first_load_done';
     if (!localStorage.getItem(firstLoadKey)) {
         invalidateAllFileCache();
     }
@@ -183,7 +183,7 @@ export function ErrorBoundary() {
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <title>Erreur | Videomi</title>
+                <title>Erreur | Stormi</title>
                 <Links />
             </head>
             <body style={{ backgroundColor: '#121212', color: '#e0e0e0', margin: 0, padding: 40, fontFamily: 'system-ui' }}>

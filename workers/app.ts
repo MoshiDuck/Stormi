@@ -266,7 +266,7 @@ function cleanStringArray(arr: any[] | null | undefined): string[] | null {
 }
 
 // Constantes
-const OAUTH_REDIRECT_URI = 'https://videomi.uk/oauth-callback';
+const OAUTH_REDIRECT_URI = 'https://stormi.uk/oauth-callback';
 const CORS_ALLOWED_METHODS = 'GET, POST, OPTIONS';
 
 // Middleware CORS pour les routes API
@@ -1937,7 +1937,7 @@ function getOAuthCallbackHtml(): string {
     return `<!DOCTYPE html>
 <html>
   <head>
-    <title>Connexion - Videomi</title>
+    <title>Connexion - Stormi</title>
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval';">
     <style>
       body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; }

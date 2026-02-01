@@ -67,8 +67,8 @@ export default function ImagesRoute() {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('videomi_token');
-            const response = await fetch(`https://videomi.uk/api/upload/user/${user.id}?category=images`, {
+            const token = localStorage.getItem('stormi_token');
+            const response = await fetch(`https://stormi.uk/api/upload/user/${user.id}?category=images`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!response.ok) throw new Error(t('errors.fetchFailed'));
@@ -98,7 +98,7 @@ export default function ImagesRoute() {
     }, [selectedImage]);
 
     const getFileUrl = (file: FileItem): string =>
-        `https://videomi.uk/api/files/${file.category}/${file.file_id}`;
+        `https://stormi.uk/api/files/${file.category}/${file.file_id}`;
 
     const masonrySections = useMemo(() => groupByMonthAsSections(images), [images]);
 
