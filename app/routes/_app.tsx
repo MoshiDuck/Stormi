@@ -1,6 +1,6 @@
 /**
  * Layout principal authentifié : shell commun à toutes les pages app (home, upload, films, etc.).
- * - AuthGuard : redirection vers /login si non connecté
+ * - AuthGuard : protège toutes les routes enfants ; si non connecté → affiche SplashScreen puis redirection /login
  * - Navigation : barre de navigation avec prefetch
  * - Indicateur de chargement global pendant les navigations
  * - Transition de page : le main disparaît pendant le chargement (opacity 0), puis la nouvelle page apparaît en fondu (évite de voir deux pages en même temps)

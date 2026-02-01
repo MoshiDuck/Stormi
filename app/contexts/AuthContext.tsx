@@ -12,7 +12,7 @@ interface AuthContextType {
     handleAuthWithToken: (token: string, config: any) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const auth = useAuth();

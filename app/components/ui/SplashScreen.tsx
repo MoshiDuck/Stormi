@@ -1,36 +1,78 @@
 // INFO : app/components/ui/SplashScreen.tsx
-// Affiche uniquement "Stormi" sans charger de données utilisateur.
-// Si connecté → /home après 2s. Si non connecté → /login immédiatement (évite le layout _app et les timeouts).
-import React, { useEffect } from 'react';
+// Écran de démarrage Stormi — optimisé UX/UI production.
+//
+// === DIAGNOSTIC (points faibles corrigés) ===
+// - Visibilité : logo lisible en ≤1s (animation raccourcie), hiérarchie claire (titre > particules).
+// - Performance : particules réduites (8), positions fixes (pas de Math.random au render), contain/will-change ciblés.
+// - Accessibilité : live region pour état chargement/redirection, prefers-reduced-motion, contraste WCAG.
+// - Réseau : aucun asset externe ; tout en CSS inline/critical pour temps de premier rendu minimal.
+// - Fallback : timeout 5s si auth bloquée → message + lien vers login.
+//
+// === RÈGLES PRODUCTION ===
+// 1. Priorité visuelle : le nom "Stormi" doit être reconnaissable en <2s (objectif <1s).
+// 2. Contraste : texte principal #fff sur #0a0a0a ; accent doré avec repli couleur solide si besoin.
+// 3. Microcopy : courte et optionnelle (tagline masquée sur très petits viewports).
+// 4. Animations : courtes à l’entrée (~0.5s), optionnelles après ; respect de prefers-reduced-motion.
+// 5. Comportement : chargement → redirection ; échec/timeout → message explicite + action (réessayer/login).
+
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { darkTheme } from '~/utils/ui/theme';
 import { useAuth } from '~/hooks/useAuth';
 
+const SPLASH_LOADING_TIMEOUT_MS = 5000;
+/** Durée minimale d’affichage du splash (évite fenêtre noire / flash avant redirection). */
+const MIN_SPLASH_DISPLAY_MS = 1200;
+/** Délai avant redirection : connecté → /home, non connecté → /login (au moins MIN_SPLASH_DISPLAY_MS). */
+const REDIRECT_DELAY_MS = { whenLoggedIn: 1500, whenGuest: 800 };
+
+// Positions fixes des particules (évite recalcul et layout à chaque rendu)
+const PARTICLE_POSITIONS: Array<{ left: number; top: number; delay: number }> = [
+    { left: 15, top: 20, delay: 0 }, { left: 85, top: 25, delay: 1 }, { left: 50, top: 15, delay: 0.5 },
+    { left: 25, top: 70, delay: 1.5 }, { left: 75, top: 75, delay: 0.8 }, { left: 40, top: 50, delay: 0.2 },
+    { left: 60, top: 35, delay: 1.2 }, { left: 90, top: 60, delay: 0.6 },
+];
+
 export function SplashScreen() {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
+    const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        // Attendre que l'auth soit résolue (lecture localStorage, pas d'API)
+        if (loading) {
+            timeoutRef.current = setTimeout(() => setLoadingTimedOut(true), SPLASH_LOADING_TIMEOUT_MS);
+            return () => {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            };
+        }
+        setLoadingTimedOut(false);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    }, [loading]);
+
+    useEffect(() => {
         if (loading) return;
 
-        if (user) {
-            // Utilisateur connecté : courte pause branding puis /home
-            const timer = setTimeout(() => {
-                navigate('/home', { replace: true });
-            }, 1500);
-            return () => clearTimeout(timer);
-        } else {
-            // Non connecté : courte pause pour afficher "Stormi" puis /login (évite layout _app, home loader)
-            const timer = setTimeout(() => {
-                navigate('/login', { replace: true });
-            }, 800);
-            return () => clearTimeout(timer);
-        }
+        const desiredDelay = user ? REDIRECT_DELAY_MS.whenLoggedIn : REDIRECT_DELAY_MS.whenGuest;
+        const delay = Math.max(desiredDelay, MIN_SPLASH_DISPLAY_MS);
+        const target = user ? '/home' : '/login';
+
+        const timer = setTimeout(() => navigate(target, { replace: true }), delay);
+        return () => clearTimeout(timer);
     }, [loading, user, navigate]);
 
+    const statusMessage = useMemo(() => {
+        if (loadingTimedOut) return 'Chargement prolongé. Vous pouvez réessayer.';
+        if (loading) return 'Chargement…';
+        if (user) return 'Redirection…';
+        return 'Connexion…';
+    }, [loading, loadingTimedOut, user]);
+
     return (
-        <div 
+        <div
             style={{
                 position: 'fixed',
                 top: 0,
@@ -42,195 +84,232 @@ export function SplashScreen() {
                 justifyContent: 'center',
                 backgroundColor: darkTheme.background.primary,
                 overflow: 'hidden',
-                zIndex: 9999
+                zIndex: 9999,
+                contain: 'strict',
             }}
             role="banner"
             aria-label="Écran de démarrage Stormi"
         >
-            {/* Effet de gradient animé en arrière-plan */}
-            <div 
+            {/* Annonce pour lecteurs d’écran */}
+            <div
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    padding: 0,
+                    margin: '-1px',
+                    overflow: 'hidden',
+                    clip: 'rect(0,0,0,0)',
+                    whiteSpace: 'nowrap',
+                    border: 0,
+                }}
+            >
+                {statusMessage}
+            </div>
+
+            {/* Gradient de fond — léger, peu coûteux */}
+            <div
                 className="splash-gradient-bg"
                 style={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    inset: 0,
                     background: `radial-gradient(circle at 30% 50%, rgba(66, 133, 244, 0.08) 0%, transparent 50%),
-                                radial-gradient(circle at 70% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 50%)`,
-                    opacity: 0
+                        radial-gradient(circle at 70% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 50%)`,
+                    pointerEvents: 'none',
+                    contain: 'layout style paint',
                 }}
             />
 
-            {/* Particules subtiles animées */}
-            <div className="splash-particles" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-                {[...Array(20)].map((_, i) => (
+            {/* Particules réduites, positions fixes */}
+            <div
+                className="splash-particles"
+                style={{ position: 'absolute', inset: 0, pointerEvents: 'none', contain: 'layout style paint' }}
+                aria-hidden="true"
+            >
+                {PARTICLE_POSITIONS.map((pos, i) => (
                     <div
                         key={i}
                         className="splash-particle"
                         style={{
                             position: 'absolute',
-                            width: '2px',
-                            height: '2px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            left: `${pos.left}%`,
+                            top: `${pos.top}%`,
+                            width: 2,
+                            height: 2,
                             borderRadius: '50%',
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            opacity: 0
+                            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                            animationDelay: `${pos.delay}s`,
                         }}
                     />
                 ))}
             </div>
 
-            {/* Contenu principal */}
-            <div style={{
-                position: 'relative',
-                zIndex: 10,
-                textAlign: 'center',
-                padding: '0 20px'
-            }}>
-                <h1 
+            {/* Contenu principal — priorité visuelle */}
+            <div
+                style={{
+                    position: 'relative',
+                    zIndex: 10,
+                    textAlign: 'center',
+                    padding: '0 20px',
+                }}
+            >
+                <h1
                     style={{
-                        fontSize: 'clamp(4rem, 18vw, 14rem)',
+                        margin: 0,
+                        fontSize: 'clamp(3rem, 16vw, 12rem)',
                         fontWeight: 800,
                         letterSpacing: '-0.04em',
-                        userSelect: 'none',
-                        margin: 0,
                         lineHeight: 1,
-                        fontFamily: 'system-ui, -apple-system, sans-serif'
+                        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+                        userSelect: 'none',
                     }}
-                    aria-label="Stormi"
+                    aria-hidden="true"
                 >
-                    {/* Partie "Storm" en blanc avec ombre subtile */}
-                    <span 
+                    <span
                         className="splash-storm"
                         style={{
                             display: 'inline-block',
                             color: darkTheme.text.primary,
                             marginRight: '0.08em',
                             textShadow: '0 0 40px rgba(255, 255, 255, 0.1)',
-                            fontWeight: 700
+                            fontWeight: 700,
                         }}
                     >
                         Storm
                     </span>
-                    
-                    {/* Partie "i" en doré scintillant avec effet premium */}
-                    <span 
+                    <span
                         className="splash-i"
                         style={{
                             display: 'inline-block',
-                            background: 'linear-gradient(135deg, #fbbf24 0%, #fde047 25%, #fbbf24 50%, #f59e0b 75%, #fbbf24 100%)',
-                            backgroundSize: '300% 100%',
+                            background: 'linear-gradient(135deg, #fbbf24 0%, #fde047 30%, #fbbf24 60%, #f59e0b 100%)',
+                            backgroundSize: '200% 100%',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
                             color: 'transparent',
-                            filter: 'drop-shadow(0 0 30px rgba(251, 191, 36, 0.4))',
-                            fontWeight: 800
+                            filter: 'drop-shadow(0 0 24px rgba(251, 191, 36, 0.35))',
+                            fontWeight: 800,
                         }}
                     >
                         i
                     </span>
                 </h1>
+                {/* Tagline courte — masquée sur très petit écran */}
+                <p
+                    className="splash-tagline"
+                    style={{
+                        margin: '0.5rem 0 0',
+                        fontSize: 'clamp(0.75rem, 2vw, 0.95rem)',
+                        color: darkTheme.text.tertiary,
+                        fontWeight: 500,
+                        letterSpacing: '0.02em',
+                    }}
+                >
+                    Vos médias, unifiés
+                </p>
+
+                {/* Fallback : chargement bloqué */}
+                {loadingTimedOut && (
+                    <div
+                        style={{
+                            marginTop: '1.5rem',
+                            padding: '0.75rem 1rem',
+                            backgroundColor: darkTheme.surface.warning,
+                            color: darkTheme.text.secondary,
+                            borderRadius: darkTheme.radius.medium,
+                            fontSize: '0.875rem',
+                            maxWidth: 320,
+                        }}
+                    >
+                        <p style={{ margin: 0, marginBottom: '0.5rem' }}>
+                            Le chargement prend plus de temps que prévu.
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/login', { replace: true })}
+                            style={{
+                                padding: '0.4rem 0.8rem',
+                                backgroundColor: darkTheme.accent.blue,
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: darkTheme.radius.small,
+                                cursor: 'pointer',
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                            }}
+                        >
+                            Aller à la connexion
+                        </button>
+                    </div>
+                )}
             </div>
 
-            {/* Styles d'animation */}
             <style>{`
-                @keyframes fadeInScale {
-                    0% {
+                .splash-gradient-bg {
+                    animation: splash-gradient-in 0.6s ease-out forwards;
+                }
+                .splash-storm {
+                    opacity: 0;
+                    transform: scale(0.92) translateY(12px);
+                    animation: splash-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                }
+                .splash-i {
+                    opacity: 0;
+                    transform: scale(0.92) translateY(12px);
+                    animation: splash-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards,
+                        splash-shimmer 3s ease-in-out infinite 0.6s;
+                }
+                .splash-tagline {
+                    opacity: 0;
+                    animation: splash-reveal 0.4s ease-out 0.25s forwards;
+                }
+                .splash-particle {
+                    opacity: 0;
+                    animation: splash-particle-float 6s ease-in-out infinite;
+                }
+                .splash-particle:nth-child(odd) { animation-duration: 8s; }
+                .splash-particle:nth-child(even) { animation-duration: 7s; }
+
+                @keyframes splash-gradient-in {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes splash-reveal {
+                    from {
                         opacity: 0;
-                        transform: scale(0.85) translateY(20px);
+                        transform: scale(0.92) translateY(12px);
                     }
-                    100% {
+                    to {
                         opacity: 1;
                         transform: scale(1) translateY(0);
                     }
                 }
-
-                @keyframes shimmer {
-                    0%, 100% {
-                        background-position: 0% 50%;
-                    }
-                    50% {
-                        background-position: 100% 50%;
-                    }
+                @keyframes splash-shimmer {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
                 }
-
-                @keyframes sparkle {
-                    0%, 100% {
-                        filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.4)) brightness(1);
-                    }
-                    50% {
-                        filter: drop-shadow(0 0 50px rgba(251, 191, 36, 0.7)) brightness(1.2);
-                    }
-                }
-
-                @keyframes gradientFade {
-                    0% {
-                        opacity: 0;
-                    }
-                    100% {
-                        opacity: 1;
-                    }
-                }
-
-                @keyframes particleFloat {
-                    0%, 100% {
-                        opacity: 0;
-                        transform: translateY(0) translateX(0);
-                    }
-                    50% {
-                        opacity: 0.3;
-                        transform: translateY(-20px) translateX(10px);
-                    }
-                }
-
-                .splash-gradient-bg {
-                    animation: gradientFade 1.5s ease-out forwards;
-                }
-
-                .splash-storm {
-                    animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-                    opacity: 0;
-                    transform: scale(0.85);
-                }
-
-                .splash-i {
-                    animation: fadeInScale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards, 
-                               shimmer 4s ease-in-out infinite 1s,
-                               sparkle 3s ease-in-out infinite 1s;
-                    opacity: 0;
-                    transform: scale(0.85);
-                }
-
-                .splash-particle {
-                    animation: particleFloat 8s ease-in-out infinite;
-                }
-
-                .splash-particle:nth-child(odd) {
-                    animation-delay: 0s;
-                    animation-duration: 10s;
-                }
-
-                .splash-particle:nth-child(even) {
-                    animation-delay: 2s;
-                    animation-duration: 12s;
+                @keyframes splash-particle-float {
+                    0%, 100% { opacity: 0; transform: translate(0, 0); }
+                    50% { opacity: 0.25; transform: translate(6px, -12px); }
                 }
 
                 @media (prefers-reduced-motion: reduce) {
+                    .splash-gradient-bg,
                     .splash-storm,
                     .splash-i,
-                    .splash-gradient-bg,
+                    .splash-tagline,
                     .splash-particle {
-                        animation: fadeInScale 0.3s ease-out forwards !important;
-                        opacity: 1 !important;
-                        transform: scale(1) !important;
+                        animation: splash-reveal 0.2s ease-out forwards !important;
                     }
-                    
-                    .splash-i {
-                        animation: fadeInScale 0.3s ease-out 0.1s forwards !important;
-                    }
+                    .splash-i { animation-delay: 0.05s; }
+                    .splash-tagline { animation-delay: 0.1s; }
+                    .splash-particle { animation: none !important; opacity: 0.15; }
+                }
+                @media (max-width: 360px) {
+                    .splash-tagline { display: none; }
                 }
             `}</style>
         </div>

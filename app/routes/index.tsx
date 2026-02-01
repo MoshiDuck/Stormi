@@ -1,8 +1,8 @@
 // INFO : app/routes/index.tsx
+// Affiche le splash directement sur / pour éviter fenêtre noire (pas de lazy load vers /splash).
 import React from 'react';
-import { Navigate } from 'react-router';
+import { SplashScreen } from '~/components/ui/SplashScreen';
 
 export default function IndexRoute() {
-    // Rediriger vers /splash comme page d'accueil par défaut
-    return <Navigate to="/splash" replace />;
+    return <SplashScreen />;
 }

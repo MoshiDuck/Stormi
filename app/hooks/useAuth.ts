@@ -1,8 +1,9 @@
 // INFO : app/hooks/useAuth.ts
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import type { CredentialResponse } from '@react-oauth/google';
 import type { ApiAuthResponse, AuthConfig } from '~/types/auth';
 import { useNavigate } from 'react-router';
+import { AuthContext } from '~/contexts/AuthContext';
 import { clearLocalCache } from '~/utils/cache/localCache';
 import { clearServiceWorkerCache, setServiceWorkerUserId } from '~/utils/cache/serviceWorker';
 import { handleCacheInvalidation } from '~/utils/cache/cacheInvalidation';
@@ -18,6 +19,9 @@ function isApiAuthResponse(obj: unknown): obj is ApiAuthResponse {
 }
 
 export function useAuth() {
+    const context = useContext(AuthContext);
+    if (context !== undefined) return context;
+
     const [user, setUser] = useState<ApiAuthResponse['user'] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
