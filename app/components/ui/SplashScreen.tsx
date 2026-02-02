@@ -163,7 +163,7 @@ export function SplashScreen() {
                         margin: 0,
                         fontSize: 'clamp(3rem, 16vw, 12rem)',
                         fontWeight: 800,
-                        letterSpacing: '-0.04em',
+                        letterSpacing: '0.08em',
                         lineHeight: 1,
                         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
                         userSelect: 'none',
@@ -175,12 +175,12 @@ export function SplashScreen() {
                         style={{
                             display: 'inline-block',
                             color: darkTheme.text.primary,
-                            marginRight: '0.08em',
+                            marginRight: '0.04em',
                             textShadow: '0 0 40px rgba(255, 255, 255, 0.1)',
-                            fontWeight: 700,
+                            fontWeight: 800,
                         }}
                     >
-                        Stor
+                        STOR
                     </span>
                     <span
                         className="splash-mi"
@@ -196,22 +196,9 @@ export function SplashScreen() {
                             fontWeight: 800,
                         }}
                     >
-                        mi
+                        MI
                     </span>
                 </h1>
-                {/* Tagline courte — masquée sur très petit écran */}
-                <p
-                    className="splash-tagline"
-                    style={{
-                        margin: '0.5rem 0 0',
-                        fontSize: 'clamp(0.75rem, 2vw, 0.95rem)',
-                        color: darkTheme.text.tertiary,
-                        fontWeight: 500,
-                        letterSpacing: '0.02em',
-                    }}
-                >
-                    Vos médias, unifiés
-                </p>
 
                 {/* Fallback : chargement bloqué */}
                 {loadingTimedOut && (
@@ -264,10 +251,6 @@ export function SplashScreen() {
                     animation: splash-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards,
                         splash-shimmer 3s ease-in-out infinite 0.6s;
                 }
-                .splash-tagline {
-                    opacity: 0;
-                    animation: splash-reveal 0.4s ease-out 0.25s forwards;
-                }
                 .splash-particle {
                     opacity: 0;
                     animation: splash-particle-float 6s ease-in-out infinite;
@@ -302,16 +285,11 @@ export function SplashScreen() {
                     .splash-gradient-bg,
                     .splash-storm,
                     .splash-mi,
-                    .splash-tagline,
                     .splash-particle {
                         animation: splash-reveal 0.2s ease-out forwards !important;
                     }
                     .splash-mi { animation-delay: 0.05s; }
-                    .splash-tagline { animation-delay: 0.1s; }
                     .splash-particle { animation: none !important; opacity: 0.15; }
-                }
-                @media (max-width: 360px) {
-                    .splash-tagline { display: none; }
                 }
             `}</style>
         </div>
