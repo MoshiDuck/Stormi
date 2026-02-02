@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 import { useFilesPreloader } from '~/hooks/useFilesPreloader';
 import { useAuth } from '~/hooks/useAuth';
@@ -29,6 +30,7 @@ const CATEGORIES: FileCategory[] = ['videos', 'musics', 'images', 'documents', '
 export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarProps) {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
     const { preloadCategory } = useFilesPreloader({ 
         userId: user?.id || null, 
         enabled: !!user?.id,
@@ -38,16 +40,20 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
     return (
         <div style={{
             backgroundColor: darkTheme.background.secondary,
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '30px',
-            boxShadow: darkTheme.shadow.medium
+            borderRadius: breakpoint === 'phone' ? '10px' : '12px',
+            padding: breakpoint === 'phone' ? 12 : 20,
+            marginBottom: breakpoint === 'phone' ? 20 : 30,
+            boxShadow: darkTheme.shadow.medium,
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
         }}>
             <div style={{
                 display: 'flex',
-                gap: '12px',
+                gap: breakpoint === 'phone' ? 8 : 12,
                 flexWrap: 'wrap',
-                alignItems: 'center'
+                alignItems: 'center',
+                minWidth: 'min-content',
             }}>
                 {CATEGORIES.map(category => {
                     const hint = t(`categories.${category}Hint` as keyof typeof t);

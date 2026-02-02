@@ -1,9 +1,11 @@
-// INFO : app/components/Navigation.tsx — barre de navigation moderne avec icônes
+// INFO : app/components/Navigation.tsx — barre du haut : logo + profil (phone/tablet) ou logo + liens + profil (desktop). BottomNav = barre du bas sur phone/tablet.
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 import type { User } from '~/types/auth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { useBreakpoint, useIsTenFoot } from '~/hooks/useBreakpoint';
+import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { ProfileDropdown } from '~/components/navigation/ProfileDropdown';
 import { StormiLogo } from '~/components/navigation/StormiLogo';
 import {
@@ -49,19 +51,30 @@ const navItems: NavItemConfig[] = [
     },
 ];
 
+const iconSize = { default: 18, tenFoot: 22 };
+const linkPadding = { default: '10px 14px', tenFoot: '14px 18px' };
+
 function NavLink({
     to,
     label,
     ariaLabel,
     isActive,
     icon: Icon,
+    tenFoot,
+    onClick,
 }: {
     to: string;
     label: string;
     ariaLabel: string;
     isActive: boolean;
     icon: LucideIcon;
+    tenFoot?: boolean;
+    onClick?: () => void;
 }) {
+    const size = tenFoot ? iconSize.tenFoot : iconSize.default;
+    const padding = tenFoot ? linkPadding.tenFoot : linkPadding.default;
+    const minHeight = tenFoot ? TOUCH_TARGET_MIN : undefined;
+
     return (
         <Link
             to={to}
@@ -73,14 +86,13 @@ function NavLink({
                 color: isActive ? darkTheme.accent.blue : darkTheme.text.secondary,
                 backgroundColor: isActive ? 'rgba(66, 133, 244, 0.12)' : 'transparent',
                 fontWeight: isActive ? 600 : 500,
+                padding,
+                minHeight,
+                minWidth: minHeight,
             }}
+            onClick={onClick}
         >
-            <Icon
-                size={18}
-                strokeWidth={2.2}
-                aria-hidden
-                style={{ flexShrink: 0 }}
-            />
+            <Icon size={size} strokeWidth={2.2} aria-hidden style={{ flexShrink: 0 }} />
             <span>{label}</span>
             {isActive && <span className="nav-link-indicator" aria-hidden />}
         </Link>
@@ -90,13 +102,16 @@ function NavLink({
 export function Navigation({ user, onLogout }: NavigationProps) {
     const location = useLocation();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
+    const isTenFoot = useIsTenFoot();
+    const isMobileOrTablet = breakpoint === 'phone' || breakpoint === 'tablet';
 
     const isItemActive = (item: NavItemConfig) => {
-        if (item.activePaths) {
-            return item.activePaths.some((p) => location.pathname === p);
-        }
+        if (item.activePaths) return item.activePaths.some((p) => location.pathname === p);
         return location.pathname === item.to;
     };
+
+    const tenFoot = isTenFoot;
 
     return (
         <>
@@ -116,18 +131,21 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             <StormiLogo theme="dark" />
                         </Link>
 
-                        <div className="nav-links">
-                            {navItems.map((item) => (
-                                <NavLink
-                                    key={item.to}
-                                    to={item.to}
-                                    label={t(item.labelKey)}
-                                    ariaLabel={t(item.ariaKey)}
-                                    isActive={isItemActive(item)}
-                                    icon={item.icon}
-                                />
-                            ))}
-                        </div>
+                        {!isMobileOrTablet && (
+                            <div className="nav-links">
+                                {navItems.map((item) => (
+                                    <NavLink
+                                        key={item.to}
+                                        to={item.to}
+                                        label={t(item.labelKey)}
+                                        ariaLabel={t(item.ariaKey)}
+                                        isActive={isItemActive(item)}
+                                        icon={item.icon}
+                                        tenFoot={tenFoot}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <ProfileDropdown user={user} onLogout={onLogout} />
@@ -170,13 +188,20 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     min-width: 0;
                 }
 
+                @media (max-width: 1023px) {
+                    .nav-bar-inner { padding: 0 12px; }
+                    .nav-bar-left { gap: 12px; }
+                    .nav-bar { margin-bottom: 12px; padding: 10px 0; }
+                }
+
                 .nav-logo-link {
                     display: inline-flex;
                     text-decoration: none;
                     color: inherit;
                 }
                 .nav-logo-link:focus-visible {
-                    outline: none;
+                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline-offset: 2px;
                 }
 
                 .nav-links {
@@ -197,7 +222,6 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     display: inline-flex;
                     align-items: center;
                     gap: 8px;
-                    padding: 10px 14px;
                     border-radius: ${darkTheme.radius.medium};
                     text-decoration: none;
                     font-size: 0.9375rem;

@@ -45,7 +45,7 @@ export default function App() {
         <html lang="fr">
         <head>
             <meta charSet="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
             <Meta />
             <Links />
             <style dangerouslySetInnerHTML={{ __html: `
@@ -97,6 +97,12 @@ export default function App() {
                     }
                 }
                 
+                /* Éviter le scroll horizontal sur mobile (contenu qui dépasse) */
+                html, body {
+                    overflow-x: hidden;
+                    max-width: 100vw;
+                }
+
                 /* Skip link pour accessibilité */
                 .skip-link {
                     position: absolute;
@@ -149,7 +155,16 @@ export default function App() {
                 }
             ` }} />
         </head>
-        <body style={{ backgroundColor: '#121212', color: '#e0e0e0', margin: 0, padding: 0 }}>
+        <body style={{
+            backgroundColor: '#121212',
+            color: '#e0e0e0',
+            margin: 0,
+            padding: 0,
+            paddingLeft: 'env(safe-area-inset-left, 0)',
+            paddingRight: 'env(safe-area-inset-right, 0)',
+            paddingBottom: 'env(safe-area-inset-bottom, 0)',
+            paddingTop: 'env(safe-area-inset-top, 0)',
+        }}>
             <LanguageProvider>
                 <AuthProvider>
                     <PlayerProvider>

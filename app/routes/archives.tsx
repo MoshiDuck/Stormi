@@ -2,7 +2,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 import { CategoryBar } from '~/components/ui/categoryBar';
 import { getCategoryRoute, getCategoryFromPathname } from '~/utils/routes';
@@ -28,6 +30,8 @@ interface FileItem {
 export default function ArchivesRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
+    const pad = CONTENT_PADDING[breakpoint];
     const navigate = useNavigate();
     const location = useLocation();
     const { showToast, ToastContainer } = useToast();
@@ -108,7 +112,7 @@ export default function ArchivesRoute() {
     if (loading && archives.length === 0) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                         <LoadingSpinner size="large" message={t('categories.archives')} />
@@ -132,7 +136,7 @@ export default function ArchivesRoute() {
 
     return (
         <>
-                <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
 
                     <h1 style={{

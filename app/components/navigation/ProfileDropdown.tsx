@@ -1,15 +1,16 @@
-// INFO : menu au survol de l'image de profil (Manage profile, Account, Help center)
+// INFO : menu au survol de l'image de profil (Manage profile, Account, Help center) — cibles tactiles ≥ 44px
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
-import type { User } from '~/types/auth';
+import type { User as UserProfile } from '~/types/auth';
 import { darkTheme } from '~/utils/ui/theme';
+import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { UserCircle, User, HelpCircle, LogOut } from 'lucide-react';
 
 const CLOSE_DELAY_MS = 220;
 
 interface ProfileDropdownProps {
-    user: User;
+    user: UserProfile;
     onLogout: () => void;
 }
 
@@ -132,6 +133,8 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
 
                 .profile-dropdown-trigger {
                     padding: 0;
+                    min-width: ${TOUCH_TARGET_MIN}px;
+                    min-height: ${TOUCH_TARGET_MIN}px;
                     border: none;
                     background: none;
                     cursor: pointer;
@@ -211,7 +214,9 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                     align-items: center;
                     gap: 12px;
                     width: 100%;
+                    min-height: ${TOUCH_TARGET_MIN}px;
                     padding: 10px 16px;
+                    box-sizing: border-box;
                     color: ${darkTheme.text.primary};
                     text-decoration: none;
                     font-size: 0.9375rem;

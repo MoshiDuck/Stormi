@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router';
 import { darkTheme } from '~/utils/ui/theme';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { useLanguage } from '~/contexts/LanguageContext';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 
@@ -25,7 +26,9 @@ interface LibraryTabBarProps {
 
 export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) {
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
     const [, setSearchParams] = useSearchParams();
+    const isPhone = breakpoint === 'phone';
 
     const handleTabClick = (tab: LibraryTab) => {
         onTabChange?.(tab);
@@ -36,13 +39,16 @@ export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) 
         <div
             style={{
                 display: 'flex',
-                gap: '8px',
-                marginBottom: '24px',
-                padding: '4px',
+                gap: isPhone ? 6 : 8,
+                marginBottom: isPhone ? 16 : 24,
+                padding: isPhone ? 4 : 6,
                 backgroundColor: darkTheme.background.tertiary,
-                borderRadius: '12px',
+                borderRadius: isPhone ? 10 : 12,
                 width: 'fit-content',
+                maxWidth: '100%',
                 flexWrap: 'wrap',
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
             }}
             role="tablist"
             aria-label={t('nav.library')}
@@ -60,8 +66,8 @@ export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
-                            padding: '10px 20px',
+                            gap: isPhone ? 6 : 8,
+                            padding: isPhone ? '10px 14px' : '10px 20px',
                             backgroundColor: isSelected ? darkTheme.accent.blue : 'transparent',
                             color: isSelected ? '#fff' : darkTheme.text.secondary,
                             border: 'none',

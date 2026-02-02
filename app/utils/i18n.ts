@@ -24,6 +24,8 @@ export interface Translations {
         libraryAriaLabel: string;
         localPlayerAriaLabel: string;
         profileAriaLabel: string;
+        menuOpenAriaLabel: string;
+        menuCloseAriaLabel: string;
     };
     // Lecteur local (page dédiée)
     localPlayer: {
@@ -483,7 +485,9 @@ const translations: Record<Language, Translations> = {
             listenAriaLabel: 'Musiques',
             libraryAriaLabel: 'Images, documents et archives',
             localPlayerAriaLabel: 'Lire des fichiers locaux sans upload',
-            profileAriaLabel: 'Mon compte et paramètres'
+            profileAriaLabel: 'Mon compte et paramètres',
+            menuOpenAriaLabel: 'Ouvrir le menu de navigation',
+            menuCloseAriaLabel: 'Fermer le menu de navigation'
         },
         localPlayer: {
             title: 'Lecteur local',
@@ -909,7 +913,9 @@ const translations: Record<Language, Translations> = {
             listenAriaLabel: 'Music',
             libraryAriaLabel: 'Images, documents and archives',
             localPlayerAriaLabel: 'Play local files without uploading',
-            profileAriaLabel: 'My account and settings'
+            profileAriaLabel: 'My account and settings',
+            menuOpenAriaLabel: 'Open navigation menu',
+            menuCloseAriaLabel: 'Close navigation menu'
         },
         localPlayer: {
             title: 'Local player',
@@ -1333,7 +1339,9 @@ const translations: Record<Language, Translations> = {
             listenAriaLabel: 'Música',
             libraryAriaLabel: 'Imágenes, documentos y archivos',
             localPlayerAriaLabel: 'Reproducir archivos locales sin subir',
-            profileAriaLabel: 'Mi cuenta y ajustes'
+            profileAriaLabel: 'Mi cuenta y ajustes',
+            menuOpenAriaLabel: 'Abrir menú de navegación',
+            menuCloseAriaLabel: 'Cerrar menú de navegación'
         },
         localPlayer: {
             title: 'Reproductor local',
@@ -1759,7 +1767,9 @@ const translations: Record<Language, Translations> = {
             listenAriaLabel: 'Musik',
             libraryAriaLabel: 'Bilder, Dokumente und Archive',
             localPlayerAriaLabel: 'Lokale Dateien ohne Upload abspielen',
-            profileAriaLabel: 'Mein Konto und Einstellungen'
+            profileAriaLabel: 'Mein Konto und Einstellungen',
+            menuOpenAriaLabel: 'Navigationsmenü öffnen',
+            menuCloseAriaLabel: 'Navigationsmenü schließen'
         },
         localPlayer: {
             title: 'Lokaler Player',

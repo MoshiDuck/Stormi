@@ -12,18 +12,25 @@ import { Outlet, useNavigation, useLocation, useRouteError } from 'react-router'
 import { useAuth } from '~/hooks/useAuth';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { replacePlaceholders } from '~/utils/i18n';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { AuthGuard } from '~/components/auth/AuthGuard';
 import { Navigation } from '~/components/navigation/Navigation';
+import { BottomNav } from '~/components/navigation/BottomNav';
 import { PageTransition } from '~/components/navigation/PageTransition';
 import { AppLayoutLoadingBar } from '~/components/navigation/AppLayoutLoadingBar';
 import { darkTheme } from '~/utils/ui/theme';
+import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
 
 export default function AppLayout() {
     const { user, logout } = useAuth();
     const navigation = useNavigation();
     const location = useLocation();
     const mainRef = useRef<HTMLElement>(null);
+    const breakpoint = useBreakpoint();
     const isNavigating = navigation.state === 'loading';
+    const padding = CONTENT_PADDING[breakpoint];
+    const maxWidth = CONTENT_MAX_WIDTH[breakpoint];
+    const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
 
     // Focus sur le contenu principal après chaque navigation (a11y : clavier / lecteur d'écran)
     useEffect(() => {
@@ -41,14 +48,21 @@ export default function AppLayout() {
                     ref={mainRef}
                     tabIndex={-1}
                     style={{
-                        maxWidth: 1200,
+                        maxWidth: maxWidth || undefined,
+                        width: '100%',
                         margin: '0 auto',
-                        padding: '0 20px 40px',
+                        padding: `0 ${padding}px ${showBottomNav ? 16 : 40}px`,
+                        paddingBottom: showBottomNav
+                            ? `calc(${BOTTOM_NAV_HEIGHT}px + 16px + env(safe-area-inset-bottom, 0px))`
+                            : 40,
                         fontFamily: 'system-ui, sans-serif',
                         outline: 'none',
                         opacity: isNavigating ? 0 : 1,
                         transition: 'opacity 0.12s ease-out',
                         pointerEvents: isNavigating ? 'none' : 'auto',
+                        boxSizing: 'border-box',
+                        minHeight: 0,
+                        overflowX: 'hidden',
                     }}
                     role="main"
                     id="main-content"
@@ -57,6 +71,7 @@ export default function AppLayout() {
                         <Outlet />
                     </PageTransition>
                 </main>
+                {showBottomNav && <BottomNav />}
             </div>
         </AuthGuard>
     );

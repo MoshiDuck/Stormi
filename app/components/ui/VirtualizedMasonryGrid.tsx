@@ -4,7 +4,10 @@
 import React, { useMemo } from 'react';
 import { Masonry } from 'masonic';
 import { darkTheme } from '~/utils/ui/theme';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import type { MasonryGridItem, MasonrySection } from '~/utils/file/fileGridUtils';
+
+const COLUMN_WIDTH_BY_BREAKPOINT = { phone: 160, tablet: 220, desktop: 280, tv: 300 } as const;
 
 export interface SectionedMasonryGridProps<T> {
     /** Sections (date + fichiers) à afficher, empilées verticalement */
@@ -25,11 +28,14 @@ export interface SectionedMasonryGridProps<T> {
 export function SectionedMasonryGrid<T>({
     sections,
     renderCard,
-    columnWidth = 280,
+    columnWidth: columnWidthProp,
     gutter = 16,
     itemHeightEstimate = 280,
     itemKey: customItemKey,
 }: SectionedMasonryGridProps<T>) {
+    const breakpoint = useBreakpoint();
+    const defaultColumnWidth = COLUMN_WIDTH_BY_BREAKPOINT[breakpoint];
+    const columnWidth = columnWidthProp ?? defaultColumnWidth;
     const defaultItemKey = (item: T, index: number) => {
         const f = item as { file_id?: string };
         return f?.file_id ?? `item-${index}`;
@@ -127,11 +133,14 @@ function filterValidMasonryItems<T>(items: MasonryGridItem<T>[]): MasonryGridIte
 export function VirtualizedMasonryGrid<T>({
     items,
     renderCard,
-    columnWidth = 280,
+    columnWidth: columnWidthProp,
     gutter = 16,
     itemHeightEstimate = 280,
     itemKey = (item) => (item != null && item.key != null ? item.key : 'fallback'),
 }: VirtualizedMasonryGridProps<T>) {
+    const breakpoint = useBreakpoint();
+    const defaultColumnWidth = COLUMN_WIDTH_BY_BREAKPOINT[breakpoint];
+    const columnWidth = columnWidthProp ?? defaultColumnWidth;
     const render = useMemo(
         () =>
             function MasonryCell({

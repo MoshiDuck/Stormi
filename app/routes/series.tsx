@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import { VideoSubCategoryBar } from '~/components/ui/VideoSubCategoryBar';
 import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
 import { formatDuration } from '~/utils/format';
@@ -106,6 +108,8 @@ export default function SeriesRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const { config } = useConfig();
+    const breakpoint = useBreakpoint();
+    const pad = CONTENT_PADDING[breakpoint];
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [loading, setLoading] = useState(true);
@@ -1048,7 +1052,7 @@ export default function SeriesRoute() {
     if (loading && !heroShow && organizedSeries.byGenre.length === 0 && organizedSeries.unidentified.length === 0) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     <MediaPageSkeleton />
                 </div>
@@ -1059,7 +1063,7 @@ export default function SeriesRoute() {
     if (error) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     <div style={{ 
                         display: 'flex', 
@@ -1103,7 +1107,7 @@ export default function SeriesRoute() {
     return (
         <>
                 <div style={{ padding: '0 0 60px 0', overflow: 'visible' }}>
-                    <div style={{ padding: '20px 60px' }}>
+                    <div style={{ padding: breakpoint === 'phone' ? 12 : `20px ${pad}px` }}>
                         <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     </div>
                     

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useLoaderData, useRevalidator } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
 import { useFilesPreloader } from '~/hooks/useFilesPreloader';
 import { useLanguage } from '~/contexts/LanguageContext';
@@ -78,7 +79,10 @@ export function meta() {
 export default function HomeRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
     const navigate = useNavigate();
+    const isPhone = breakpoint === 'phone';
+    const isTablet = breakpoint === 'tablet';
     const loaderData = useLoaderData() as { stats: StatsPayload | null; userId: string | null } | undefined;
     const revalidator = useRevalidator();
     const [stats, setStats] = useState<StatsPayload>(() => loaderData?.stats ?? { fileCount: 0, totalSizeGB: 0, billableGB: 0 });
@@ -298,8 +302,8 @@ export default function HomeRoute() {
 
     const cardBaseStyle: React.CSSProperties = {
         backgroundColor: darkTheme.background.secondary,
-        borderRadius: darkTheme.radius.xlarge,
-        padding: '24px 22px',
+        borderRadius: isPhone ? darkTheme.radius.large : darkTheme.radius.xlarge,
+        padding: isPhone ? '16px 14px' : '24px 22px',
         marginBottom: 0,
         border: `1px solid ${darkTheme.border.secondary}`,
         boxShadow: darkTheme.shadow.small,
@@ -307,6 +311,7 @@ export default function HomeRoute() {
         transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease',
         position: 'relative',
         overflow: 'hidden',
+        minWidth: 0,
     };
     const sectionTitleStyle: React.CSSProperties = {
         fontSize: '17px',
@@ -419,9 +424,10 @@ export default function HomeRoute() {
                     {/* Vidéos, Musiques, Bibliothèque — cartes cliquables en colonnes */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: '20px',
-                        marginBottom: '28px',
+                        gridTemplateColumns: isPhone ? '1fr' : isTablet ? 'repeat(auto-fit, minmax(240px, 1fr))' : 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: isPhone ? 12 : 20,
+                        marginBottom: isPhone ? 20 : 28,
+                        minWidth: 0,
                     }}>
                     <section
                         aria-labelledby="home-space-videos"
@@ -695,9 +701,10 @@ export default function HomeRoute() {
                         {statsExpanded && (
                             <div id="home-stats-panel" role="region" aria-label={t('home.stats')} style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                                gap: '24px',
-                                marginTop: '16px'
+                                gridTemplateColumns: isPhone ? '1fr' : 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))',
+                                gap: isPhone ? 16 : 24,
+                                marginTop: 16,
+                                minWidth: 0,
                             }}>
                         {/* Carte Statistiques */}
                         <div style={{
@@ -753,12 +760,13 @@ export default function HomeRoute() {
                             <>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '16px'
+                                gridTemplateColumns: isPhone ? '1fr' : '1fr 1fr',
+                                gap: 16,
+                                minWidth: 0,
                             }}>
-                                <div style={{ textAlign: 'center' }}>
+                                <div style={{ textAlign: 'center', minWidth: 0 }}>
                                     <div style={{
-                                        fontSize: '28px',
+                                        fontSize: isPhone ? 24 : 28,
                                         fontWeight: 'bold',
                                         color: darkTheme.accent.blue,
                                         display: 'flex',
@@ -960,16 +968,17 @@ export default function HomeRoute() {
                                 <span>{t('home.uploadFirst')}</span>
                             </button>
                             
-                            <p style={{ fontSize: '14px', color: darkTheme.text.tertiary, maxWidth: '480px', margin: '0 auto 24px', lineHeight: 1.5 }}>
+                            <p style={{ fontSize: 14, color: darkTheme.text.tertiary, maxWidth: '100%', margin: '0 auto 24px', lineHeight: 1.5, padding: '0 8px' }}>
                                 {t('home.emptyHint')}
                             </p>
                             <div style={{
-                                marginTop: '24px',
+                                marginTop: 24,
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                                gap: '20px',
-                                maxWidth: '600px',
-                                margin: '24px auto 0'
+                                gridTemplateColumns: isPhone ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(150px, 1fr))',
+                                gap: isPhone ? 12 : 20,
+                                maxWidth: isPhone ? '100%' : 600,
+                                margin: '24px auto 0',
+                                minWidth: 0,
                             }}>
                                 {[
                                     { icon: '🎬', label: t('categories.videos') },

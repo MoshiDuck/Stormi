@@ -2,7 +2,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 import { CategoryBar } from '~/components/ui/categoryBar';
 import { getCategoryRoute, getCategoryFromPathname } from '~/utils/routes';
@@ -91,6 +93,8 @@ function PdfPreviewClient(props: {
 export default function DocumentsRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
+    const pad = CONTENT_PADDING[breakpoint];
     const navigate = useNavigate();
     const location = useLocation();
     const [selectedCategory, setSelectedCategory] = useState<FileCategory>('documents');
@@ -285,7 +289,7 @@ export default function DocumentsRoute() {
     if (loading && documents.length === 0) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                         <LoadingSpinner size="large" message={t('common.loading')} />
@@ -306,7 +310,7 @@ export default function DocumentsRoute() {
 
     return (
         <>
-            <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
+            <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
                 <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                 <h2
                     style={{
@@ -324,7 +328,6 @@ export default function DocumentsRoute() {
                         <SectionedMasonryGrid<FileItem>
                             sections={masonrySections}
                             renderCard={renderDocumentCard}
-                            columnWidth={280}
                             gutter={16}
                             itemHeightEstimate={400}
                         />

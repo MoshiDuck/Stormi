@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import { VideoSubCategoryBar } from '~/components/ui/VideoSubCategoryBar';
 import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
 import { formatDuration } from '~/utils/format';
@@ -86,6 +88,9 @@ export default function FilmsRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const { config } = useConfig();
+    const breakpoint = useBreakpoint();
+    const pad = CONTENT_PADDING[breakpoint];
+    const isPhone = breakpoint === 'phone';
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [loading, setLoading] = useState(true);
@@ -803,7 +808,7 @@ export default function FilmsRoute() {
     if (loading && !heroMovie && organizedMovies.byGenre.length === 0 && organizedMovies.unidentified.length === 0) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: isPhone ? 0 : pad, maxWidth: isPhone ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     <MediaPageSkeleton />
                 </div>
@@ -814,7 +819,7 @@ export default function FilmsRoute() {
     if (error) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: isPhone ? 0 : pad, maxWidth: isPhone ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     <div style={{ 
                         display: 'flex', 
@@ -858,8 +863,8 @@ export default function FilmsRoute() {
 
     return (
         <>
-                <div style={{ padding: '0 0 60px 0', overflow: 'visible' }}>
-                    <div style={{ padding: '20px 60px' }}>
+                <div style={{ padding: isPhone ? '0 0 24px' : '0 0 60px 0', overflow: 'visible', minWidth: 0 }}>
+                    <div style={{ padding: isPhone ? 12 : `20px ${pad}px` }}>
                         <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     </div>
                     
@@ -867,11 +872,11 @@ export default function FilmsRoute() {
                     {heroMovie && (
                         <div style={{
                             position: 'relative',
-                            height: '80vh',
-                            minHeight: '600px',
-                            maxHeight: '900px',
-                            marginBottom: '60px',
-                            overflow: 'hidden'
+                            height: isPhone ? '50vh' : '80vh',
+                            minHeight: isPhone ? 280 : 600,
+                            maxHeight: isPhone ? 400 : 900,
+                            marginBottom: isPhone ? 24 : 60,
+                            overflow: 'hidden',
                         }}>
                             {/* Image de fond avec parallaxe effect */}
                             <div style={{
@@ -912,20 +917,24 @@ export default function FilmsRoute() {
                             {/* Contenu avec animation */}
                             <div style={{
                                 position: 'absolute',
-                                bottom: '10%',
-                                left: '4%',
-                                maxWidth: '600px',
+                                bottom: isPhone ? '8%' : '10%',
+                                left: isPhone ? 12 : '4%',
+                                right: isPhone ? 12 : undefined,
+                                maxWidth: isPhone ? '100%' : 600,
                                 zIndex: 3,
-                                animation: 'fadeInUp 0.8s ease-out'
+                                animation: 'fadeInUp 0.8s ease-out',
+                                minWidth: 0,
                             }}>
                                 <h1 style={{
-                                    fontSize: 'clamp(32px, 5vw, 72px)',
-                                    fontWeight: '900',
+                                    fontSize: isPhone ? 22 : 'clamp(32px, 5vw, 72px)',
+                                    fontWeight: 900,
                                     color: '#fff',
-                                    marginBottom: '20px',
+                                    marginBottom: isPhone ? 12 : 20,
                                     textShadow: '2px 2px 8px rgba(0,0,0,0.8)',
-                                    lineHeight: '1.1',
-                                    letterSpacing: '-0.02em'
+                                    lineHeight: 1.1,
+                                    letterSpacing: '-0.02em',
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'break-word',
                                 }}>
                                     {heroMovie.title}
                                 </h1>

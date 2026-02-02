@@ -3,7 +3,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { translations } from '~/utils/i18n';
@@ -64,6 +66,8 @@ export default function MusicsRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const { config } = useConfig();
+    const breakpoint = useBreakpoint();
+    const pad = CONTENT_PADDING[breakpoint];
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     
@@ -500,7 +504,7 @@ export default function MusicsRoute() {
     if (loading && artists.length === 0) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <PageSkeleton lines={6} minHeight="60vh" variant="cards" />
                 </div>
             </>
@@ -510,7 +514,7 @@ export default function MusicsRoute() {
     if (error) {
         return (
             <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     <div style={{ 
                         display: 'flex', 
                         flexDirection: 'column',
@@ -559,7 +563,7 @@ export default function MusicsRoute() {
 
     return (
         <>
-                <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1400, margin: '0 auto', minWidth: 0 }}>
                     {/* Header avec navigation */}
                     {viewMode !== 'artists' && (
                         <div style={{
