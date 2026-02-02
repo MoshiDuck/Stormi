@@ -1,10 +1,11 @@
 /**
  * Page 404 : route non trouvée.
- * Accessible via deep link, partageable, avec retour clair vers l'accueil.
+ * Deux actions claires : retour accueil ou ajouter des fichiers.
  */
 import React from 'react';
 import { Link } from 'react-router';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 export function meta() {
     return [
@@ -14,6 +15,8 @@ export function meta() {
 }
 
 export default function NotFoundRoute() {
+    const { t } = useLanguage();
+
     return (
         <div
             style={{
@@ -48,23 +51,46 @@ export default function NotFoundRoute() {
                     marginBottom: 32,
                 }}
             >
-                Cette page n&apos;existe pas ou a été déplacée.
+                {t('notFound.description')}
             </p>
-            <Link
-                to="/home"
-                style={{
-                    display: 'inline-block',
-                    padding: '12px 24px',
-                    backgroundColor: darkTheme.accent.blue,
-                    color: '#fff',
-                    borderRadius: darkTheme.radius.medium,
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    transition: darkTheme.transition.normal,
-                }}
-            >
-                Retour à l&apos;accueil
-            </Link>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', alignItems: 'center' }}>
+                <Link
+                    to="/home"
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 24px',
+                        backgroundColor: darkTheme.accent.blue,
+                        color: '#fff',
+                        borderRadius: darkTheme.radius.medium,
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                        transition: darkTheme.transition.normal,
+                    }}
+                >
+                    {t('notFound.backHome')}
+                </Link>
+                <Link
+                    to="/upload"
+                    prefetch="intent"
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 24px',
+                        backgroundColor: darkTheme.background.tertiary,
+                        color: darkTheme.text.primary,
+                        border: `1px solid ${darkTheme.border.secondary}`,
+                        borderRadius: darkTheme.radius.medium,
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        transition: darkTheme.transition.normal,
+                    }}
+                >
+                    {t('notFound.addFiles')}
+                </Link>
+            </div>
         </div>
     );
 }

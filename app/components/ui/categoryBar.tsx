@@ -7,6 +7,7 @@ import type { FileCategory } from '~/utils/file/fileClassifier';
 import { useFilesPreloader } from '~/hooks/useFilesPreloader';
 import { useAuth } from '~/hooks/useAuth';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { Tooltip } from '~/components/ui/Tooltip';
 
 const CATEGORY_ICONS: Record<FileCategory, string> = {
     videos: '🎬',
@@ -48,53 +49,71 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
                 flexWrap: 'wrap',
                 alignItems: 'center'
             }}>
-                {CATEGORIES.map(category => (
-                    <button
-                        key={category}
-                        onClick={() => onCategoryChange(category)}
-                        onMouseEnter={() => {
-                            // Précharger la catégorie au survol pour navigation instantanée
-                            if (selectedCategory !== category) {
-                                preloadCategory(category);
-                            }
-                        }}
-                        aria-current={selectedCategory === category ? 'page' : undefined}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            padding: '10px 16px',
-                            borderRadius: '8px',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            backgroundColor: selectedCategory === category
-                                ? darkTheme.accent.blue
-                                : darkTheme.background.tertiary,
-                            color: selectedCategory === category
-                                ? '#fff'
-                                : darkTheme.text.primary,
-                            transition: 'all 0.2s',
-                            boxShadow: selectedCategory === category
-                                ? darkTheme.shadow.small
-                                : 'none'
-                        }}
-                        onMouseOver={(e) => {
-                            if (selectedCategory !== category) {
-                                e.currentTarget.style.backgroundColor = darkTheme.border.secondary;
-                            }
-                        }}
-                        onMouseOut={(e) => {
-                            if (selectedCategory !== category) {
-                                e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                            }
-                        }}
-                    >
-                        <span>{CATEGORY_ICONS[category]}</span>
-                        <span>{t(`categories.${category}`)}</span>
-                    </button>
-                ))}
+                {CATEGORIES.map(category => {
+                    const hint = t(`categories.${category}Hint` as keyof typeof t);
+                    return (
+                        <Tooltip
+                            key={category}
+                            content={typeof hint === 'string' && hint ? hint : t(`categories.${category}`)}
+                            position="bottom"
+                            delay={400}
+                        >
+                            <button
+                                onClick={() => onCategoryChange(category)}
+                                onMouseEnter={() => {
+                                    if (selectedCategory !== category) {
+                                        preloadCategory(category);
+                                    }
+                                }}
+                                aria-current={selectedCategory === category ? 'page' : undefined}
+                                aria-label={`${t(`categories.${category}`)}${typeof hint === 'string' && hint ? ` — ${hint}` : ''}`}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '10px 16px',
+                                    borderRadius: darkTheme.radius.medium,
+                                    border: '2px solid transparent',
+                                    outline: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    backgroundColor: selectedCategory === category
+                                        ? darkTheme.accent.blue
+                                        : darkTheme.background.tertiary,
+                                    color: selectedCategory === category
+                                        ? '#fff'
+                                        : darkTheme.text.primary,
+                                    transition: darkTheme.transition.normal,
+                                    boxShadow: selectedCategory === category
+                                        ? darkTheme.shadow.small
+                                        : 'none'
+                                }}
+                                onMouseOver={(e) => {
+                                    if (selectedCategory !== category) {
+                                        e.currentTarget.style.backgroundColor = darkTheme.border.secondary;
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (selectedCategory !== category) {
+                                        e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                    }
+                                }}
+                                onFocus={(e) => {
+                                    e.currentTarget.style.outline = `2px solid ${darkTheme.accent.blue}`;
+                                    e.currentTarget.style.outlineOffset = '2px';
+                                }}
+                                onBlur={(e) => {
+                                    e.currentTarget.style.outline = 'none';
+                                    e.currentTarget.style.outlineOffset = '0';
+                                }}
+                            >
+                                <span>{CATEGORY_ICONS[category]}</span>
+                                <span>{t(`categories.${category}`)}</span>
+                            </button>
+                        </Tooltip>
+                    );
+                })}
             </div>
         </div>
     );

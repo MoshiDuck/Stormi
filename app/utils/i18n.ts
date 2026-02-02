@@ -50,6 +50,7 @@ export interface Translations {
         delete: string;
         save: string;
         close: string;
+        open: string;
     };
     // Login
     login: {
@@ -89,6 +90,7 @@ export interface Translations {
         seeAllVideos: string;
         seeAllMusics: string;
         addMore: string;
+        emptyHint: string;
     };
     // Upload
     upload: {
@@ -115,8 +117,22 @@ export interface Translations {
         size: string;
         speed: string;
         remainingTime: string;
+        successMessage: string;
+        nextStep: string;
+        viewHome: string;
+        viewLibrary: string;
+        addAnother: string;
+        nextStepHint: string;
+        uploadButton: string;
     };
-    // Categories
+    // Page 404
+    notFound: {
+        title: string;
+        description: string;
+        backHome: string;
+        addFiles: string;
+    };
+    // Categories (labels + tooltips pour la barre de catégories)
     categories: {
         videos: string;
         musics: string;
@@ -125,6 +141,13 @@ export interface Translations {
         archives: string;
         executables: string;
         others: string;
+        videosHint?: string;
+        musicsHint?: string;
+        imagesHint?: string;
+        documentsHint?: string;
+        archivesHint?: string;
+        executablesHint?: string;
+        othersHint?: string;
     };
     // Videos page (Films & Séries)
     videos: {
@@ -243,7 +266,8 @@ const translations: Record<Language, Translations> = {
             retry: 'Réessayer',
             delete: 'Supprimer',
             save: 'Enregistrer',
-            close: 'Fermer'
+            close: 'Fermer',
+            open: 'Ouvrir'
         },
         login: {
             title: 'Stormi',
@@ -280,7 +304,8 @@ const translations: Record<Language, Translations> = {
             spaceAdd: 'Ajouter',
             seeAllVideos: 'Voir films & séries',
             seeAllMusics: 'Écouter ma musique',
-            addMore: 'Ajouter encore'
+            addMore: 'Ajouter encore',
+            emptyHint: 'Vos fichiers apparaîtront dans ces espaces une fois ajoutés.'
         },
         upload: {
             title: 'Gestionnaire d\'upload',
@@ -305,7 +330,20 @@ const translations: Record<Language, Translations> = {
             status: 'Statut',
             size: 'Taille',
             speed: 'Vitesse',
-            remainingTime: 'Temps restant'
+            remainingTime: 'Temps restant',
+            successMessage: 'Fichier ajouté avec succès',
+            nextStep: 'Prochaine étape',
+            viewHome: 'Voir mon accueil',
+            viewLibrary: 'Voir la bibliothèque',
+            addAnother: 'Ajouter un autre fichier',
+            nextStepHint: 'Où souhaitez-vous aller ?',
+            uploadButton: 'Envoyer'
+        },
+        notFound: {
+            title: 'Page non trouvée',
+            description: 'Cette page n\'existe pas ou a été déplacée.',
+            backHome: 'Retour à l\'accueil',
+            addFiles: 'Ajouter des fichiers'
         },
         videos: {
             films: 'Films',
@@ -330,7 +368,14 @@ const translations: Record<Language, Translations> = {
             documents: 'Documents',
             archives: 'Archives',
             executables: 'Exécutables',
-            others: 'Autres fichiers'
+            others: 'Autres fichiers',
+            videosHint: 'Films, séries et vidéos',
+            musicsHint: 'Pistes audio et albums',
+            imagesHint: 'Photos et images',
+            documentsHint: 'PDF et documents',
+            archivesHint: 'ZIP, RAR et archives',
+            executablesHint: 'Programmes et exécutables',
+            othersHint: 'Autres types de fichiers'
         },
         emptyStates: {
             noVideos: 'Aucune vidéo',
@@ -426,7 +471,8 @@ const translations: Record<Language, Translations> = {
             retry: 'Retry',
             delete: 'Delete',
             save: 'Save',
-            close: 'Close'
+            close: 'Close',
+            open: 'Open'
         },
         login: {
             title: 'Stormi',
@@ -463,7 +509,8 @@ const translations: Record<Language, Translations> = {
             spaceAdd: 'Add',
             seeAllVideos: 'Watch movies & series',
             seeAllMusics: 'Listen to my music',
-            addMore: 'Add more'
+            addMore: 'Add more',
+            emptyHint: 'Your files will appear in these spaces once added.'
         },
         upload: {
             title: 'Upload Manager',
@@ -486,7 +533,20 @@ const translations: Record<Language, Translations> = {
             status: 'Status',
             size: 'Size',
             speed: 'Speed',
-            remainingTime: 'Remaining time'
+            remainingTime: 'Remaining time',
+            successMessage: 'File added successfully',
+            nextStep: 'Next step',
+            viewHome: 'Go to my home',
+            viewLibrary: 'View library',
+            addAnother: 'Add another file',
+            nextStepHint: 'Where would you like to go?',
+            uploadButton: 'Upload'
+        },
+        notFound: {
+            title: 'Page not found',
+            description: 'This page does not exist or has been moved.',
+            backHome: 'Back to home',
+            addFiles: 'Add files'
         },
         videos: {
             films: 'Movies',
@@ -511,7 +571,14 @@ const translations: Record<Language, Translations> = {
             documents: 'Documents',
             archives: 'Archives',
             executables: 'Executables',
-            others: 'Other files'
+            others: 'Other files',
+            videosHint: 'Movies, series and videos',
+            musicsHint: 'Audio tracks and albums',
+            imagesHint: 'Photos and images',
+            documentsHint: 'PDF and documents',
+            archivesHint: 'ZIP, RAR and archives',
+            executablesHint: 'Programs and executables',
+            othersHint: 'Other file types'
         },
         emptyStates: {
             noVideos: 'No videos',
@@ -607,7 +674,8 @@ const translations: Record<Language, Translations> = {
             retry: 'Reintentar',
             delete: 'Eliminar',
             save: 'Guardar',
-            close: 'Cerrar'
+            close: 'Cerrar',
+            open: 'Abrir'
         },
         login: {
             title: 'Stormi',
@@ -644,7 +712,8 @@ const translations: Record<Language, Translations> = {
             spaceAdd: 'Añadir',
             seeAllVideos: 'Ver películas y series',
             seeAllMusics: 'Escuchar mi música',
-            addMore: 'Añadir más'
+            addMore: 'Añadir más',
+            emptyHint: 'Tus archivos aparecerán aquí una vez añadidos.'
         },
         upload: {
             title: 'Gestor de carga',
@@ -669,7 +738,20 @@ const translations: Record<Language, Translations> = {
             status: 'Estado',
             size: 'Tamaño',
             speed: 'Velocidad',
-            remainingTime: 'Tiempo restante'
+            remainingTime: 'Tiempo restante',
+            successMessage: 'Archivo añadido correctamente',
+            nextStep: 'Siguiente paso',
+            viewHome: 'Ir a mi inicio',
+            viewLibrary: 'Ver biblioteca',
+            addAnother: 'Añadir otro archivo',
+            nextStepHint: '¿A dónde quieres ir?',
+            uploadButton: 'Enviar'
+        },
+        notFound: {
+            title: 'Página no encontrada',
+            description: 'Esta página no existe o ha sido movida.',
+            backHome: 'Volver al inicio',
+            addFiles: 'Añadir archivos'
         },
         videos: {
             films: 'Películas',
@@ -694,7 +776,14 @@ const translations: Record<Language, Translations> = {
             documents: 'Documentos',
             archives: 'Archivos',
             executables: 'Ejecutables',
-            others: 'Otros archivos'
+            others: 'Otros archivos',
+            videosHint: 'Películas, series y vídeos',
+            musicsHint: 'Pistas de audio y álbumes',
+            imagesHint: 'Fotos e imágenes',
+            documentsHint: 'PDF y documentos',
+            archivesHint: 'ZIP, RAR y archivos',
+            executablesHint: 'Programas y ejecutables',
+            othersHint: 'Otros tipos de archivos'
         },
         emptyStates: {
             noVideos: 'Sin videos',
@@ -790,7 +879,8 @@ const translations: Record<Language, Translations> = {
             retry: 'Wiederholen',
             delete: 'Löschen',
             save: 'Speichern',
-            close: 'Schließen'
+            close: 'Schließen',
+            open: 'Öffnen'
         },
         login: {
             title: 'Stormi',
@@ -827,7 +917,8 @@ const translations: Record<Language, Translations> = {
             spaceAdd: 'Hinzufügen',
             seeAllVideos: 'Filme & Serien ansehen',
             seeAllMusics: 'Meine Musik hören',
-            addMore: 'Weitere hinzufügen'
+            addMore: 'Weitere hinzufügen',
+            emptyHint: 'Ihre Dateien erscheinen hier nach dem Hinzufügen.'
         },
         upload: {
             title: 'Upload-Manager',
@@ -852,7 +943,20 @@ const translations: Record<Language, Translations> = {
             status: 'Status',
             size: 'Größe',
             speed: 'Geschwindigkeit',
-            remainingTime: 'Verbleibende Zeit'
+            remainingTime: 'Verbleibende Zeit',
+            successMessage: 'Datei erfolgreich hinzugefügt',
+            nextStep: 'Nächster Schritt',
+            viewHome: 'Zu meiner Startseite',
+            viewLibrary: 'Bibliothek anzeigen',
+            addAnother: 'Weitere Datei hinzufügen',
+            nextStepHint: 'Wohin möchten Sie gehen?',
+            uploadButton: 'Hochladen'
+        },
+        notFound: {
+            title: 'Seite nicht gefunden',
+            description: 'Diese Seite existiert nicht oder wurde verschoben.',
+            backHome: 'Zurück zur Startseite',
+            addFiles: 'Dateien hinzufügen'
         },
         videos: {
             films: 'Filme',
@@ -877,7 +981,14 @@ const translations: Record<Language, Translations> = {
             documents: 'Dokumente',
             archives: 'Archive',
             executables: 'Ausführbare Dateien',
-            others: 'Andere Dateien'
+            others: 'Andere Dateien',
+            videosHint: 'Filme, Serien und Videos',
+            musicsHint: 'Audiotracks und Alben',
+            imagesHint: 'Fotos und Bilder',
+            documentsHint: 'PDF und Dokumente',
+            archivesHint: 'ZIP, RAR und Archive',
+            executablesHint: 'Programme und Ausführbare',
+            othersHint: 'Andere Dateitypen'
         },
         emptyStates: {
             noVideos: 'Keine Videos',

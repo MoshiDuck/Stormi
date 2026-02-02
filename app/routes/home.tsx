@@ -591,9 +591,9 @@ export default function HomeRoute() {
                     </section>
                     </div>
 
-                    {/* CTA secondaire "Ajouter encore" lorsque l'utilisateur a déjà des fichiers */}
+                    {/* CTA secondaires : "Ajouter encore" et "Voir la bibliothèque" lorsque l'utilisateur a déjà des fichiers */}
                     {hasLoadedOnce && !loadingStats && stats.fileCount > 0 && (
-                        <div style={{ marginBottom: '28px', textAlign: 'center' }}>
+                        <div style={{ marginBottom: '28px', textAlign: 'center', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px', alignItems: 'center' }}>
                             <Link
                                 to="/upload"
                                 prefetch="intent"
@@ -621,6 +621,37 @@ export default function HomeRoute() {
                             >
                                 <span aria-hidden>📤</span>
                                 {t('home.addMore')}
+                            </Link>
+                            <span style={{ color: darkTheme.text.tertiary, fontSize: '14px' }}>·</span>
+                            <Link
+                                to="/library"
+                                prefetch="intent"
+                                style={{
+                                    fontSize: '14px',
+                                    color: darkTheme.text.secondary,
+                                    textDecoration: 'none',
+                                    fontWeight: '500',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '8px 16px',
+                                    borderRadius: darkTheme.radius.medium,
+                                    transition: darkTheme.transition.normal,
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.textDecoration = 'underline';
+                                    e.currentTarget.style.color = darkTheme.accent.blue;
+                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.textDecoration = 'none';
+                                    e.currentTarget.style.color = darkTheme.text.secondary;
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                }}
+                                aria-label={t('nav.libraryAriaLabel')}
+                            >
+                                <span aria-hidden>📚</span>
+                                {t('nav.library')}
                             </Link>
                         </div>
                     )}
@@ -929,13 +960,16 @@ export default function HomeRoute() {
                                 <span>{t('home.uploadFirst')}</span>
                             </button>
                             
+                            <p style={{ fontSize: '14px', color: darkTheme.text.tertiary, maxWidth: '480px', margin: '0 auto 24px', lineHeight: 1.5 }}>
+                                {t('home.emptyHint')}
+                            </p>
                             <div style={{
-                                marginTop: '40px',
+                                marginTop: '24px',
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
                                 gap: '20px',
                                 maxWidth: '600px',
-                                margin: '40px auto 0'
+                                margin: '24px auto 0'
                             }}>
                                 {[
                                     { icon: '🎬', label: t('categories.videos') || 'Vidéos' },
@@ -946,7 +980,7 @@ export default function HomeRoute() {
                                     <div key={i} style={{
                                         padding: '16px',
                                         backgroundColor: darkTheme.background.tertiary,
-                                        borderRadius: '8px',
+                                        borderRadius: darkTheme.radius.medium,
                                         textAlign: 'center'
                                     }}>
                                         <div style={{ fontSize: '28px', marginBottom: '8px' }}>{item.icon}</div>

@@ -10,6 +10,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Outlet, useNavigation, useLocation, useRouteError } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
+import { useLanguage } from '~/contexts/LanguageContext';
 import { AuthGuard } from '~/components/auth/AuthGuard';
 import { Navigation } from '~/components/navigation/Navigation';
 import { PageTransition } from '~/components/navigation/PageTransition';
@@ -62,16 +63,21 @@ export default function AppLayout() {
 
 /**
  * ErrorBoundary au niveau du layout app : erreurs API, loaders, etc.
- * Affiche un message lisible et un lien pour réessayer / retour.
+ * Affiche un message lisible et deux actions : réessayer ou retour à l'accueil.
  */
 export function ErrorBoundary() {
     const error = useRouteError() as Error | { status?: number; statusText?: string; data?: unknown } | undefined;
+    const { t } = useLanguage();
     const message =
         error instanceof Error
             ? error.message
             : error && typeof error === 'object' && 'statusText' in error
               ? (error.statusText as string) || `Erreur ${error.status ?? 500}`
-              : 'Erreur inconnue';
+              : t('errors.unknown');
+
+    const handleRetry = () => {
+        window.location.reload();
+    };
 
     return (
         <div
@@ -82,17 +88,44 @@ export function ErrorBoundary() {
             }}
             role="alert"
         >
-            <h2 style={{ marginBottom: 16 }}>Une erreur est survenue</h2>
+            <h2 style={{ marginBottom: 16 }}>{t('errors.title')}</h2>
             <p style={{ color: darkTheme.text.secondary, marginBottom: 24 }}>{message}</p>
-            <a
-                href="/home"
-                style={{
-                    color: darkTheme.accent.blue,
-                    textDecoration: 'underline',
-                }}
-            >
-                Retour à l&apos;accueil
-            </a>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <button
+                    type="button"
+                    onClick={handleRetry}
+                    style={{
+                        padding: '12px 24px',
+                        backgroundColor: darkTheme.accent.blue,
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: darkTheme.radius.medium,
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        transition: darkTheme.transition.normal,
+                    }}
+                >
+                    {t('common.retry')}
+                </button>
+                <a
+                    href="/home"
+                    style={{
+                        display: 'inline-block',
+                        padding: '12px 24px',
+                        backgroundColor: darkTheme.background.tertiary,
+                        color: darkTheme.text.primary,
+                        border: `1px solid ${darkTheme.border.secondary}`,
+                        borderRadius: darkTheme.radius.medium,
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        fontSize: 14,
+                        transition: darkTheme.transition.normal,
+                    }}
+                >
+                    {t('notFound.backHome')}
+                </a>
+            </div>
         </div>
     );
 }

@@ -1,8 +1,10 @@
 // INFO : app/routes/upload.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard.
 import React, { useState, useCallback, useRef } from 'react';
+import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { UploadManager, UploadManagerHandle } from '~/components/upload/UploadManager';
+import { useToast } from '~/components/ui/Toast';
 import { darkTheme } from '~/utils/ui/theme';
 import { formatFileSize, formatDate, formatDateTime } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
@@ -32,11 +34,13 @@ interface UploadedFile {
 export default function UploadRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const { showToast, ToastContainer } = useToast();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [showNextStep, setShowNextStep] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -103,13 +107,13 @@ export default function UploadRoute() {
                             marginBottom: '8px',
                             color: darkTheme.text.primary
                         }}>
-                            Upload de fichiers
+                            {t('upload.title')}
                         </h1>
                         <p style={{
                             color: darkTheme.text.secondary,
                             fontSize: '16px'
                         }}>
-                            Téléchargez vos fichiers vers le cloud
+                            {t('upload.dragDrop')} — {t('upload.dragDropOr')}
                         </p>
                     </div>
 
@@ -125,19 +129,19 @@ export default function UploadRoute() {
                             borderRadius: '12px',
                             padding: '30px',
                             boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                            border: '2px dashed #e0e0e0'
+                            border: `2px dashed ${darkTheme.border.secondary}`
                         }}>
                             <h2 style={{
                                 fontSize: '20px',
                                 fontWeight: '600',
                                 marginBottom: '20px',
-                                color: '#333'
+                                color: darkTheme.text.primary
                             }}>
-                                Sélectionnez un fichier
+                                {t('upload.selectFile')}
                             </h2>
 
                             <div style={{
-                                border: '2px dashed #4285f4',
+                                border: `2px dashed ${darkTheme.accent.blue}`,
                                 borderRadius: '8px',
                                 padding: '40px 20px',
                                 textAlign: 'center',
@@ -162,13 +166,13 @@ export default function UploadRoute() {
                                  }}
                             >
                                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>📤</div>
-                                <p style={{ marginBottom: '8px', color: '#4285f4', fontWeight: '500' }}>
+                                <p style={{ marginBottom: '8px', color: darkTheme.accent.blue, fontWeight: '500' }}>
                                     {t('upload.dragDrop')}
                                 </p>
-                                <p style={{ color: '#666', fontSize: '14px', marginBottom: '16px' }}>
+                                <p style={{ color: darkTheme.text.secondary, fontSize: '14px', marginBottom: '16px' }}>
                                     {t('upload.dragDropOr')}
                                 </p>
-                                <p style={{ color: '#888', fontSize: '12px' }}>
+                                <p style={{ color: darkTheme.text.tertiary, fontSize: '12px' }}>
                                     {t('upload.supportedFormats')}
                                 </p>
                             </div>
@@ -182,41 +186,41 @@ export default function UploadRoute() {
 
                             {selectedFile && (
                                 <div style={{
-                                    backgroundColor: '#e8f5e9',
-                                    borderRadius: '8px',
+                                    backgroundColor: darkTheme.surface.success,
+                                    borderRadius: darkTheme.radius.medium,
                                     padding: '16px',
                                     marginBottom: '20px',
-                                    border: '1px solid #c8e6c9'
+                                    border: `1px solid ${darkTheme.accent.green}`
                                 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                         <div style={{
                                             width: '40px',
                                             height: '40px',
-                                            backgroundColor: '#4caf50',
-                                            borderRadius: '6px',
+                                            backgroundColor: darkTheme.accent.green,
+                                            borderRadius: darkTheme.radius.small,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            color: 'white',
+                                            color: darkTheme.text.primary,
                                             fontSize: '20px'
                                         }}>
                                             📄
                                         </div>
                                         <div style={{ flex: 1 }}>
-                                            <p style={{ margin: 0, fontWeight: '500', fontSize: '14px' }}>
+                                            <p style={{ margin: 0, fontWeight: '500', fontSize: '14px', color: darkTheme.text.primary }}>
                                                 {selectedFile.name}
                                             </p>
-                                            <p style={{ margin: '4px 0 0', color: '#666', fontSize: '12px' }}>
+                                            <p style={{ margin: '4px 0 0', color: darkTheme.text.secondary, fontSize: '12px' }}>
                                                 {formatFileSize(selectedFile.size)} • {selectedFile.type}
                                             </p>
                                         </div>
                                         <button
                                             onClick={handleCancel}
-                                            aria-label="Annuler l'upload"
+                                            aria-label={t('common.cancel')}
                                             style={{
                                                 backgroundColor: 'transparent',
                                                 border: 'none',
-                                                color: '#f44336',
+                                                color: darkTheme.accent.red,
                                                 cursor: 'pointer',
                                                 fontSize: '20px',
                                                 padding: '4px'
@@ -245,10 +249,10 @@ export default function UploadRoute() {
                                     />
                                     <p style={{
                                         marginTop: '8px',
-                                        color: darkTheme.text.secondary,
+                                        color: darkTheme.text.tertiary,
                                         fontSize: '12px'
                                     }}>
-                                        Aperçu de l'image
+                                        Aperçu
                                     </p>
                                 </div>
                             )}
@@ -260,29 +264,29 @@ export default function UploadRoute() {
                                         justifyContent: 'space-between',
                                         marginBottom: '8px'
                                     }}>
-                                        <span style={{ fontSize: '14px', color: '#666' }}>Progression</span>
-                                        <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                                        <span style={{ fontSize: '14px', color: darkTheme.text.secondary }}>Progression</span>
+                                        <span style={{ fontSize: '14px', fontWeight: '500', color: darkTheme.text.primary }}>
                                             {uploadProgress.percentage.toFixed(1)}%
                                         </span>
                                     </div>
                                     <div style={{
                                         height: '8px',
-                                        backgroundColor: '#e0e0e0',
-                                        borderRadius: '4px',
+                                        backgroundColor: darkTheme.background.tertiary,
+                                        borderRadius: darkTheme.radius.small,
                                         overflow: 'hidden'
                                     }}>
                                         <div style={{
                                             height: '100%',
                                             width: `${uploadProgress.percentage}%`,
-                                            backgroundColor: '#4285f4',
-                                            borderRadius: '4px',
+                                            backgroundColor: darkTheme.accent.blue,
+                                            borderRadius: darkTheme.radius.small,
                                             transition: 'width 0.3s'
                                         }} />
                                     </div>
                                     <p style={{
                                         marginTop: '4px',
                                         fontSize: '12px',
-                                        color: '#888',
+                                        color: darkTheme.text.tertiary,
                                         textAlign: 'center'
                                     }}>
                                         {formatFileSize(uploadProgress.loaded)} / {formatFileSize(uploadProgress.total)}
@@ -296,15 +300,15 @@ export default function UploadRoute() {
                                     disabled={!selectedFile || uploading}
                                     style={{
                                         flex: 1,
-                                        backgroundColor: selectedFile && !uploading ? '#4285f4' : '#cccccc',
-                                        color: 'white',
+                                        backgroundColor: selectedFile && !uploading ? darkTheme.accent.blue : darkTheme.background.tertiary,
+                                        color: selectedFile && !uploading ? '#fff' : darkTheme.text.disabled,
                                         border: 'none',
                                         padding: '14px 24px',
-                                        borderRadius: '6px',
+                                        borderRadius: darkTheme.radius.medium,
                                         cursor: selectedFile && !uploading ? 'pointer' : 'not-allowed',
                                         fontSize: '16px',
                                         fontWeight: '500',
-                                        transition: 'background-color 0.2s',
+                                        transition: darkTheme.transition.normal,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -316,15 +320,15 @@ export default function UploadRoute() {
                                             <span style={{
                                                 width: '16px',
                                                 height: '16px',
-                                                border: '2px solid white',
+                                                border: '2px solid currentColor',
                                                 borderTopColor: 'transparent',
                                                 borderRadius: '50%',
                                                 animation: 'spin 1s linear infinite'
                                             }} />
-                                            Upload en cours...
+                                            {t('upload.inProgress')}
                                         </>
                                     ) : (
-                                        '📤 Uploader'
+                                        <>📤 {t('upload.uploadButton')}</>
                                     )}
                                 </button>
 
@@ -334,15 +338,15 @@ export default function UploadRoute() {
                                         style={{
                                             backgroundColor: 'transparent',
                                             color: darkTheme.text.secondary,
-                                            border: '1px solid #ddd',
+                                            border: `1px solid ${darkTheme.border.secondary}`,
                                             padding: '14px 20px',
-                                            borderRadius: '6px',
+                                            borderRadius: darkTheme.radius.medium,
                                             cursor: 'pointer',
                                             fontSize: '16px',
                                             fontWeight: '500'
                                         }}
                                     >
-                                        Annuler
+                                        {t('common.cancel')}
                                     </button>
                                 )}
                             </div>
@@ -358,17 +362,17 @@ export default function UploadRoute() {
 
                             {uploadSuccess && (
                                 <div style={{
-                                    backgroundColor: '#e8f5e9',
-                                    color: '#2e7d32',
+                                    backgroundColor: darkTheme.surface.success,
+                                    color: darkTheme.accent.green,
                                     padding: '12px 16px',
-                                    borderRadius: '6px',
+                                    borderRadius: darkTheme.radius.medium,
                                     marginTop: '16px',
-                                    border: '1px solid #c8e6c9'
+                                    border: `1px solid ${darkTheme.accent.green}`
                                 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <span style={{ fontSize: '18px' }}>✅</span>
                                         <p style={{ margin: 0, fontWeight: '500' }}>
-                                            Fichier uploadé avec succès !
+                                            {t('upload.successMessage')}
                                         </p>
                                     </div>
                                 </div>
@@ -378,31 +382,32 @@ export default function UploadRoute() {
                         {/* Fichiers récents */}
                         <div style={{
                             backgroundColor: darkTheme.background.secondary,
-                            borderRadius: '12px',
+                            borderRadius: darkTheme.radius.large,
                             padding: '30px',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                            boxShadow: darkTheme.shadow.medium,
+                            border: `1px solid ${darkTheme.border.primary}`
                         }}>
                             <h2 style={{
                                 fontSize: '20px',
                                 fontWeight: '600',
                                 marginBottom: '20px',
-                                color: '#333'
+                                color: darkTheme.text.primary
                             }}>
-                                Fichiers récents
+                                {t('upload.uploaded')}
                             </h2>
 
                             {uploadedFiles.length === 0 ? (
                                 <div style={{
                                     textAlign: 'center',
                                     padding: '40px 20px',
-                                    color: '#888'
+                                    color: darkTheme.text.tertiary
                                 }}>
                                     <div style={{ fontSize: '48px', marginBottom: '16px' }}>📁</div>
-                                    <p style={{ marginBottom: '8px', fontSize: '16px' }}>
-                                        Aucun fichier uploadé
+                                    <p style={{ marginBottom: '8px', fontSize: '16px', color: darkTheme.text.secondary }}>
+                                        {t('upload.noUploads')}
                                     </p>
                                     <p style={{ fontSize: '14px' }}>
-                                        Les fichiers que vous uploaderez apparaîtront ici
+                                        Les fichiers que vous ajoutez apparaîtront ici
                                     </p>
                                 </div>
                             ) : (
@@ -412,13 +417,13 @@ export default function UploadRoute() {
                                             key={file.id}
                                             style={{
                                                 padding: '16px',
-                                                borderBottom: '1px solid #eee',
+                                                borderBottom: `1px solid ${darkTheme.border.primary}`,
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 gap: '12px',
-                                                transition: 'background-color 0.2s'
+                                                transition: darkTheme.transition.normal
                                             }}
-                                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = darkTheme.background.tertiary}
                                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                         >
                                             <div style={{
@@ -429,7 +434,7 @@ export default function UploadRoute() {
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                color: '#4285f4',
+                                                color: darkTheme.accent.blue,
                                                 fontSize: '20px'
                                             }}>
                                                 {file.type.startsWith('image/') ? '🖼️' :
@@ -438,10 +443,10 @@ export default function UploadRoute() {
                                                             file.type.includes('word') ? '📝' : '📄'}
                                             </div>
                                             <div style={{ flex: 1 }}>
-                                                <p style={{ margin: 0, fontWeight: '500', fontSize: '14px' }}>
+                                                <p style={{ margin: 0, fontWeight: '500', fontSize: '14px', color: darkTheme.text.primary }}>
                                                     {file.name}
                                                 </p>
-                                                <p style={{ margin: '4px 0 0', color: '#666', fontSize: '12px' }}>
+                                                <p style={{ margin: '4px 0 0', color: darkTheme.text.secondary, fontSize: '12px' }}>
                                                     {formatFileSize(file.size)} • {formatDateTime(file.uploadedAt)}
                                                 </p>
                                             </div>
@@ -450,16 +455,16 @@ export default function UploadRoute() {
                                                     onClick={() => window.open(file.url, '_blank')}
                                                     style={{
                                                         backgroundColor: darkTheme.surface.info,
-                                                        color: '#4285f4',
+                                                        color: darkTheme.accent.blue,
                                                         border: 'none',
                                                         padding: '6px 12px',
-                                                        borderRadius: '4px',
+                                                        borderRadius: darkTheme.radius.small,
                                                         cursor: 'pointer',
                                                         fontSize: '12px',
                                                         fontWeight: '500'
                                                     }}
                                                 >
-                                                    Ouvrir
+                                                    {t('common.open')}
                                                 </button>
                                             </div>
                                         </div>
@@ -470,11 +475,11 @@ export default function UploadRoute() {
                             <div style={{
                                 marginTop: '20px',
                                 paddingTop: '20px',
-                                borderTop: '1px solid #eee'
+                                borderTop: `1px solid ${darkTheme.border.primary}`
                             }}>
                                 <p style={{
                                     fontSize: '12px',
-                                    color: '#888',
+                                    color: darkTheme.text.tertiary,
                                     margin: 0,
                                     textAlign: 'center'
                                 }}>
@@ -487,19 +492,143 @@ export default function UploadRoute() {
                     {/* Section UploadManager */}
                     <UploadManager
                         ref={uploadManagerRef}
-                        onUploadComplete={(fileId) => {
-                            // Actualiser la liste des fichiers
+                        onUploadComplete={() => {
+                            showToast(t('upload.successMessage'), 'success', 5000);
+                            setShowNextStep(true);
                         }}
-                        onProgress={(progress) => {
-                        }}
+                        onProgress={() => {}}
                     />
+
+                    {/* Prochaine étape : proposer les actions logiques après un upload */}
+                    {showNextStep && (
+                        <div style={{
+                            backgroundColor: darkTheme.surface.success,
+                            borderRadius: darkTheme.radius.large,
+                            padding: '24px',
+                            marginBottom: '30px',
+                            border: `1px solid ${darkTheme.accent.green}`,
+                            boxShadow: darkTheme.shadow.medium
+                        }}>
+                            <h3 style={{
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                color: darkTheme.text.primary,
+                                marginBottom: '16px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                <span aria-hidden>✨</span>
+                                {t('upload.nextStep')}
+                            </h3>
+                            <p style={{
+                                color: darkTheme.text.secondary,
+                                fontSize: '14px',
+                                marginBottom: '16px'
+                            }}>
+                                {t('upload.nextStepHint')}
+                            </p>
+                            <div style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '12px'
+                            }}>
+                                <Link
+                                    to="/home"
+                                    prefetch="intent"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        padding: '12px 20px',
+                                        backgroundColor: darkTheme.accent.blue,
+                                        color: '#fff',
+                                        borderRadius: darkTheme.radius.medium,
+                                        textDecoration: 'none',
+                                        fontWeight: '600',
+                                        fontSize: '14px',
+                                        transition: darkTheme.transition.normal
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.opacity = '0.9';
+                                        e.currentTarget.style.transform = 'translateY(-1px)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.opacity = '1';
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                    }}
+                                >
+                                    {t('upload.viewHome')}
+                                </Link>
+                                <Link
+                                    to="/library"
+                                    prefetch="intent"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        padding: '12px 20px',
+                                        backgroundColor: darkTheme.background.tertiary,
+                                        color: darkTheme.text.primary,
+                                        border: `1px solid ${darkTheme.border.secondary}`,
+                                        borderRadius: darkTheme.radius.medium,
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
+                                        fontSize: '14px',
+                                        transition: darkTheme.transition.normal
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.borderColor = darkTheme.accent.blue;
+                                        e.currentTarget.style.color = darkTheme.accent.blue;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.borderColor = darkTheme.border.secondary;
+                                        e.currentTarget.style.color = darkTheme.text.primary;
+                                    }}
+                                >
+                                    {t('upload.viewLibrary')}
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNextStep(false)}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        padding: '12px 20px',
+                                        backgroundColor: 'transparent',
+                                        color: darkTheme.text.secondary,
+                                        border: `1px solid ${darkTheme.border.primary}`,
+                                        borderRadius: darkTheme.radius.medium,
+                                        fontWeight: '500',
+                                        fontSize: '14px',
+                                        cursor: 'pointer',
+                                        transition: darkTheme.transition.normal
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = darkTheme.text.primary;
+                                        e.currentTarget.style.borderColor = darkTheme.border.light;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = darkTheme.text.secondary;
+                                        e.currentTarget.style.borderColor = darkTheme.border.primary;
+                                    }}
+                                >
+                                    {t('upload.addAnother')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <ToastContainer />
 
                     {/* Informations */}
                     <div style={{
                         backgroundColor: darkTheme.background.secondary,
-                        borderRadius: '12px',
+                        borderRadius: darkTheme.radius.large,
                         padding: '30px',
-                        boxShadow: darkTheme.shadow.medium
+                        boxShadow: darkTheme.shadow.medium,
+                        border: `1px solid ${darkTheme.border.primary}`
                     }}>
                         <h2 style={{
                             fontSize: '20px',
@@ -507,7 +636,7 @@ export default function UploadRoute() {
                             marginBottom: '20px',
                             color: darkTheme.text.primary
                         }}>
-                            Informations sur l'upload
+                            Informations
                         </h2>
 
                         <div style={{
@@ -629,8 +758,8 @@ export default function UploadRoute() {
                     </div>
 
                 <footer style={{
-                    backgroundColor: '#1a1a1a',
-                    color: '#cccccc',
+                    backgroundColor: darkTheme.background.nav,
+                    color: darkTheme.text.secondary,
                     padding: '20px 0',
                     marginTop: '40px',
                     textAlign: 'center'
@@ -642,7 +771,7 @@ export default function UploadRoute() {
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
                             © {new Date().getFullYear()} Stormi. Tous droits réservés.
-                            <span style={{ marginLeft: '20px', color: '#888' }}>
+                            <span style={{ marginLeft: '20px', color: darkTheme.text.tertiary }}>
                                 Espace utilisé : {formatFileSize(0)} / Illimité
                             </span>
                         </p>
