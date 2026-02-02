@@ -5,7 +5,7 @@ import { useAuth } from '~/hooks/useAuth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useFilesPreloader } from '~/hooks/useFilesPreloader';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { replacePlaceholders } from '~/utils/i18n';
+import { replacePlaceholders, translations } from '~/utils/i18n';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
@@ -70,8 +70,8 @@ interface RecentlyAddedItem {
 
 export function meta() {
     return [
-        { title: 'Accueil | Stormi' },
-        { name: 'description', content: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.' },
+        { title: translations.fr.meta.pageTitleHome },
+        { name: 'description', content: translations.fr.meta.pageDescriptionHome },
     ];
 }
 
@@ -144,11 +144,11 @@ export default function HomeRoute() {
                     setStatsError(null);
                     sessionStorage.setItem(cacheKey, JSON.stringify(statsData));
                 } else {
-                    setStatsError(t('errors.statsLoadFailed') ?? 'Impossible de charger les statistiques');
+                    setStatsError(t('errors.statsLoadFailed'));
                 }
             } catch (error) {
                 console.error('Erreur récupération stats:', error);
-                setStatsError(t('errors.networkError') ?? 'Erreur de connexion');
+                setStatsError(t('errors.networkError'));
             } finally {
                 setLoadingStats(false);
                 setHasLoadedOnce(true);
@@ -337,7 +337,7 @@ export default function HomeRoute() {
                             fontSize: '16px',
                             lineHeight: 1.5,
                         }}>
-                            {replacePlaceholders(t('home.welcome'), { name: user?.name || 'Utilisateur' })}
+                            {replacePlaceholders(t('home.welcome'), { name: user?.name || t('common.user') })}
                         </p>
                     </div>
 
@@ -350,7 +350,7 @@ export default function HomeRoute() {
                             <NetflixCarousel title={t('home.continueWatching')} icon="▶">
                                 {continueWatching.map((item) => {
                                     const thumb = getThumbnailUrl(item);
-                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || t('common.untitled');
                                     return (
                                         <Link
                                             key={item.file_id}
@@ -500,7 +500,7 @@ export default function HomeRoute() {
                                 <NetflixCarousel title={t('home.recentlyAdded')} icon="🆕">
                                 {recentlyAdded.map((item) => {
                                     const thumb = getThumbnailUrl(item);
-                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || t('common.untitled');
                                     const linkTo = item.category === 'videos'
                                         ? `/info/videos/${item.file_id}`
                                         : `/reader/musics/${item.file_id}`;
@@ -972,10 +972,10 @@ export default function HomeRoute() {
                                 margin: '24px auto 0'
                             }}>
                                 {[
-                                    { icon: '🎬', label: t('categories.videos') || 'Vidéos' },
-                                    { icon: '🎵', label: t('categories.musics') || 'Musiques' },
-                                    { icon: '🖼️', label: t('categories.images') || 'Images' },
-                                    { icon: '📄', label: t('categories.documents') || 'Documents' }
+                                    { icon: '🎬', label: t('categories.videos') },
+                                    { icon: '🎵', label: t('categories.musics') },
+                                    { icon: '🖼️', label: t('categories.images') },
+                                    { icon: '📄', label: t('categories.documents') }
                                 ].map((item, i) => (
                                     <div key={i} style={{
                                         padding: '16px',
@@ -1004,7 +1004,7 @@ export default function HomeRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. {t('footer.allRightsReserved')}.
                         </p>
                     </div>
                 </footer>

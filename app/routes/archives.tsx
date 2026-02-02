@@ -219,7 +219,7 @@ export default function ArchivesRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Ouvrir ${archive.filename || 'cette archive'}`}
+                                        aria-label={`${t('actions.open')} ${archive.filename || t('actions.thisArchive')}`}
                                         style={{
                                             backgroundColor: darkTheme.background.secondary,
                                             borderRadius: '8px',

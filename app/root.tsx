@@ -10,7 +10,7 @@ import { MiniPlayer } from './components/ui/MiniPlayer';
 import { DropZoneOverlay } from './components/ui/DropZoneOverlay';
 import { invalidateAllFileCache } from './hooks/useFiles';
 import { useFilesPreloader } from './hooks/useFilesPreloader';
-import { detectLanguage } from './utils/i18n';
+import { detectLanguage, translations } from './utils/i18n';
 
 export const links: LinksFunction = () => [
     { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
@@ -168,29 +168,31 @@ export default function App() {
     );
 }
 
-/** ErrorBoundary racine : erreurs non gérées par les routes enfants. */
+/** ErrorBoundary racine : erreurs non gérées par les routes enfants. Pas dans LanguageProvider, on utilise la langue par défaut. */
 export function ErrorBoundary() {
     const error = useRouteError() as Error | { status?: number; statusText?: string } | undefined;
+    const lang = typeof window !== 'undefined' ? detectLanguage() : 'fr';
+    const T = translations[lang];
     const message =
         error instanceof Error
             ? error.message
             : error && typeof error === 'object' && 'statusText' in error
-              ? (error.statusText as string) || `Erreur ${error.status ?? 500}`
-              : 'Une erreur inattendue est survenue';
+              ? (error.statusText as string) || T.errors.errorWithStatus.replace('{status}', String((error as { status?: number }).status ?? 500))
+              : T.errors.unknown;
 
     return (
-        <html lang="fr">
+        <html lang={lang}>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <title>Erreur | Stormi</title>
+                <title>{T.errors.title} | Stormi</title>
                 <Links />
             </head>
             <body style={{ backgroundColor: '#121212', color: '#e0e0e0', margin: 0, padding: 40, fontFamily: 'system-ui' }}>
-                <h1 style={{ marginBottom: 16 }}>Erreur</h1>
+                <h1 style={{ marginBottom: 16 }}>{T.errors.title}</h1>
                 <p style={{ color: '#b0b0b0', marginBottom: 24 }}>{message}</p>
                 <a href="/home" style={{ color: '#4285f4', textDecoration: 'underline' }}>
-                    Retour à l&apos;accueil
+                    {T.notFound.backHome}
                 </a>
                 <Scripts />
             </body>

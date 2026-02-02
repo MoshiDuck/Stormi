@@ -6,14 +6,15 @@ import { useConfig } from '~/hooks/useConfig';
 import { darkTheme } from '~/utils/ui/theme';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { translations } from '~/utils/i18n';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { PageSkeleton } from '~/components/ui/PageSkeleton';
 import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
 
 export function meta() {
     return [
-        { title: 'Musiques | Stormi' },
-        { name: 'description', content: 'Vos musiques par artiste et album. Écoutez en streaming.' },
+        { title: translations.fr.meta.pageTitleMusics },
+        { name: 'description', content: translations.fr.meta.pageDescriptionHome },
     ];
 }
 
@@ -149,7 +150,7 @@ export default function MusicsRoute() {
                     { headers: { 'Authorization': `Bearer ${token}` } }
                 );
 
-                if (!response.ok) throw new Error('Erreur lors de la récupération des fichiers');
+                if (!response.ok) throw new Error(t('errors.fetchFilesFailed'));
 
                 const data = await response.json() as { files: FileItem[] };
                 const files = data.files || [];
@@ -189,7 +190,7 @@ export default function MusicsRoute() {
                 let unidentifiedCount = 0;
                 
                 for (const file of files) {
-                    const title = cleanString(file.title) || cleanString(file.filename)?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                    const title = cleanString(file.title) || cleanString(file.filename)?.replace(/\.[^/.]+$/, '') || t('common.untitled');
                     const artistThumbnail = getArtistThumbnail(file);
                     const albumThumbnails = getAlbumThumbnails(file);
                     
@@ -200,7 +201,7 @@ export default function MusicsRoute() {
                     if (isUnidentified) {
                         unidentifiedCount++;
                         // Ajouter à "Artiste inconnu"
-                        const unknownArtist = 'Artiste inconnu';
+                        const unknownArtist = t('musics.unknownArtist');
                         if (!artistMap.has(unknownArtist)) {
                             artistMap.set(unknownArtist, {
                                 artistName: unknownArtist,
@@ -220,7 +221,7 @@ export default function MusicsRoute() {
                         }
                         
                         // Album "À identifier"
-                        const albumName = 'À identifier';
+                        const albumName = t('musics.toIdentify');
                         const albumThumbnail = albumThumbnails[0] || null; // Première image d'album, ou null
                         if (!artistData.albums.has(albumName)) {
                             artistData.albums.set(albumName, {
@@ -274,12 +275,12 @@ export default function MusicsRoute() {
                         // Pour les artistes identifiés mais sans nom d'artiste explicite
                         const artistNames = artistsArray.length > 0 
                             ? artistsArray.map(a => cleanString(a)).filter(a => a.length > 0)
-                            : ['Artiste inconnu'];
+                            : [t('musics.unknownArtist')];
                         
                         for (const rawArtistName of artistNames) {
-                            const artistName = cleanString(rawArtistName) || 'Artiste inconnu';
+                            const artistName = cleanString(rawArtistName) || t('musics.unknownArtist');
                             // Flag pour savoir si c'est un artiste sans nom
-                            const isUnknownArtist = artistName === 'Artiste inconnu';
+                            const isUnknownArtist = artistName === t('musics.unknownArtist');
                             
                             if (!artistMap.has(artistName)) {
                                 artistMap.set(artistName, {
@@ -302,7 +303,7 @@ export default function MusicsRoute() {
                             if (albumsArray.length > 0) {
                                 for (let i = 0; i < albumsArray.length; i++) {
                                     const rawAlbumName = albumsArray[i];
-                                    const albumName = cleanString(rawAlbumName) || 'Sans nom';
+                                    const albumName = cleanString(rawAlbumName) || t('musics.unknownAlbum');
                                     // Utiliser l'image d'album correspondante à l'index, ou la première disponible, ou null
                                     const albumThumb = albumThumbnails[i] || albumThumbnails[0] || null;
 
@@ -339,7 +340,7 @@ export default function MusicsRoute() {
                         }
                     } catch {
                         // En cas d'erreur de parsing, ajouter à Artiste inconnu
-                        const unknownArtist = 'Artiste inconnu';
+                        const unknownArtist = t('musics.unknownArtist');
                         if (!artistMap.has(unknownArtist)) {
                             artistMap.set(unknownArtist, {
                                 artistName: unknownArtist,
@@ -352,7 +353,7 @@ export default function MusicsRoute() {
                         const artistData = artistMap.get(unknownArtist)!;
                         artistData.trackCount++;
                         
-                        const albumName = 'À identifier';
+                        const albumName = t('musics.toIdentify');
                         if (!artistData.albums.has(albumName)) {
                             artistData.albums.set(albumName, {
                                 albumName,
@@ -372,8 +373,8 @@ export default function MusicsRoute() {
                         albums: Array.from(artist.albums.values()).sort((a, b) => {
                             if (a.albumName === 'Singles') return 1;
                             if (b.albumName === 'Singles') return -1;
-                            if (a.albumName === 'À identifier') return 1;
-                            if (b.albumName === 'À identifier') return -1;
+                            if (a.albumName === t('musics.toIdentify')) return 1;
+                            if (b.albumName === t('musics.toIdentify')) return -1;
                             if (a.year && b.year) return b.year - a.year;
                             return a.albumName.localeCompare(b.albumName);
                         })
@@ -388,7 +389,7 @@ export default function MusicsRoute() {
                 setArtists(artistsArray);
             } catch (err) {
                 console.error('Erreur fetch fichiers:', err);
-                setError(err instanceof Error ? err.message : 'Erreur inconnue');
+                setError(err instanceof Error ? err.message : t('errors.unknown'));
             } finally {
                 setLoading(false);
             }
@@ -570,7 +571,7 @@ export default function MusicsRoute() {
                         }}>
                             <button
                                 onClick={handleBack}
-                                aria-label="Retour à la liste"
+                                aria-label={t('actions.backToList')}
                                 style={{
                                     width: '40px',
                                     height: '40px',
@@ -603,12 +604,12 @@ export default function MusicsRoute() {
                                         boxShadow: '0 4px 20px rgba(0,0,0,0.4)'
                                     }} />
                                     <div>
-                                        <div style={{ color: '#b3b3b3', fontSize: '12px', textTransform: 'uppercase' }}>Artiste</div>
+                                        <div style={{ color: '#b3b3b3', fontSize: '12px', textTransform: 'uppercase' }}>{t('musics.artist')}</div>
                                         <h1 style={{ color: '#fff', fontSize: '32px', fontWeight: '700', margin: '4px 0' }}>
                                             {selectedArtist.artistName}
                                         </h1>
                                         <div style={{ color: '#b3b3b3', fontSize: '14px' }}>
-                                            {selectedArtist.albums.length} album{selectedArtist.albums.length > 1 ? 's' : ''} • {selectedArtist.trackCount} titre{selectedArtist.trackCount > 1 ? 's' : ''}
+                                            {selectedArtist.albums.length} {selectedArtist.albums.length > 1 ? t('musics.albums') : t('musics.album')} • {selectedArtist.trackCount} {selectedArtist.trackCount > 1 ? t('musics.trackCountPlural') : t('musics.trackCount')}
                                         </div>
                                     </div>
                                 </div>
@@ -626,12 +627,12 @@ export default function MusicsRoute() {
                                         boxShadow: '0 8px 24px rgba(0,0,0,0.5)'
                                     }} />
                                     <div>
-                                        <div style={{ color: '#b3b3b3', fontSize: '12px', textTransform: 'uppercase' }}>Album</div>
+                                        <div style={{ color: '#b3b3b3', fontSize: '12px', textTransform: 'uppercase' }}>{t('musics.album')}</div>
                                         <h1 style={{ color: '#fff', fontSize: '28px', fontWeight: '700', margin: '4px 0' }}>
                                             {selectedAlbum.albumName}
                                         </h1>
                                         <div style={{ color: '#b3b3b3', fontSize: '14px' }}>
-                                            {selectedArtist?.artistName} {selectedAlbum.year && `• ${selectedAlbum.year}`} • {selectedAlbum.tracks.length} titre{selectedAlbum.tracks.length > 1 ? 's' : ''}
+                                            {selectedArtist?.artistName} {selectedAlbum.year && `• ${selectedAlbum.year}`} • {selectedAlbum.tracks.length} {selectedAlbum.tracks.length > 1 ? t('musics.trackCountPlural') : t('musics.trackCount')}
                                         </div>
                                     </div>
                                 </div>
@@ -640,7 +641,7 @@ export default function MusicsRoute() {
                     )}
 
                     {/* Bouton Play All pour album (pas pour "À identifier") */}
-                    {viewMode === 'album-tracks' && selectedAlbum && selectedAlbum.albumName !== 'À identifier' && (
+                    {viewMode === 'album-tracks' && selectedAlbum && selectedAlbum.albumName !== t('musics.toIdentify') && (
                         <div style={{ marginBottom: '24px' }}>
                             <button
                                 onClick={() => handlePlayAll(selectedAlbum.tracks)}
@@ -661,7 +662,7 @@ export default function MusicsRoute() {
                                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                             >
-                                ▶ Tout lire
+                                ▶ {t('musics.playAll')}
                             </button>
                         </div>
                     )}
@@ -677,7 +678,7 @@ export default function MusicsRoute() {
                                 marginBottom: '24px',
                                 marginTop: '24px'
                             }}>
-                                {artists.length > 0 ? 'Vos artistes' : ''}
+                                {artists.length > 0 ? t('musics.yourArtists') : ''}
                             </h2>
                             
                             {/* Grille d'artistes */}
@@ -698,7 +699,7 @@ export default function MusicsRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Voir les albums de ${artist.artistName}`}
+                                        aria-label={`${t('actions.viewAlbumsBy')} ${artist.artistName}`}
                                         style={{
                                             padding: '20px',
                                             borderRadius: '8px',
@@ -762,8 +763,8 @@ export default function MusicsRoute() {
                                             fontSize: '14px'
                                         }}>
                                             {artist.isUnknown 
-                                                ? `${artist.trackCount} à identifier` 
-                                                : 'Artiste'}
+                                                ? `${artist.trackCount} ${t('musics.toIdentify')}` 
+                                                : t('musics.artist')}
                                         </div>
                                     </div>
                                 ))}
@@ -778,9 +779,9 @@ export default function MusicsRoute() {
                                 }}>
                                     <div style={{ fontSize: '64px', marginBottom: '24px' }}>🎵</div>
                                     <h2 style={{ color: '#fff', fontSize: '24px', marginBottom: '8px' }}>
-                                        Aucune musique
+                                        {t('emptyStates.noMusics')}
                                     </h2>
-                                    <p style={{ marginBottom: '24px' }}>Uploadez des fichiers musicaux pour commencer</p>
+                                    <p style={{ marginBottom: '24px' }}>{t('musics.uploadMusicHint')}</p>
                                     <button
                                         onClick={() => navigate('/upload')}
                                         style={{
@@ -807,7 +808,7 @@ export default function MusicsRoute() {
                                         }}
                                     >
                                         <span>⬆️</span>
-                                        Uploader ma première musique
+                                        {t('emptyStates.uploadFirstMusic')}
                                     </button>
                                 </div>
                             )}
@@ -842,14 +843,14 @@ export default function MusicsRoute() {
                                         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                                         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                                     >
-                                        ▶ Tout lire
+                                        ▶ {t('musics.playAll')}
                                     </button>
                                 </div>
                             )}
 
                             {/* Grille d'albums */}
                             <h3 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', marginBottom: '16px' }}>
-                                Albums
+                                {t('musics.albums')}
                             </h3>
                             <div style={{
                                 display: 'grid',
@@ -868,7 +869,7 @@ export default function MusicsRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Voir les titres de ${album.albumName}`}
+                                        aria-label={`${t('actions.viewTracksOf')} ${album.albumName}`}
                                         style={{
                                             padding: '16px',
                                             borderRadius: '8px',
@@ -922,7 +923,7 @@ export default function MusicsRoute() {
                                             color: '#b3b3b3',
                                             fontSize: '14px'
                                         }}>
-                                            {album.year || ''} • {album.tracks.length} titre{album.tracks.length > 1 ? 's' : ''}
+                                            {album.year || ''} • {album.tracks.length} {album.tracks.length > 1 ? t('musics.trackCountPlural') : t('musics.trackCount')}
                                         </div>
                                     </div>
                                 ))}
@@ -940,7 +941,7 @@ export default function MusicsRoute() {
                             {/* Header de la liste */}
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: selectedAlbum.albumName === 'À identifier' ? '50px 1fr 140px' : '50px 1fr 120px',
+                                gridTemplateColumns: selectedAlbum.albumName === t('musics.toIdentify') ? '50px 1fr 140px' : '50px 1fr 120px',
                                 gap: '16px',
                                 padding: '12px 24px',
                                 borderBottom: '1px solid #282828',
@@ -950,15 +951,15 @@ export default function MusicsRoute() {
                                 letterSpacing: '0.1em'
                             }}>
                                 <div>#</div>
-                                <div>Titre</div>
+                                <div>{t('musics.title')}</div>
                                 <div style={{ textAlign: 'right' }}>
-                                    {selectedAlbum.albumName === 'À identifier' ? 'Action' : 'Durée'}
+                                    {selectedAlbum.albumName === t('musics.toIdentify') ? t('musics.action') : t('musics.duration')}
                                 </div>
                             </div>
                             
                             {/* Liste des titres */}
                             {selectedAlbum.tracks.map((track, index) => {
-                                const isToIdentify = selectedAlbum.albumName === 'À identifier';
+                                const isToIdentify = selectedAlbum.albumName === t('musics.toIdentify');
                                 
                                 const handleTrackClick = () => {
                                     if (isToIdentify) {
@@ -980,7 +981,7 @@ export default function MusicsRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={isToIdentify ? `Identifier ${track.title}` : `Lire ${track.title}`}
+                                        aria-label={isToIdentify ? `${t('actions.identifyTrack')} ${track.title}` : `${t('actions.playTrack')} ${track.title}`}
                                         style={{
                                             display: 'grid',
                                             gridTemplateColumns: isToIdentify ? '50px 1fr 140px' : '50px 1fr 120px',

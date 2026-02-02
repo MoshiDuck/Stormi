@@ -2,6 +2,7 @@
 // Composant Carrousel style Netflix réutilisable
 
 import React, { useState, useRef } from 'react';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 const netflixTheme = {
     text: {
@@ -20,6 +21,7 @@ interface NetflixCarouselProps {
 }
 
 export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps) => {
+    const { t } = useLanguage();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
@@ -65,7 +67,7 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
                 {showLeftArrow && (
                     <button
                         onClick={() => scroll('left')}
-                        aria-label="Défiler vers la gauche"
+                        aria-label={t('carousel.scrollLeft')}
                         style={{
                             position: 'absolute',
                             left: 0,
@@ -126,7 +128,7 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
                 {showRightArrow && (
                     <button
                         onClick={() => scroll('right')}
-                        aria-label="Défiler vers la droite"
+                        aria-label={t('carousel.scrollRight')}
                         style={{
                             position: 'absolute',
                             right: 0,

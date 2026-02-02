@@ -177,7 +177,7 @@ export default function DocumentsRoute() {
                         }}
                         tabIndex={0}
                         role="button"
-                        aria-label={`Ouvrir ${doc.filename || 'ce document'}`}
+                        aria-label={`${t('actions.open')} ${doc.filename || t('actions.thisDocument')}`}
                         style={{
                             position: 'relative',
                             width,

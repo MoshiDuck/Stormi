@@ -219,7 +219,7 @@ export default function OthersRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Ouvrir ${file.filename || 'ce fichier'}`}
+                                        aria-label={`${t('actions.open')} ${file.filename || t('actions.thisFile')}`}
                                         style={{
                                             backgroundColor: darkTheme.background.secondary,
                                             borderRadius: '8px',

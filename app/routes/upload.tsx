@@ -8,11 +8,12 @@ import { useToast } from '~/components/ui/Toast';
 import { darkTheme } from '~/utils/ui/theme';
 import { formatFileSize, formatDate, formatDateTime } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { translations } from '~/utils/i18n';
 
 export function meta() {
     return [
-        { title: 'Upload | Stormi' },
-        { name: 'description', content: 'Téléversez vos fichiers vers le cloud Stormi. Stockage sécurisé et streaming.' },
+        { title: translations.fr.meta.pageTitleUpload },
+        { name: 'description', content: translations.fr.meta.pageDescriptionHome },
     ];
 }
 
@@ -264,7 +265,7 @@ export default function UploadRoute() {
                                         justifyContent: 'space-between',
                                         marginBottom: '8px'
                                     }}>
-                                        <span style={{ fontSize: '14px', color: darkTheme.text.secondary }}>Progression</span>
+                                        <span style={{ fontSize: '14px', color: darkTheme.text.secondary }}>{t('common.progression')}</span>
                                         <span style={{ fontSize: '14px', fontWeight: '500', color: darkTheme.text.primary }}>
                                             {uploadProgress.percentage.toFixed(1)}%
                                         </span>
@@ -407,7 +408,7 @@ export default function UploadRoute() {
                                         {t('upload.noUploads')}
                                     </p>
                                     <p style={{ fontSize: '14px' }}>
-                                        Les fichiers que vous ajoutez apparaîtront ici
+                                        {t('upload.filesWillAppearHere')}
                                     </p>
                                 </div>
                             ) : (
@@ -483,7 +484,7 @@ export default function UploadRoute() {
                                     margin: 0,
                                     textAlign: 'center'
                                 }}>
-                                    {uploadedFiles.length} fichier{uploadedFiles.length !== 1 ? 's' : ''} uploadé{uploadedFiles.length !== 1 ? 's' : ''}
+                                    {uploadedFiles.length} {uploadedFiles.length !== 1 ? t('upload.filesUploaded') : t('upload.fileUploaded')}
                                 </p>
                             </div>
                         </div>
@@ -669,7 +670,7 @@ export default function UploadRoute() {
                                     fontWeight: '600',
                                     color: darkTheme.text.primary
                                 }}>
-                                    Rapide
+                                    {t('upload.fast')}
                                 </h3>
                                 <p style={{
                                     margin: 0,
@@ -677,7 +678,7 @@ export default function UploadRoute() {
                                     fontSize: '14px',
                                     lineHeight: '1.5'
                                 }}>
-                                    Upload optimisé avec progression en temps réel
+                                    {t('upload.fastDescription')}
                                 </p>
                             </div>
 
@@ -706,7 +707,7 @@ export default function UploadRoute() {
                                     fontWeight: '600',
                                     color: darkTheme.text.primary
                                 }}>
-                                    Sécurisé
+                                    {t('upload.secure')}
                                 </h3>
                                 <p style={{
                                     margin: 0,
@@ -714,7 +715,7 @@ export default function UploadRoute() {
                                     fontSize: '14px',
                                     lineHeight: '1.5'
                                 }}>
-                                    Tous les uploads sont authentifiés et protégés
+                                    {t('upload.secureDescription')}
                                 </p>
                             </div>
 
@@ -743,7 +744,7 @@ export default function UploadRoute() {
                                     fontWeight: '600',
                                     color: darkTheme.text.primary
                                 }}>
-                                    Stockage Cloudflare
+                                    {t('upload.cloudflareStorage')}
                                 </h3>
                                 <p style={{
                                     margin: 0,
@@ -751,7 +752,7 @@ export default function UploadRoute() {
                                     fontSize: '14px',
                                     lineHeight: '1.5'
                                 }}>
-                                    Vos fichiers sont stockés sur R2 de Cloudflare
+                                    {t('upload.cloudflareStorageDescription')}
                                 </p>
                             </div>
                         </div>
@@ -770,9 +771,9 @@ export default function UploadRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. {t('footer.allRightsReserved')}.
                             <span style={{ marginLeft: '20px', color: darkTheme.text.tertiary }}>
-                                Espace utilisé : {formatFileSize(0)} / Illimité
+                                {t('upload.spaceUsed')} : {formatFileSize(0)} / {t('upload.unlimited')}
                             </span>
                         </p>
                     </div>

@@ -11,6 +11,7 @@ import React, { useEffect, useRef } from 'react';
 import { Outlet, useNavigation, useLocation, useRouteError } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { replacePlaceholders } from '~/utils/i18n';
 import { AuthGuard } from '~/components/auth/AuthGuard';
 import { Navigation } from '~/components/navigation/Navigation';
 import { PageTransition } from '~/components/navigation/PageTransition';
@@ -72,7 +73,7 @@ export function ErrorBoundary() {
         error instanceof Error
             ? error.message
             : error && typeof error === 'object' && 'statusText' in error
-              ? (error.statusText as string) || `Erreur ${error.status ?? 500}`
+              ? (error.statusText as string) || replacePlaceholders(t('errors.errorWithStatus'), { status: String((error as { status?: number }).status ?? 500) })
               : t('errors.unknown');
 
     const handleRetry = () => {

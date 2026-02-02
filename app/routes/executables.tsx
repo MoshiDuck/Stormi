@@ -219,7 +219,7 @@ export default function ExecutablesRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Ouvrir ${executable.filename || 'cet exécutable'}`}
+                                        aria-label={`${t('actions.open')} ${executable.filename || t('actions.thisExecutable')}`}
                                         style={{
                                             backgroundColor: darkTheme.background.secondary,
                                             borderRadius: '8px',

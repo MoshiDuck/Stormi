@@ -125,7 +125,7 @@ export default function ImagesRoute() {
                         }}
                         tabIndex={0}
                         role="button"
-                        aria-label={`Voir ${image.filename || 'cette image'} en grand`}
+                        aria-label={`${t('actions.view')} ${image.filename || t('actions.thisImage')}`}
                         style={{
                             position: 'relative',
                             width,
@@ -165,7 +165,7 @@ export default function ImagesRoute() {
                                 if (container) {
                                     container.innerHTML = `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; color: ${darkTheme.text.tertiary};">
                                         <div style="font-size: 48px; margin-bottom: 8px;">🖼️</div>
-                                        <div style="font-size: 12px;">Erreur de chargement</div>
+                                        <div style={{ fontSize: '12px' }}>{t('errors.loadFailed')}</div>
                                     </div>`;
                                 }
                             }}
@@ -342,13 +342,13 @@ export default function ImagesRoute() {
                         <div
                             role="dialog"
                             aria-modal="true"
-                            aria-label="Prévisualisation de l'image"
+                            aria-label={t('viewer.previewImage')}
                             style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <button
                                 onClick={() => setSelectedImage(null)}
-                                aria-label="Fermer la prévisualisation"
+                                aria-label={t('viewer.closePreview')}
                                 style={{
                                     position: 'absolute',
                                     top: '-40px',

@@ -512,7 +512,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 fileId: track.file_id,
                 category: track.category,
                 fileUrl,
-                title: track.title || track.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre',
+                title: track.title || track.filename?.replace(/\.[^/.]+$/, '') || '',
                 artist,
                 thumbnail,
                 type: mediaType,

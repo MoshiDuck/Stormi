@@ -1,20 +1,23 @@
 // INFO : app/components/ui/LoadingSpinner.tsx
 import React from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 interface LoadingSpinnerProps {
     message?: string;
     size?: 'small' | 'medium' | 'large';
 }
 
-export function LoadingSpinner({ message = 'Chargement en cours...', size = 'medium' }: LoadingSpinnerProps) {
+export function LoadingSpinner({ message, size = 'medium' }: LoadingSpinnerProps) {
+    const { t } = useLanguage();
+    const displayMessage = message ?? t('common.loading');
     const spinnerSize = size === 'small' ? 24 : size === 'large' ? 48 : 32;
     
     return (
         <div 
             role="status"
             aria-live="polite"
-            aria-label={message || 'Chargement en cours'}
+            aria-label={displayMessage}
             style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -35,13 +38,13 @@ export function LoadingSpinner({ message = 'Chargement en cours...', size = 'med
                     animation: 'spin 1s linear infinite'
                 }}
             />
-            {message && (
+            {displayMessage && (
                 <p style={{
                     color: darkTheme.text.secondary,
                     fontSize: '14px',
                     margin: 0
                 }}>
-                    {message}
+                    {displayMessage}
                 </p>
             )}
             <style>

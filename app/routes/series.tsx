@@ -142,7 +142,7 @@ export default function SeriesRoute() {
                     { headers: { 'Authorization': `Bearer ${token}` } }
                 );
 
-                if (!response.ok) throw new Error('Erreur lors de la récupération des fichiers');
+                if (!response.ok) throw new Error(t('errors.fetchFilesFailed'));
 
                 const data = await response.json() as { files: FileItem[] };
                 let files = data.files || [];
@@ -165,7 +165,7 @@ export default function SeriesRoute() {
                 organizeSeries(files, progressions);
                 setLoading(false);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Erreur inconnue');
+                setError(err instanceof Error ? err.message : t('errors.unknown'));
                 setLoading(false);
             }
         };
@@ -637,7 +637,7 @@ export default function SeriesRoute() {
                                         e.stopPropagation();
                                         onClick();
                                     }}
-                                    aria-label="Lire la série"
+                                    aria-label={t('actions.playSeries')}
                                     style={{
                                         width: '48px',
                                         height: '48px',
@@ -666,7 +666,7 @@ export default function SeriesRoute() {
                                 </button>
                                 <button 
                                     onClick={(e) => e.stopPropagation()}
-                                    aria-label="Ajouter à ma liste"
+                                    aria-label={t('media.addToList')}
                                     style={{
                                         width: '48px',
                                         height: '48px',
@@ -800,7 +800,7 @@ export default function SeriesRoute() {
                     onKeyDown={handleKeyDown}
                     tabIndex={0}
                     role="button"
-                    aria-label={`Voir ${show.showName || 'cette série'}`}
+                    aria-label={`${t('actions.view')} ${show.showName || t('actions.thisShow')}`}
                     style={{
                         position: 'relative',
                         width: '185px',
@@ -826,7 +826,7 @@ export default function SeriesRoute() {
                             onKeyDown={handleKeyDown}
                             tabIndex={0}
                             role="button"
-                            aria-label={`Voir ${show.showName || 'cette série'}`}
+                            aria-label={`${t('actions.view')} ${show.showName || t('actions.thisShow')}`}
                             style={{
                                 position: 'fixed',
                                 top: `${customPosition.top}px`,
@@ -864,7 +864,7 @@ export default function SeriesRoute() {
                 onKeyDown={handleKeyDown}
                 tabIndex={0}
                 role="button"
-                aria-label={`Lire épisode ${episode.episodeNumber}: ${episode.title}`}
+                aria-label={`${t('actions.playEpisode')} ${episode.episodeNumber}: ${episode.title}`}
                 style={{
                     width: '280px',
                     flexShrink: 0,
@@ -999,7 +999,7 @@ export default function SeriesRoute() {
             onKeyDown={handleKeyDown}
             tabIndex={0}
             role="button"
-            aria-label={`Identifier ${file.filename || 'ce fichier'}`}
+            aria-label={`${t('actions.identify')} ${file.filename || t('actions.thisFile')}`}
             style={{
                 width: '185px',
                 flexShrink: 0,
@@ -1274,7 +1274,7 @@ export default function SeriesRoute() {
                                         }}
                                     >
                                         <span style={{ fontSize: '20px' }}>▶</span>
-                                        <span>Lecture</span>
+                                        <span>{t('media.play')}</span>
                                     </button>
                                     <button
                                         onClick={() => handleShowClick(heroShow)}
@@ -1303,7 +1303,7 @@ export default function SeriesRoute() {
                                         }}
                                     >
                                         <span style={{ fontSize: '20px' }}>ℹ</span>
-                                        <span>Plus d'infos</span>
+                                        <span>{t('media.moreInfo')}</span>
                                     </button>
                                 </div>
                             </div>
@@ -1330,7 +1330,7 @@ export default function SeriesRoute() {
                     
                     {/* Continuer de regarder */}
                     {organizedSeries.continueWatching.length > 0 && (
-                        <NetflixCarousel title="Continuer de regarder">
+                        <NetflixCarousel title={t('home.continueWatching')}>
                             {organizedSeries.continueWatching.map((item) => (
                                 <div key={item.show.showId} style={{ position: 'relative' }}>
                                     <SeriesCard
@@ -1362,7 +1362,7 @@ export default function SeriesRoute() {
                     
                     {/* Top 10 */}
                     {organizedSeries.top10.length > 0 && (
-                        <NetflixCarousel title="Top 10 - Les mieux notés">
+                        <NetflixCarousel title={t('videos.top10')}>
                             {organizedSeries.top10.map((show, index) => (
                                 <div key={show.showId} style={{ position: 'relative' }}>
                                     <SeriesCard
@@ -1428,7 +1428,7 @@ export default function SeriesRoute() {
                     
                     {/* Ajoutés récemment */}
                     {organizedSeries.recentlyAdded.length > 0 && (
-                        <NetflixCarousel title="Ajoutés récemment">
+                        <NetflixCarousel title={t('videos.recentlyAdded')}>
                             {organizedSeries.recentlyAdded.map((show) => (
                                 <SeriesCard
                                     key={show.showId}

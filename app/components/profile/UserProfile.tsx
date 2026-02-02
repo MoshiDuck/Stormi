@@ -1,6 +1,7 @@
 // INFO : app/components/UserProfile.tsx
 import React from 'react';
 import type { User } from '~/types/auth';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 interface UserProfileProps {
     user: User;
@@ -8,6 +9,7 @@ interface UserProfileProps {
 }
 
 export function UserProfile({ user, onLogout }: UserProfileProps) {
+    const { t } = useLanguage();
     return (
         <div style={{
             backgroundColor: '#f8f9fa',
@@ -33,7 +35,7 @@ export function UserProfile({ user, onLogout }: UserProfileProps) {
                 )}
                 <div>
                     <p style={{ margin: 0, fontWeight: 'bold', fontSize: '16px' }}>
-                        {user.name || 'Utilisateur'}
+                        {user.name || t('common.user')}
                     </p>
                     <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
                         {user.email}
@@ -50,11 +52,11 @@ export function UserProfile({ user, onLogout }: UserProfileProps) {
                 borderRadius: '6px'
             }}>
                 <p style={{ margin: '4px 0' }}>
-                    <strong>ID:</strong> <code style={{ fontSize: '11px', wordBreak: 'break-all' }}>{user.id}</code>
+                    <strong>{t('profile.idLabel')}:</strong> <code style={{ fontSize: '11px', wordBreak: 'break-all' }}>{user.id}</code>
                 </p>
                 {user.email_verified !== undefined && (
                     <p style={{ margin: '4px 0' }}>
-                        <strong>Email vérifié:</strong> {user.email_verified ? '✅ Oui' : '❌ Non'}
+                        <strong>{t('profile.emailVerifiedLabel')}:</strong> {user.email_verified ? `✅ ${t('common.yes')}` : `❌ ${t('common.no')}`}
                     </p>
                 )}
             </div>
@@ -76,7 +78,7 @@ export function UserProfile({ user, onLogout }: UserProfileProps) {
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
             >
-                Se déconnecter
+                {t('nav.logout')}
             </button>
         </div>
     );

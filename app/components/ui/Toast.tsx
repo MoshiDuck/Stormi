@@ -2,6 +2,7 @@
 // Système de notifications toast pour feedback utilisateur
 import React, { useEffect, useState } from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -18,6 +19,7 @@ interface ToastProps {
 }
 
 function ToastComponent({ toast, onClose }: ToastProps) {
+    const { t } = useLanguage();
     const [isVisible, setIsVisible] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
 
@@ -91,7 +93,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
             aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
             aria-atomic="true"
             tabIndex={0}
-            aria-label="Cliquer ou appuyer sur Entrée pour fermer"
+            aria-label={t('toast.closeHint')}
             style={{
                 backgroundColor: darkTheme.background.secondary,
                 borderLeft: `4px solid ${getColor()}`,
@@ -146,7 +148,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
                     setIsExiting(true);
                     setTimeout(() => onClose(toast.id), 300);
                 }}
-                aria-label="Fermer la notification"
+                aria-label={t('toast.close')}
                 style={{
                     background: 'none',
                     border: 'none',

@@ -51,6 +51,58 @@ export interface Translations {
         save: string;
         close: string;
         open: string;
+        untitled: string;
+        user: string;
+        yes: string;
+        no: string;
+        unnamed: string;
+        imageFallback: string;
+        progression: string;
+        later: string;
+        cancelWithCountdown: string;
+    };
+    // Splash & redirection
+    splash: {
+        loadingLong: string;
+        loading: string;
+        redirecting: string;
+        connecting: string;
+        ariaLabel: string;
+    };
+    // Titres de page (meta)
+    meta: {
+        pageTitleHome: string;
+        pageTitleNotFound: string;
+        pageTitleMusics: string;
+        pageTitleUpload: string;
+        pageTitleLibrary: string;
+        pageTitleProfile: string;
+        pageDescriptionHome: string;
+        pageDescriptionProfile: string;
+        pageDescriptionLibrary: string;
+    };
+    // Actions médias (Lecture, Plus d'infos, etc.)
+    media: {
+        play: string;
+        moreInfo: string;
+        addToList: string;
+    };
+    // Musiques (Artiste, Album, Titre, etc.)
+    musics: {
+        artist: string;
+        album: string;
+        title: string;
+        unknownArtist: string;
+        unknownAlbum: string;
+        toIdentify: string;
+        duration: string;
+        action: string;
+        albums: string;
+        playAll: string;
+        uploadMusicHint: string;
+        trackCount: string;
+        trackCountPlural: string;
+        yourArtists: string;
     };
     // Login
     login: {
@@ -61,6 +113,8 @@ export interface Translations {
         terms: string;
         configError: string;
         configUnavailable: string;
+        googleAuthError: string;
+        configErrorDetail: string;
     };
     // Home
     home: {
@@ -124,6 +178,26 @@ export interface Translations {
         addAnother: string;
         nextStepHint: string;
         uploadButton: string;
+        filesWillAppearHere: string;
+        fileUploaded: string;
+        filesUploaded: string;
+        fast: string;
+        fastDescription: string;
+        secure: string;
+        secureDescription: string;
+        cloudflareStorage: string;
+        cloudflareStorageDescription: string;
+        spaceUsed: string;
+        unlimited: string;
+    };
+    // Local player (meta)
+    localPlayerMeta: {
+        pageTitle: string;
+        pageDescription: string;
+    };
+    // Footer
+    footer: {
+        allRightsReserved: string;
     };
     // Page 404
     notFound: {
@@ -165,6 +239,7 @@ export interface Translations {
         episode: string;
         recentlyAdded: string;
         redirectToFilms: string;
+        top10: string;
     };
     // Empty states
     emptyStates: {
@@ -202,11 +277,146 @@ export interface Translations {
         subtitle: string;
         language: string;
         languageDescription: string;
+        emailVerified: string;
+        emailNotVerified: string;
+        personalInfo: string;
+        fullName: string;
+        notSpecified: string;
+        emailLabel: string;
+        verificationStatus: string;
+        userId: string;
+        idLabel: string;
+        emailVerifiedLabel: string;
+        connectedAccount: string;
+        googleAccount: string;
+        connectedViaGoogle: string;
+        accountSecureHint: string;
+        actions: string;
+        logout: string;
+        clearLocalData: string;
+        confirmClearLocalData: string;
+        logoutNote: string;
+        noteLabel: string;
     };
     // Dialogs
     dialogs: {
         logoutTitle: string;
         logoutMessage: string;
+    };
+    // Match (identification médias)
+    match: {
+        loadingInfo: string;
+        titleDetected: string;
+        artistDetected: string;
+        artistDetectedInMetadata: string;
+        fileLabel: string;
+        identifyTrack: string;
+        identifyMovie: string;
+        step1Artist: string;
+        step2Title: string;
+        searchArtistTitle: string;
+        artistPlaceholder: string;
+        searchButton: string;
+        searching: string;
+        selectedArtistLabel: string;
+        songTitlePlaceholder: string;
+        loadingAlbums: string;
+        viewAllAlbums: string;
+        searchMovieOrShow: string;
+        fileNotFound: string;
+        searchArtistsError: string;
+        searchAlbumsError: string;
+        loadAlbumsError: string;
+        searchMoviesError: string;
+        pleaseEnterTitle: string;
+        pleaseSelectArtist: string;
+        pleaseSelectMovie: string;
+        allAlbumsBy: string;
+        albumsContaining: string;
+        movieOrShowPlaceholder: string;
+        selectArtist: string;
+        selectMatch: string;
+        selectAlbum: string;
+        deselectAlbum: string;
+        step4Confirm: string;
+        confirmSelection: string;
+        saving: string;
+        cancelAndReturn: string;
+        titleFallback: string;
+    };
+    // Player (MiniPlayer, reader)
+    player: {
+        dismissRestore: string;
+        resumePlayback: string;
+        previousTrack: string;
+        nextTrack: string;
+        pause: string;
+        play: string;
+        closePlayer: string;
+        miniPlayer: string;
+    };
+    // Carousel
+    carousel: {
+        scrollLeft: string;
+        scrollRight: string;
+    };
+    // Actions / aria (View, Open, Identify, etc.)
+    actions: {
+        select: string;
+        deselect: string;
+        view: string;
+        open: string;
+        identify: string;
+        backToList: string;
+        viewAlbumsBy: string;
+        viewTracksOf: string;
+        playTrack: string;
+        identifyTrack: string;
+        viewImage: string;
+        thisImage: string;
+        thisFile: string;
+        thisDocument: string;
+        thisArchive: string;
+        thisExecutable: string;
+        thisMovie: string;
+        thisShow: string;
+        playMovie: string;
+        playSeries: string;
+        playEpisode: string;
+    };
+    // Info page (Ma liste)
+    info: {
+        myList: string;
+    };
+    // Viewer (images preview)
+    viewer: {
+        previewImage: string;
+        closePreview: string;
+    };
+    // Loading
+    loading: {
+        pageLoad: string;
+    };
+    // Toast
+    toast: {
+        closeHint: string;
+        close: string;
+    };
+    // Rating
+    rating: {
+        rateStars: string;
+        rateStarsPlural: string;
+        clickToRate: string;
+        yourRating: string;
+        averageRating: string;
+    };
+    // PDF
+    pdf: {
+        previewUnavailable: string;
+    };
+    // Language selector
+    language: {
+        selectLanguage: string;
     };
     // Errors
     errors: {
@@ -220,6 +430,9 @@ export interface Translations {
         loadFailed: string;
         title: string;
         retry: string;
+        fetchFilesFailed: string;
+        errorWithStatus: string;
+        saveFailedTryAgain: string;
     };
 }
 
@@ -267,7 +480,159 @@ const translations: Record<Language, Translations> = {
             delete: 'Supprimer',
             save: 'Enregistrer',
             close: 'Fermer',
-            open: 'Ouvrir'
+            open: 'Ouvrir',
+            untitled: 'Sans titre',
+            user: 'Utilisateur',
+            yes: 'Oui',
+            no: 'Non',
+            unnamed: 'Sans nom',
+            imageFallback: 'Image',
+            progression: 'Progression',
+            later: 'Plus tard',
+            cancelWithCountdown: 'Annuler ({seconds}s)'
+        },
+        splash: {
+            loadingLong: 'Chargement prolongé. Vous pouvez réessayer.',
+            loading: 'Chargement…',
+            redirecting: 'Redirection…',
+            connecting: 'Connexion…',
+            ariaLabel: 'Écran de démarrage Stormi'
+        },
+        meta: {
+            pageTitleHome: 'Accueil | Stormi',
+            pageTitleNotFound: 'Page non trouvée | Stormi',
+            pageTitleMusics: 'Musiques | Stormi',
+            pageTitleUpload: 'Upload | Stormi',
+            pageTitleLibrary: 'Bibliothèque | Stormi',
+            pageTitleProfile: 'Profil | Stormi',
+            pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
+            pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
+            pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.'
+        },
+        media: {
+            play: 'Lecture',
+            moreInfo: 'Plus d\'infos',
+            addToList: 'Ajouter à ma liste'
+        },
+        musics: {
+            artist: 'Artiste',
+            album: 'Album',
+            title: 'Titre',
+            unknownArtist: 'Artiste inconnu',
+            unknownAlbum: 'Sans nom',
+            toIdentify: 'À identifier',
+            duration: 'Durée',
+            action: 'Action',
+            albums: 'Albums',
+            playAll: 'Tout lire',
+            uploadMusicHint: 'Uploadez des fichiers musicaux pour commencer',
+            trackCount: 'titre',
+            trackCountPlural: 'titres',
+            yourArtists: 'Vos artistes'
+        },
+        match: {
+            loadingInfo: 'Chargement des informations...',
+            titleDetected: 'Titre détecté dans les métadonnées',
+            artistDetected: 'Artiste détecté',
+            artistDetectedInMetadata: 'Artiste détecté dans les métadonnées',
+            fileLabel: 'Fichier',
+            identifyTrack: 'Identifier ce morceau',
+            identifyMovie: 'Identifier ce film/série',
+            step1Artist: 'Choisir l\'artiste',
+            step2Title: 'Entrer le titre',
+            searchArtistTitle: 'Rechercher l\'artiste',
+            artistPlaceholder: 'Nom de l\'artiste...',
+            searchButton: 'Rechercher',
+            searching: 'Recherche...',
+            selectedArtistLabel: 'Artiste sélectionné',
+            songTitlePlaceholder: 'Titre de la chanson...',
+            loadingAlbums: 'Chargement des albums...',
+            viewAllAlbums: 'Voir tous les albums de',
+            searchMovieOrShow: 'Rechercher un film ou une série',
+            fileNotFound: 'Fichier non trouvé',
+            searchArtistsError: 'Impossible de rechercher les artistes. Vérifiez votre connexion ou réessayez.',
+            searchAlbumsError: 'Impossible de rechercher les albums. Vérifiez votre connexion ou réessayez.',
+            loadAlbumsError: 'Impossible de charger les albums. Vérifiez votre connexion ou réessayez.',
+            searchMoviesError: 'Impossible de rechercher les films/séries. Vérifiez votre connexion ou réessayez.',
+            pleaseEnterTitle: 'Veuillez entrer un titre',
+            pleaseSelectArtist: 'Veuillez sélectionner un artiste',
+            pleaseSelectMovie: 'Veuillez sélectionner un film ou une série',
+            allAlbumsBy: 'Tous les albums de',
+            albumsContaining: 'Albums contenant',
+            movieOrShowPlaceholder: 'Titre du film ou de la série...',
+            selectArtist: 'Sélectionner',
+            selectMatch: 'Sélectionner',
+            selectAlbum: 'Sélectionner',
+            deselectAlbum: 'Désélectionner',
+            step4Confirm: '4. Confirmer',
+            confirmSelection: 'Confirmer la sélection',
+            saving: 'Sauvegarde...',
+            cancelAndReturn: 'Annuler et retourner aux fichiers',
+            titleFallback: 'Titre'
+        },
+        player: {
+            dismissRestore: 'Ignorer la restauration',
+            resumePlayback: 'Reprendre la lecture',
+            previousTrack: 'Piste précédente',
+            nextTrack: 'Piste suivante',
+            pause: 'Mettre en pause',
+            play: 'Lire',
+            closePlayer: 'Fermer le lecteur',
+            miniPlayer: 'Mini lecteur'
+        },
+        carousel: {
+            scrollLeft: 'Défiler vers la gauche',
+            scrollRight: 'Défiler vers la droite'
+        },
+        actions: {
+            select: 'Sélectionner',
+            deselect: 'Désélectionner',
+            view: 'Voir',
+            open: 'Ouvrir',
+            identify: 'Identifier',
+            backToList: 'Retour à la liste',
+            viewAlbumsBy: 'Voir les albums de',
+            viewTracksOf: 'Voir les titres de',
+            playTrack: 'Lire',
+            identifyTrack: 'Identifier',
+            viewImage: 'Prévisualisation de l\'image',
+            thisImage: 'cette image',
+            thisFile: 'ce fichier',
+            thisDocument: 'ce document',
+            thisArchive: 'cette archive',
+            thisExecutable: 'cet exécutable',
+            thisMovie: 'ce film',
+            thisShow: 'cette série',
+            playMovie: 'Lire le film',
+            playSeries: 'Lire la série',
+            playEpisode: 'Lire l\'épisode'
+        },
+        info: {
+            myList: 'Ma liste'
+        },
+        viewer: {
+            previewImage: 'Prévisualisation de l\'image',
+            closePreview: 'Fermer la prévisualisation'
+        },
+        loading: {
+            pageLoad: 'Chargement de la page'
+        },
+        toast: {
+            closeHint: 'Cliquer ou appuyer sur Entrée pour fermer',
+            close: 'Fermer la notification'
+        },
+        rating: {
+            rateStars: 'Noter étoile',
+            rateStarsPlural: 'Noter étoiles',
+            clickToRate: 'Cliquez pour noter',
+            yourRating: 'Votre note',
+            averageRating: 'Note moyenne'
+        },
+        pdf: {
+            previewUnavailable: 'Aperçu indisponible'
+        },
+        language: {
+            selectLanguage: 'Sélectionner la langue'
         },
         login: {
             title: 'Stormi',
@@ -276,7 +641,9 @@ const translations: Record<Language, Translations> = {
             electronMode: 'Mode Electron actif - L\'authentification s\'ouvrira dans une fenêtre Electron',
             terms: 'En vous connectant, vous acceptez nos conditions d\'utilisation et notre politique de confidentialité.',
             configError: 'Erreur de configuration',
-            configUnavailable: 'Configuration non disponible. Veuillez réessayer plus tard.'
+            configUnavailable: 'Configuration non disponible. Veuillez réessayer plus tard.',
+            googleAuthError: 'Erreur lors de l\'authentification Google',
+            configErrorDetail: 'GOOGLE_CLIENT_ID non configuré côté Cloudflare. Veuillez configurer votre application.'
         },
         home: {
             title: 'Tableau de bord',
@@ -337,7 +704,25 @@ const translations: Record<Language, Translations> = {
             viewLibrary: 'Voir la bibliothèque',
             addAnother: 'Ajouter un autre fichier',
             nextStepHint: 'Où souhaitez-vous aller ?',
-            uploadButton: 'Envoyer'
+            uploadButton: 'Envoyer',
+            filesWillAppearHere: 'Les fichiers que vous ajoutez apparaîtront ici',
+            fileUploaded: 'fichier uploadé',
+            filesUploaded: 'fichiers uploadés',
+            fast: 'Rapide',
+            fastDescription: 'Upload optimisé avec progression en temps réel',
+            secure: 'Sécurisé',
+            secureDescription: 'Tous les uploads sont authentifiés et protégés',
+            cloudflareStorage: 'Stockage Cloudflare',
+            cloudflareStorageDescription: 'Vos fichiers sont stockés sur R2 de Cloudflare',
+            spaceUsed: 'Espace utilisé',
+            unlimited: 'Illimité'
+        },
+        localPlayerMeta: {
+            pageTitle: 'Lecteur local | Stormi',
+            pageDescription: 'Lisez des fichiers audio et vidéo depuis votre appareil en lecture continue.'
+        },
+        footer: {
+            allRightsReserved: 'Tous droits réservés'
         },
         notFound: {
             title: 'Page non trouvée',
@@ -359,7 +744,8 @@ const translations: Record<Language, Translations> = {
             season: 'saison',
             episode: 'Épisode',
             recentlyAdded: 'Ajoutés récemment',
-            redirectToFilms: 'Redirection vers Films'
+            redirectToFilms: 'Redirection vers Films',
+            top10: 'Top 10 - Les mieux notés'
         },
         categories: {
             videos: 'Vidéos',
@@ -410,7 +796,27 @@ const translations: Record<Language, Translations> = {
             title: 'Mon Profil',
             subtitle: 'Gérez vos informations personnelles et vos préférences',
             language: 'Langue',
-            languageDescription: 'Choisissez votre langue préférée'
+            languageDescription: 'Choisissez votre langue préférée',
+            emailVerified: 'Email vérifié',
+            emailNotVerified: 'Email non vérifié',
+            personalInfo: 'Informations personnelles',
+            fullName: 'Nom complet',
+            notSpecified: 'Non spécifié',
+            emailLabel: 'Email',
+            verificationStatus: 'Statut de vérification',
+            userId: 'ID utilisateur',
+            idLabel: 'ID',
+            emailVerifiedLabel: 'Email vérifié',
+            connectedAccount: 'Compte connecté',
+            googleAccount: 'Compte Google',
+            connectedViaGoogle: 'Connecté via Google OAuth',
+            accountSecureHint: 'Votre compte est sécurisé avec l\'authentification Google. Pour modifier vos informations, veuillez les mettre à jour directement sur votre compte Google.',
+            actions: 'Actions',
+            logout: 'Se déconnecter',
+            clearLocalData: 'Effacer les données locales',
+            confirmClearLocalData: 'Êtes-vous sûr de vouloir supprimer toutes vos données locales ?',
+            logoutNote: 'La déconnexion supprimera votre session actuelle mais ne supprimera pas votre compte. Pour supprimer définitivement votre compte, veuillez vous rendre sur votre compte Google.',
+            noteLabel: 'Note :'
         },
         dialogs: {
             logoutTitle: 'Déconnexion',
@@ -426,7 +832,10 @@ const translations: Record<Language, Translations> = {
             deleteFailed: 'Impossible de supprimer',
             loadFailed: 'Impossible de charger le fichier',
             title: 'Erreur',
-            retry: 'Réessayer'
+            retry: 'Réessayer',
+            fetchFilesFailed: 'Erreur lors de la récupération des fichiers',
+            errorWithStatus: 'Erreur {status}',
+            saveFailedTryAgain: 'Erreur lors de la sauvegarde. Veuillez réessayer.'
         }
     },
     en: {
@@ -472,7 +881,159 @@ const translations: Record<Language, Translations> = {
             delete: 'Delete',
             save: 'Save',
             close: 'Close',
-            open: 'Open'
+            open: 'Open',
+            untitled: 'Untitled',
+            user: 'User',
+            yes: 'Yes',
+            no: 'No',
+            unnamed: 'Untitled',
+            imageFallback: 'Image',
+            progression: 'Progress',
+            later: 'Later',
+            cancelWithCountdown: 'Cancel ({seconds}s)'
+        },
+        splash: {
+            loadingLong: 'Loading is taking longer than expected. You can try again.',
+            loading: 'Loading…',
+            redirecting: 'Redirecting…',
+            connecting: 'Connecting…',
+            ariaLabel: 'Stormi splash screen'
+        },
+        meta: {
+            pageTitleHome: 'Home | Stormi',
+            pageTitleNotFound: 'Page not found | Stormi',
+            pageTitleMusics: 'Music | Stormi',
+            pageTitleUpload: 'Upload | Stormi',
+            pageTitleLibrary: 'Library | Stormi',
+            pageTitleProfile: 'Profile | Stormi',
+            pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
+            pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
+            pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.'
+        },
+        media: {
+            play: 'Play',
+            moreInfo: 'More info',
+            addToList: 'Add to my list'
+        },
+        musics: {
+            artist: 'Artist',
+            album: 'Album',
+            title: 'Title',
+            unknownArtist: 'Unknown artist',
+            unknownAlbum: 'Untitled',
+            toIdentify: 'To identify',
+            duration: 'Duration',
+            action: 'Action',
+            albums: 'Albums',
+            playAll: 'Play all',
+            uploadMusicHint: 'Upload music files to get started',
+            trackCount: 'track',
+            trackCountPlural: 'tracks',
+            yourArtists: 'Your artists'
+        },
+        match: {
+            loadingInfo: 'Loading information...',
+            titleDetected: 'Title detected in metadata',
+            artistDetected: 'Artist detected',
+            artistDetectedInMetadata: 'Artist detected in metadata',
+            fileLabel: 'File',
+            identifyTrack: 'Identify this track',
+            identifyMovie: 'Identify this movie/show',
+            step1Artist: 'Choose artist',
+            step2Title: 'Enter title',
+            searchArtistTitle: 'Search for artist',
+            artistPlaceholder: 'Artist name...',
+            searchButton: 'Search',
+            searching: 'Searching...',
+            selectedArtistLabel: 'Selected artist',
+            songTitlePlaceholder: 'Song title...',
+            loadingAlbums: 'Loading albums...',
+            viewAllAlbums: 'View all albums by',
+            searchMovieOrShow: 'Search for a movie or show',
+            fileNotFound: 'File not found',
+            searchArtistsError: 'Unable to search for artists. Check your connection or try again.',
+            searchAlbumsError: 'Unable to search for albums. Check your connection or try again.',
+            loadAlbumsError: 'Unable to load albums. Check your connection or try again.',
+            searchMoviesError: 'Unable to search for movies/shows. Check your connection or try again.',
+            pleaseEnterTitle: 'Please enter a title',
+            pleaseSelectArtist: 'Please select an artist',
+            pleaseSelectMovie: 'Please select a movie or show',
+            allAlbumsBy: 'All albums by',
+            albumsContaining: 'Albums containing',
+            movieOrShowPlaceholder: 'Movie or show title...',
+            selectArtist: 'Select',
+            selectMatch: 'Select',
+            selectAlbum: 'Select',
+            deselectAlbum: 'Deselect',
+            step4Confirm: '4. Confirm',
+            confirmSelection: 'Confirm selection',
+            saving: 'Saving...',
+            cancelAndReturn: 'Cancel and return to files',
+            titleFallback: 'Title'
+        },
+        player: {
+            dismissRestore: 'Dismiss restore',
+            resumePlayback: 'Resume playback',
+            previousTrack: 'Previous track',
+            nextTrack: 'Next track',
+            pause: 'Pause',
+            play: 'Play',
+            closePlayer: 'Close player',
+            miniPlayer: 'Mini player'
+        },
+        carousel: {
+            scrollLeft: 'Scroll left',
+            scrollRight: 'Scroll right'
+        },
+        actions: {
+            select: 'Select',
+            deselect: 'Deselect',
+            view: 'View',
+            open: 'Open',
+            identify: 'Identify',
+            backToList: 'Back to list',
+            viewAlbumsBy: 'View albums by',
+            viewTracksOf: 'View tracks of',
+            playTrack: 'Play',
+            identifyTrack: 'Identify',
+            viewImage: 'Image preview',
+            thisImage: 'this image',
+            thisFile: 'this file',
+            thisDocument: 'this document',
+            thisArchive: 'this archive',
+            thisExecutable: 'this executable',
+            thisMovie: 'this movie',
+            thisShow: 'this show',
+            playMovie: 'Play movie',
+            playSeries: 'Play series',
+            playEpisode: 'Play episode'
+        },
+        info: {
+            myList: 'My list'
+        },
+        viewer: {
+            previewImage: 'Image preview',
+            closePreview: 'Close preview'
+        },
+        loading: {
+            pageLoad: 'Page loading'
+        },
+        toast: {
+            closeHint: 'Click or press Enter to close',
+            close: 'Close notification'
+        },
+        rating: {
+            rateStars: 'Rate star',
+            rateStarsPlural: 'Rate stars',
+            clickToRate: 'Click to rate',
+            yourRating: 'Your rating',
+            averageRating: 'Average rating'
+        },
+        pdf: {
+            previewUnavailable: 'Preview unavailable'
+        },
+        language: {
+            selectLanguage: 'Select language'
         },
         login: {
             title: 'Stormi',
@@ -481,7 +1042,9 @@ const translations: Record<Language, Translations> = {
             electronMode: 'Electron mode active - Authentication will open in an Electron window',
             terms: 'By signing in, you agree to our terms of use and privacy policy.',
             configError: 'Configuration error',
-            configUnavailable: 'Configuration unavailable. Please try again later.'
+            configUnavailable: 'Configuration unavailable. Please try again later.',
+            googleAuthError: 'Error during Google authentication',
+            configErrorDetail: 'GOOGLE_CLIENT_ID not configured on Cloudflare. Please configure your application.'
         },
         home: {
             title: 'Dashboard',
@@ -540,7 +1103,25 @@ const translations: Record<Language, Translations> = {
             viewLibrary: 'View library',
             addAnother: 'Add another file',
             nextStepHint: 'Where would you like to go?',
-            uploadButton: 'Upload'
+            uploadButton: 'Upload',
+            filesWillAppearHere: 'Files you add will appear here',
+            fileUploaded: 'file uploaded',
+            filesUploaded: 'files uploaded',
+            fast: 'Fast',
+            fastDescription: 'Optimized upload with real-time progress',
+            secure: 'Secure',
+            secureDescription: 'All uploads are authenticated and protected',
+            cloudflareStorage: 'Cloudflare Storage',
+            cloudflareStorageDescription: 'Your files are stored on Cloudflare R2',
+            spaceUsed: 'Space used',
+            unlimited: 'Unlimited'
+        },
+        localPlayerMeta: {
+            pageTitle: 'Local player | Stormi',
+            pageDescription: 'Play audio and video files from your device in sequence.'
+        },
+        footer: {
+            allRightsReserved: 'All rights reserved'
         },
         notFound: {
             title: 'Page not found',
@@ -562,7 +1143,8 @@ const translations: Record<Language, Translations> = {
             season: 'season',
             episode: 'Episode',
             recentlyAdded: 'Recently Added',
-            redirectToFilms: 'Redirecting to Movies'
+            redirectToFilms: 'Redirecting to Movies',
+            top10: 'Top 10 - Highest rated'
         },
         categories: {
             videos: 'Videos',
@@ -613,7 +1195,27 @@ const translations: Record<Language, Translations> = {
             title: 'My Profile',
             subtitle: 'Manage your personal information and preferences',
             language: 'Language',
-            languageDescription: 'Choose your preferred language'
+            languageDescription: 'Choose your preferred language',
+            emailVerified: 'Email verified',
+            emailNotVerified: 'Email not verified',
+            personalInfo: 'Personal information',
+            fullName: 'Full name',
+            notSpecified: 'Not specified',
+            emailLabel: 'Email',
+            verificationStatus: 'Verification status',
+            userId: 'User ID',
+            idLabel: 'ID',
+            emailVerifiedLabel: 'Email verified',
+            connectedAccount: 'Connected account',
+            googleAccount: 'Google account',
+            connectedViaGoogle: 'Connected via Google OAuth',
+            accountSecureHint: 'Your account is secured with Google authentication. To update your information, please update it directly on your Google account.',
+            actions: 'Actions',
+            logout: 'Log out',
+            clearLocalData: 'Clear local data',
+            confirmClearLocalData: 'Are you sure you want to delete all your local data?',
+            logoutNote: 'Logging out will remove your current session but will not delete your account. To permanently delete your account, please go to your Google account.',
+            noteLabel: 'Note:'
         },
         dialogs: {
             logoutTitle: 'Logout',
@@ -629,7 +1231,10 @@ const translations: Record<Language, Translations> = {
             deleteFailed: 'Unable to delete',
             loadFailed: 'Unable to load file',
             title: 'Error',
-            retry: 'Retry'
+            retry: 'Retry',
+            fetchFilesFailed: 'Error while fetching files',
+            errorWithStatus: 'Error {status}',
+            saveFailedTryAgain: 'Error while saving. Please try again.'
         }
     },
     es: {
@@ -675,7 +1280,159 @@ const translations: Record<Language, Translations> = {
             delete: 'Eliminar',
             save: 'Guardar',
             close: 'Cerrar',
-            open: 'Abrir'
+            open: 'Abrir',
+            untitled: 'Sin título',
+            user: 'Usuario',
+            yes: 'Sí',
+            no: 'No',
+            unnamed: 'Sin nombre',
+            imageFallback: 'Imagen',
+            progression: 'Progreso',
+            later: 'Más tarde',
+            cancelWithCountdown: 'Cancelar ({seconds}s)'
+        },
+        splash: {
+            loadingLong: 'La carga tarda más de lo habitual. Puedes intentarlo de nuevo.',
+            loading: 'Cargando…',
+            redirecting: 'Redirigiendo…',
+            connecting: 'Conectando…',
+            ariaLabel: 'Pantalla de inicio Stormi'
+        },
+        meta: {
+            pageTitleHome: 'Inicio | Stormi',
+            pageTitleNotFound: 'Página no encontrada | Stormi',
+            pageTitleMusics: 'Música | Stormi',
+            pageTitleUpload: 'Subir | Stormi',
+            pageTitleLibrary: 'Biblioteca | Stormi',
+            pageTitleProfile: 'Perfil | Stormi',
+            pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
+            pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
+            pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.'
+        },
+        media: {
+            play: 'Reproducir',
+            moreInfo: 'Más información',
+            addToList: 'Añadir a mi lista'
+        },
+        musics: {
+            artist: 'Artista',
+            album: 'Álbum',
+            title: 'Título',
+            unknownArtist: 'Artista desconocido',
+            unknownAlbum: 'Sin nombre',
+            toIdentify: 'Por identificar',
+            duration: 'Duración',
+            action: 'Acción',
+            albums: 'Álbumes',
+            playAll: 'Reproducir todo',
+            uploadMusicHint: 'Sube archivos de música para comenzar',
+            trackCount: 'pista',
+            trackCountPlural: 'pistas',
+            yourArtists: 'Tus artistas'
+        },
+        match: {
+            loadingInfo: 'Cargando información...',
+            titleDetected: 'Título detectado en los metadatos',
+            artistDetected: 'Artista detectado',
+            artistDetectedInMetadata: 'Artista detectado en los metadatos',
+            fileLabel: 'Archivo',
+            identifyTrack: 'Identificar esta pista',
+            identifyMovie: 'Identificar esta película/serie',
+            step1Artist: 'Elegir artista',
+            step2Title: 'Introducir título',
+            searchArtistTitle: 'Buscar artista',
+            artistPlaceholder: 'Nombre del artista...',
+            searchButton: 'Buscar',
+            searching: 'Buscando...',
+            selectedArtistLabel: 'Artista seleccionado',
+            songTitlePlaceholder: 'Título de la canción...',
+            loadingAlbums: 'Cargando álbumes...',
+            viewAllAlbums: 'Ver todos los álbumes de',
+            searchMovieOrShow: 'Buscar una película o serie',
+            fileNotFound: 'Archivo no encontrado',
+            searchArtistsError: 'No se pueden buscar artistas. Comprueba tu conexión o inténtalo de nuevo.',
+            searchAlbumsError: 'No se pueden buscar álbumes. Comprueba tu conexión o inténtalo de nuevo.',
+            loadAlbumsError: 'No se pueden cargar los álbumes. Comprueba tu conexión o inténtalo de nuevo.',
+            searchMoviesError: 'No se pueden buscar películas/series. Comprueba tu conexión o inténtalo de nuevo.',
+            pleaseEnterTitle: 'Por favor, introduce un título',
+            pleaseSelectArtist: 'Por favor, selecciona un artista',
+            pleaseSelectMovie: 'Por favor, selecciona una película o serie',
+            allAlbumsBy: 'Todos los álbumes de',
+            albumsContaining: 'Álbumes que contienen',
+            movieOrShowPlaceholder: 'Título de la película o serie...',
+            selectArtist: 'Seleccionar',
+            selectMatch: 'Seleccionar',
+            selectAlbum: 'Seleccionar',
+            deselectAlbum: 'Deseleccionar',
+            step4Confirm: '4. Confirmar',
+            confirmSelection: 'Confirmar selección',
+            saving: 'Guardando...',
+            cancelAndReturn: 'Cancelar y volver a los archivos',
+            titleFallback: 'Título'
+        },
+        player: {
+            dismissRestore: 'Descartar restauración',
+            resumePlayback: 'Reanudar reproducción',
+            previousTrack: 'Pista anterior',
+            nextTrack: 'Pista siguiente',
+            pause: 'Pausar',
+            play: 'Reproducir',
+            closePlayer: 'Cerrar reproductor',
+            miniPlayer: 'Mini reproductor'
+        },
+        carousel: {
+            scrollLeft: 'Desplazar a la izquierda',
+            scrollRight: 'Desplazar a la derecha'
+        },
+        actions: {
+            select: 'Seleccionar',
+            deselect: 'Deseleccionar',
+            view: 'Ver',
+            open: 'Abrir',
+            identify: 'Identificar',
+            backToList: 'Volver a la lista',
+            viewAlbumsBy: 'Ver álbumes de',
+            viewTracksOf: 'Ver pistas de',
+            playTrack: 'Reproducir',
+            identifyTrack: 'Identificar',
+            viewImage: 'Vista previa de la imagen',
+            thisImage: 'esta imagen',
+            thisFile: 'este archivo',
+            thisDocument: 'este documento',
+            thisArchive: 'este archivo',
+            thisExecutable: 'este ejecutable',
+            thisMovie: 'esta película',
+            thisShow: 'esta serie',
+            playMovie: 'Reproducir película',
+            playSeries: 'Reproducir serie',
+            playEpisode: 'Reproducir episodio'
+        },
+        info: {
+            myList: 'Mi lista'
+        },
+        viewer: {
+            previewImage: 'Vista previa de la imagen',
+            closePreview: 'Cerrar vista previa'
+        },
+        loading: {
+            pageLoad: 'Cargando página'
+        },
+        toast: {
+            closeHint: 'Haz clic o pulsa Entrar para cerrar',
+            close: 'Cerrar notificación'
+        },
+        rating: {
+            rateStars: 'Valorar estrella',
+            rateStarsPlural: 'Valorar estrellas',
+            clickToRate: 'Haz clic para valorar',
+            yourRating: 'Tu valoración',
+            averageRating: 'Valoración media'
+        },
+        pdf: {
+            previewUnavailable: 'Vista previa no disponible'
+        },
+        language: {
+            selectLanguage: 'Seleccionar idioma'
         },
         login: {
             title: 'Stormi',
@@ -684,7 +1441,9 @@ const translations: Record<Language, Translations> = {
             electronMode: 'Modo Electron activo - La autenticación se abrirá en una ventana Electron',
             terms: 'Al iniciar sesión, aceptas nuestros términos de uso y política de privacidad.',
             configError: 'Error de configuración',
-            configUnavailable: 'Configuración no disponible. Por favor, inténtalo de nuevo más tarde.'
+            configUnavailable: 'Configuración no disponible. Por favor, inténtalo de nuevo más tarde.',
+            googleAuthError: 'Error durante la autenticación de Google',
+            configErrorDetail: 'GOOGLE_CLIENT_ID no configurado en Cloudflare. Por favor, configura tu aplicación.'
         },
         home: {
             title: 'Panel de control',
@@ -745,7 +1504,25 @@ const translations: Record<Language, Translations> = {
             viewLibrary: 'Ver biblioteca',
             addAnother: 'Añadir otro archivo',
             nextStepHint: '¿A dónde quieres ir?',
-            uploadButton: 'Enviar'
+            uploadButton: 'Enviar',
+            filesWillAppearHere: 'Los archivos que añadas aparecerán aquí',
+            fileUploaded: 'archivo subido',
+            filesUploaded: 'archivos subidos',
+            fast: 'Rápido',
+            fastDescription: 'Carga optimizada con progreso en tiempo real',
+            secure: 'Seguro',
+            secureDescription: 'Todas las cargas están autenticadas y protegidas',
+            cloudflareStorage: 'Almacenamiento Cloudflare',
+            cloudflareStorageDescription: 'Tus archivos se almacenan en R2 de Cloudflare',
+            spaceUsed: 'Espacio utilizado',
+            unlimited: 'Ilimitado'
+        },
+        localPlayerMeta: {
+            pageTitle: 'Reproductor local | Stormi',
+            pageDescription: 'Reproduce archivos de audio y vídeo desde tu dispositivo en secuencia.'
+        },
+        footer: {
+            allRightsReserved: 'Todos los derechos reservados'
         },
         notFound: {
             title: 'Página no encontrada',
@@ -767,7 +1544,8 @@ const translations: Record<Language, Translations> = {
             season: 'temporada',
             episode: 'Episodio',
             recentlyAdded: 'Añadidos recientemente',
-            redirectToFilms: 'Redirigiendo a Películas'
+            redirectToFilms: 'Redirigiendo a Películas',
+            top10: 'Top 10 - Mejor valorados'
         },
         categories: {
             videos: 'Videos',
@@ -818,7 +1596,27 @@ const translations: Record<Language, Translations> = {
             title: 'Mi Perfil',
             subtitle: 'Administra tu información personal y preferencias',
             language: 'Idioma',
-            languageDescription: 'Elige tu idioma preferido'
+            languageDescription: 'Elige tu idioma preferido',
+            emailVerified: 'Email verificado',
+            emailNotVerified: 'Email no verificado',
+            personalInfo: 'Información personal',
+            fullName: 'Nombre completo',
+            notSpecified: 'No especificado',
+            emailLabel: 'Email',
+            verificationStatus: 'Estado de verificación',
+            userId: 'ID de usuario',
+            idLabel: 'ID',
+            emailVerifiedLabel: 'Correo verificado',
+            connectedAccount: 'Cuenta conectada',
+            googleAccount: 'Cuenta de Google',
+            connectedViaGoogle: 'Conectado mediante Google OAuth',
+            accountSecureHint: 'Tu cuenta está protegida con la autenticación de Google. Para modificar tu información, actualízala directamente en tu cuenta de Google.',
+            actions: 'Acciones',
+            logout: 'Cerrar sesión',
+            clearLocalData: 'Borrar datos locales',
+            confirmClearLocalData: '¿Estás seguro de que quieres eliminar todos tus datos locales?',
+            logoutNote: 'Cerrar sesión eliminará tu sesión actual pero no borrará tu cuenta. Para eliminar tu cuenta permanentemente, ve a tu cuenta de Google.',
+            noteLabel: 'Nota:'
         },
         dialogs: {
             logoutTitle: 'Cerrar sesión',
@@ -834,7 +1632,10 @@ const translations: Record<Language, Translations> = {
             deleteFailed: 'No se puede eliminar',
             loadFailed: 'No se puede cargar el archivo',
             title: 'Error',
-            retry: 'Reintentar'
+            retry: 'Reintentar',
+            fetchFilesFailed: 'Error al recuperar los archivos',
+            errorWithStatus: 'Error {status}',
+            saveFailedTryAgain: 'Error al guardar. Por favor, inténtalo de nuevo.'
         }
     },
     de: {
@@ -880,7 +1681,159 @@ const translations: Record<Language, Translations> = {
             delete: 'Löschen',
             save: 'Speichern',
             close: 'Schließen',
-            open: 'Öffnen'
+            open: 'Öffnen',
+            untitled: 'Ohne Titel',
+            user: 'Benutzer',
+            yes: 'Ja',
+            no: 'Nein',
+            unnamed: 'Ohne Namen',
+            imageFallback: 'Bild',
+            progression: 'Fortschritt',
+            later: 'Später',
+            cancelWithCountdown: 'Abbrechen ({seconds}s)'
+        },
+        splash: {
+            loadingLong: 'Das Laden dauert länger als erwartet. Sie können es erneut versuchen.',
+            loading: 'Wird geladen…',
+            redirecting: 'Weiterleitung…',
+            connecting: 'Verbindung…',
+            ariaLabel: 'Stormi Startbildschirm'
+        },
+        meta: {
+            pageTitleHome: 'Startseite | Stormi',
+            pageTitleNotFound: 'Seite nicht gefunden | Stormi',
+            pageTitleMusics: 'Musik | Stormi',
+            pageTitleUpload: 'Hochladen | Stormi',
+            pageTitleLibrary: 'Bibliothek | Stormi',
+            pageTitleProfile: 'Profil | Stormi',
+            pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
+            pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
+            pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.'
+        },
+        media: {
+            play: 'Abspielen',
+            moreInfo: 'Mehr Infos',
+            addToList: 'Zu meiner Liste hinzufügen'
+        },
+        musics: {
+            artist: 'Künstler',
+            album: 'Album',
+            title: 'Titel',
+            unknownArtist: 'Unbekannter Künstler',
+            unknownAlbum: 'Ohne Titel',
+            toIdentify: 'Zu identifizieren',
+            duration: 'Dauer',
+            action: 'Aktion',
+            albums: 'Alben',
+            playAll: 'Alle abspielen',
+            uploadMusicHint: 'Laden Sie Musikdateien hoch, um zu beginnen',
+            trackCount: 'Track',
+            trackCountPlural: 'Tracks',
+            yourArtists: 'Ihre Künstler'
+        },
+        match: {
+            loadingInfo: 'Informationen werden geladen...',
+            titleDetected: 'Titel in den Metadaten erkannt',
+            artistDetected: 'Künstler erkannt',
+            artistDetectedInMetadata: 'Künstler in Metadaten erkannt',
+            fileLabel: 'Datei',
+            identifyTrack: 'Diesen Track identifizieren',
+            identifyMovie: 'Diesen Film/Serie identifizieren',
+            step1Artist: 'Künstler wählen',
+            step2Title: 'Titel eingeben',
+            searchArtistTitle: 'Künstler suchen',
+            artistPlaceholder: 'Künstlername...',
+            searchButton: 'Suchen',
+            searching: 'Suche...',
+            selectedArtistLabel: 'Ausgewählter Künstler',
+            songTitlePlaceholder: 'Songtitel...',
+            loadingAlbums: 'Alben werden geladen...',
+            viewAllAlbums: 'Alle Alben von anzeigen',
+            searchMovieOrShow: 'Film oder Serie suchen',
+            fileNotFound: 'Datei nicht gefunden',
+            searchArtistsError: 'Künstler können nicht gesucht werden. Überprüfen Sie Ihre Verbindung oder versuchen Sie es erneut.',
+            searchAlbumsError: 'Alben können nicht gesucht werden. Überprüfen Sie Ihre Verbindung oder versuchen Sie es erneut.',
+            loadAlbumsError: 'Alben können nicht geladen werden. Überprüfen Sie Ihre Verbindung oder versuchen Sie es erneut.',
+            searchMoviesError: 'Filme/Serien können nicht gesucht werden. Überprüfen Sie Ihre Verbindung oder versuchen Sie es erneut.',
+            pleaseEnterTitle: 'Bitte geben Sie einen Titel ein',
+            pleaseSelectArtist: 'Bitte wählen Sie einen Künstler',
+            pleaseSelectMovie: 'Bitte wählen Sie einen Film oder eine Serie',
+            allAlbumsBy: 'Alle Alben von',
+            albumsContaining: 'Alben mit',
+            movieOrShowPlaceholder: 'Titel des Films oder der Serie...',
+            selectArtist: 'Auswählen',
+            selectMatch: 'Auswählen',
+            selectAlbum: 'Auswählen',
+            deselectAlbum: 'Abwählen',
+            step4Confirm: '4. Bestätigen',
+            confirmSelection: 'Auswahl bestätigen',
+            saving: 'Wird gespeichert...',
+            cancelAndReturn: 'Abbrechen und zu den Dateien zurückkehren',
+            titleFallback: 'Titel'
+        },
+        player: {
+            dismissRestore: 'Wiederherstellung ablehnen',
+            resumePlayback: 'Wiedergabe fortsetzen',
+            previousTrack: 'Vorheriger Track',
+            nextTrack: 'Nächster Track',
+            pause: 'Pause',
+            play: 'Abspielen',
+            closePlayer: 'Player schließen',
+            miniPlayer: 'Mini-Player'
+        },
+        carousel: {
+            scrollLeft: 'Nach links scrollen',
+            scrollRight: 'Nach rechts scrollen'
+        },
+        actions: {
+            select: 'Auswählen',
+            deselect: 'Abwählen',
+            view: 'Ansehen',
+            open: 'Öffnen',
+            identify: 'Identifizieren',
+            backToList: 'Zurück zur Liste',
+            viewAlbumsBy: 'Alben von anzeigen',
+            viewTracksOf: 'Tracks von anzeigen',
+            playTrack: 'Abspielen',
+            identifyTrack: 'Identifizieren',
+            viewImage: 'Bildvorschau',
+            thisImage: 'dieses Bild',
+            thisFile: 'diese Datei',
+            thisDocument: 'dieses Dokument',
+            thisArchive: 'dieses Archiv',
+            thisExecutable: 'diese ausführbare Datei',
+            thisMovie: 'dieser Film',
+            thisShow: 'diese Serie',
+            playMovie: 'Film abspielen',
+            playSeries: 'Serie abspielen',
+            playEpisode: 'Episode abspielen'
+        },
+        info: {
+            myList: 'Meine Liste'
+        },
+        viewer: {
+            previewImage: 'Bildvorschau',
+            closePreview: 'Vorschau schließen'
+        },
+        loading: {
+            pageLoad: 'Seite wird geladen'
+        },
+        toast: {
+            closeHint: 'Klicken oder Enter drücken zum Schließen',
+            close: 'Benachrichtigung schließen'
+        },
+        rating: {
+            rateStars: 'Stern bewerten',
+            rateStarsPlural: 'Sterne bewerten',
+            clickToRate: 'Klicken zum Bewerten',
+            yourRating: 'Ihre Bewertung',
+            averageRating: 'Durchschnittsbewertung'
+        },
+        pdf: {
+            previewUnavailable: 'Vorschau nicht verfügbar'
+        },
+        language: {
+            selectLanguage: 'Sprache auswählen'
         },
         login: {
             title: 'Stormi',
@@ -889,7 +1842,9 @@ const translations: Record<Language, Translations> = {
             electronMode: 'Electron-Modus aktiv - Die Authentifizierung wird in einem Electron-Fenster geöffnet',
             terms: 'Durch die Anmeldung stimmen Sie unseren Nutzungsbedingungen und unserer Datenschutzrichtlinie zu.',
             configError: 'Konfigurationsfehler',
-            configUnavailable: 'Konfiguration nicht verfügbar. Bitte versuchen Sie es später erneut.'
+            configUnavailable: 'Konfiguration nicht verfügbar. Bitte versuchen Sie es später erneut.',
+            googleAuthError: 'Fehler bei der Google-Authentifizierung',
+            configErrorDetail: 'GOOGLE_CLIENT_ID nicht in Cloudflare konfiguriert. Bitte konfigurieren Sie Ihre Anwendung.'
         },
         home: {
             title: 'Dashboard',
@@ -950,7 +1905,25 @@ const translations: Record<Language, Translations> = {
             viewLibrary: 'Bibliothek anzeigen',
             addAnother: 'Weitere Datei hinzufügen',
             nextStepHint: 'Wohin möchten Sie gehen?',
-            uploadButton: 'Hochladen'
+            uploadButton: 'Hochladen',
+            filesWillAppearHere: 'Die von Ihnen hinzugefügten Dateien erscheinen hier',
+            fileUploaded: 'Datei hochgeladen',
+            filesUploaded: 'Dateien hochgeladen',
+            fast: 'Schnell',
+            fastDescription: 'Optimierter Upload mit Echtzeit-Fortschritt',
+            secure: 'Sicher',
+            secureDescription: 'Alle Uploads sind authentifiziert und geschützt',
+            cloudflareStorage: 'Cloudflare-Speicher',
+            cloudflareStorageDescription: 'Ihre Dateien werden auf Cloudflare R2 gespeichert',
+            spaceUsed: 'Verwendeter Speicher',
+            unlimited: 'Unbegrenzt'
+        },
+        localPlayerMeta: {
+            pageTitle: 'Lokaler Player | Stormi',
+            pageDescription: 'Spielen Sie Audio- und Videodateien von Ihrem Gerät in Folge ab.'
+        },
+        footer: {
+            allRightsReserved: 'Alle Rechte vorbehalten'
         },
         notFound: {
             title: 'Seite nicht gefunden',
@@ -972,7 +1945,8 @@ const translations: Record<Language, Translations> = {
             season: 'Staffel',
             episode: 'Episode',
             recentlyAdded: 'Kürzlich hinzugefügt',
-            redirectToFilms: 'Weiterleitung zu Filmen'
+            redirectToFilms: 'Weiterleitung zu Filmen',
+            top10: 'Top 10 - Beste Bewertungen'
         },
         categories: {
             videos: 'Videos',
@@ -1023,7 +1997,27 @@ const translations: Record<Language, Translations> = {
             title: 'Mein Profil',
             subtitle: 'Verwalten Sie Ihre persönlichen Informationen und Einstellungen',
             language: 'Sprache',
-            languageDescription: 'Wählen Sie Ihre bevorzugte Sprache'
+            languageDescription: 'Wählen Sie Ihre bevorzugte Sprache',
+            emailVerified: 'E-Mail verifiziert',
+            emailNotVerified: 'E-Mail nicht verifiziert',
+            personalInfo: 'Persönliche Informationen',
+            fullName: 'Vollständiger Name',
+            notSpecified: 'Nicht angegeben',
+            emailLabel: 'E-Mail',
+            verificationStatus: 'Verifizierungsstatus',
+            userId: 'Benutzer-ID',
+            idLabel: 'ID',
+            emailVerifiedLabel: 'E-Mail verifiziert',
+            connectedAccount: 'Verbundenes Konto',
+            googleAccount: 'Google-Konto',
+            connectedViaGoogle: 'Verbunden über Google OAuth',
+            accountSecureHint: 'Ihr Konto ist durch die Google-Authentifizierung gesichert. Um Ihre Daten zu ändern, aktualisieren Sie diese bitte direkt in Ihrem Google-Konto.',
+            actions: 'Aktionen',
+            logout: 'Abmelden',
+            clearLocalData: 'Lokale Daten löschen',
+            confirmClearLocalData: 'Sind Sie sicher, dass Sie alle lokalen Daten löschen möchten?',
+            logoutNote: 'Die Abmeldung entfernt Ihre aktuelle Sitzung, löscht aber nicht Ihr Konto. Um Ihr Konto dauerhaft zu löschen, gehen Sie bitte zu Ihrem Google-Konto.',
+            noteLabel: 'Hinweis:'
         },
         dialogs: {
             logoutTitle: 'Abmelden',
@@ -1039,7 +2033,10 @@ const translations: Record<Language, Translations> = {
             deleteFailed: 'Löschen nicht möglich',
             loadFailed: 'Datei konnte nicht geladen werden',
             title: 'Fehler',
-            retry: 'Erneut versuchen'
+            retry: 'Erneut versuchen',
+            fetchFilesFailed: 'Fehler beim Abrufen der Dateien',
+            errorWithStatus: 'Fehler {status}',
+            saveFailedTryAgain: 'Fehler beim Speichern. Bitte versuchen Sie es erneut.'
         }
     }
 };

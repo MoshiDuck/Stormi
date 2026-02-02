@@ -4,12 +4,14 @@
  */
 import React, { useEffect, useState } from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 interface AppLayoutLoadingBarProps {
     visible: boolean;
 }
 
 export function AppLayoutLoadingBar({ visible }: AppLayoutLoadingBarProps) {
+    const { t } = useLanguage();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -22,7 +24,7 @@ export function AppLayoutLoadingBar({ visible }: AppLayoutLoadingBarProps) {
         <div
             role="progressbar"
             aria-hidden="true"
-            aria-label="Chargement de la page"
+            aria-label={t('loading.pageLoad')}
             style={{
                 position: 'fixed',
                 top: 0,

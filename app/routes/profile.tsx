@@ -4,12 +4,12 @@ import { useAuth } from '~/hooks/useAuth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { LanguageSelector } from '~/components/ui/LanguageSelector';
-import { replacePlaceholders } from '~/utils/i18n';
+import { translations } from '~/utils/i18n';
 
 export function meta() {
     return [
-        { title: 'Profil | Stormi' },
-        { name: 'description', content: 'Gérez votre profil Stormi, langue et compte.' },
+        { title: translations.fr.meta.pageTitleProfile },
+        { name: 'description', content: translations.fr.meta.pageDescriptionProfile },
     ];
 }
 
@@ -85,7 +85,7 @@ export default function ProfileRoute() {
                       lineHeight: '24px',
                       fontSize: '14px'
                   }}>👤</span>
-                                    Informations personnelles
+                                    {t('profile.personalInfo')}
                                 </h2>
 
                                 <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
@@ -119,7 +119,7 @@ export default function ProfileRoute() {
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: '6px'
                                                 }}>
-                                                    Nom complet
+                                                    {t('profile.fullName')}
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
@@ -129,7 +129,7 @@ export default function ProfileRoute() {
                                                     fontSize: '16px',
                                                     fontWeight: '500'
                                                 }}>
-                                                    {user.name || 'Non spécifié'}
+                                                    {user.name || t('profile.notSpecified')}
                                                 </div>
                                             </div>
 
@@ -141,7 +141,7 @@ export default function ProfileRoute() {
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: '6px'
                                                 }}>
-                                                    Email
+                                                    {t('profile.emailLabel')}
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
@@ -150,7 +150,7 @@ export default function ProfileRoute() {
                                                     border: `1px solid ${darkTheme.border.primary}`,
                                                     fontSize: '16px'
                                                 }}>
-                                                    {user.email || 'Non spécifié'}
+                                                    {user.email || t('profile.notSpecified')}
                                                 </div>
                                             </div>
 
@@ -162,7 +162,7 @@ export default function ProfileRoute() {
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: '6px'
                                                 }}>
-                                                    Statut de vérification
+                                                    {t('profile.verificationStatus')}
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
@@ -180,7 +180,7 @@ export default function ProfileRoute() {
                                   color: '#34a853',
                                   fontSize: '18px'
                               }}>✓</span>
-                                                            <span style={{ color: '#34a853' }}>Email vérifié</span>
+                                                            <span style={{ color: '#34a853' }}>{t('profile.emailVerified')}</span>
                                                         </>
                                                     ) : (
                                                         <>
@@ -188,7 +188,7 @@ export default function ProfileRoute() {
                                   color: '#f44336',
                                   fontSize: '18px'
                               }}>✗</span>
-                                                            <span style={{ color: '#f44336' }}>Email non vérifié</span>
+                                                            <span style={{ color: '#f44336' }}>{t('profile.emailNotVerified')}</span>
                                                         </>
                                                     )}
                                                 </div>
@@ -202,7 +202,7 @@ export default function ProfileRoute() {
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: '6px'
                                                 }}>
-                                                    ID utilisateur
+                                                    {t('profile.userId')}
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
@@ -249,7 +249,7 @@ export default function ProfileRoute() {
                       lineHeight: '24px',
                       fontSize: '14px'
                   }}>🔗</span>
-                                    Compte connecté
+                                    {t('profile.connectedAccount')}
                                 </h2>
 
                                 <div style={{
@@ -275,14 +275,14 @@ export default function ProfileRoute() {
                                                 fontWeight: '500',
                                                 fontSize: '16px'
                                             }}>
-                                                Compte Google
+                                                {t('profile.googleAccount')}
                                             </p>
                                             <p style={{
                                                 margin: 0,
                                                 color: darkTheme.text.secondary,
                                                 fontSize: '14px'
                                             }}>
-                                                Connecté via Google OAuth
+                                                {t('profile.connectedViaGoogle')}
                                             </p>
                                         </div>
                                     </div>
@@ -296,8 +296,7 @@ export default function ProfileRoute() {
                                         marginTop: '12px'
                                     }}>
                                         <p style={{ margin: 0 }}>
-                                            Votre compte est sécurisé avec l'authentification Google. Pour modifier vos informations,
-                                            veuillez les mettre à jour directement sur votre compte Google.
+                                            {t('profile.accountSecureHint')}
                                         </p>
                                     </div>
                                 </div>
@@ -376,7 +375,7 @@ export default function ProfileRoute() {
                       lineHeight: '24px',
                       fontSize: '14px'
                   }}>⚠️</span>
-                                    Actions
+                                    {t('profile.actions')}
                                 </h2>
 
                                 <div style={{
@@ -403,12 +402,12 @@ export default function ProfileRoute() {
                                         onMouseOver={(e) => !isLoggingOut && (e.currentTarget.style.backgroundColor = '#d32f2f')}
                                         onMouseOut={(e) => !isLoggingOut && (e.currentTarget.style.backgroundColor = '#f44336')}
                                     >
-                                        {isLoggingOut ? t('common.loading') : 'Se déconnecter'}
+                                        {isLoggingOut ? t('common.loading') : t('profile.logout')}
                                     </button>
 
                                     <button
                                         onClick={() => {
-                                            if (window.confirm('Êtes-vous sûr de vouloir supprimer toutes vos données locales ?')) {
+                                            if (window.confirm(t('profile.confirmClearLocalData'))) {
                                                 localStorage.removeItem('stormi_token');
                                                 localStorage.removeItem('stormi_user');
                                                 window.location.reload();
@@ -437,7 +436,7 @@ export default function ProfileRoute() {
                                             e.currentTarget.style.color = '#666';
                                         }}
                                     >
-                                        Effacer les données locales
+                                        {t('profile.clearLocalData')}
                                     </button>
                                 </div>
 
@@ -448,8 +447,7 @@ export default function ProfileRoute() {
                                     lineHeight: '1.5'
                                 }}>
                                     <p style={{ margin: 0 }}>
-                                        <strong>Note :</strong> La déconnexion supprimera votre session actuelle mais ne supprimera pas
-                                        votre compte. Pour supprimer définitivement votre compte, veuillez vous rendre sur votre compte Google.
+                                        <strong>{t('profile.noteLabel')}</strong> {t('profile.logoutNote')}
                                     </p>
                                 </div>
                             </section>
@@ -469,7 +467,7 @@ export default function ProfileRoute() {
                         padding: '0 20px'
                     }}>
                         <p style={{ margin: 0, fontSize: '14px' }}>
-                            © {new Date().getFullYear()} Stormi. Tous droits réservés.
+                            © {new Date().getFullYear()} Stormi. {t('footer.allRightsReserved')}.
                         </p>
                     </div>
                 </footer>

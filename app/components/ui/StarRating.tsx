@@ -1,6 +1,7 @@
 // INFO : app/components/ui/StarRating.tsx
 import React, { useState, useEffect } from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 interface StarRatingProps {
     userRating: number | null;
@@ -10,6 +11,7 @@ interface StarRatingProps {
 }
 
 export function StarRating({ userRating, averageRating, onRate, disabled = false }: StarRatingProps) {
+    const { t } = useLanguage();
     const [hoveredRating, setHoveredRating] = useState<number | null>(null);
 
     const displayRating = hoveredRating || userRating || 0;
@@ -43,7 +45,7 @@ export function StarRating({ userRating, averageRating, onRate, disabled = false
                             onMouseEnter={() => !disabled && setHoveredRating(star)}
                             onMouseLeave={() => !disabled && setHoveredRating(null)}
                             disabled={disabled}
-                            aria-label={`Noter ${star} étoile${star > 1 ? 's' : ''}`}
+                            aria-label={star > 1 ? `${t('rating.rateStarsPlural')} ${star}` : `${t('rating.rateStars')} ${star}`}
                             style={{
                                 background: 'none',
                                 border: 'none',
@@ -69,11 +71,11 @@ export function StarRating({ userRating, averageRating, onRate, disabled = false
                 color: darkTheme.text.secondary
             }}>
                 {userRating ? (
-                    <span>Votre note : {userRating}/5</span>
+                    <span>{t('rating.yourRating')} : {userRating}/5</span>
                 ) : showAverage ? (
-                    <span>Note moyenne : {averageRating!.toFixed(1)}/5</span>
+                    <span>{t('rating.averageRating')} : {averageRating!.toFixed(1)}/5</span>
                 ) : (
-                    <span>Cliquez pour noter</span>
+                    <span>{t('rating.clickToRate')}</span>
                 )}
             </div>
         </div>

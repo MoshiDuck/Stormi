@@ -3,6 +3,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 // Worker PDF.js pour Vite (résolution au build)
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
@@ -31,6 +32,7 @@ export function PdfFirstPagePreview({
     className,
     style,
 }: PdfFirstPagePreviewProps) {
+    const { t } = useLanguage();
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -146,7 +148,7 @@ export function PdfFirstPagePreview({
                     }}
                 >
                     <span style={{ fontSize: '32px', marginBottom: '8px' }}>📄</span>
-                    <span>Aperçu indisponible</span>
+                    <span>{t('pdf.previewUnavailable')}</span>
                 </div>
             )}
             <div ref={canvasContainerRef} style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }} />

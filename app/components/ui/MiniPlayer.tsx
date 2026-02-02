@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { usePlayer } from '~/contexts/PlayerContext';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 // Fonction utilitaire pour formater le temps
 function formatTimeUtil(seconds: number): string {
@@ -13,6 +14,7 @@ function formatTimeUtil(seconds: number): string {
 
 export function MiniPlayer() {
     const { state, pause, resume, stop, playNext, playPrevious, toggleMiniPlayer, audioRef, videoRef, canRestore, restoredState, restorePlayback, dismissRestore } = usePlayer();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [isDragging, setIsDragging] = useState(false);
     const [position, setPosition] = useState({ x: 24, y: 24 }); // Position from bottom-right
@@ -118,7 +120,7 @@ export function MiniPlayer() {
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}>
-                            {restoredState.title || 'Sans titre'}
+                            {restoredState.title || t('common.untitled')}
                         </div>
                         <div style={{
                             color: 'rgba(255,255,255,0.7)',
@@ -147,13 +149,13 @@ export function MiniPlayer() {
                             }}
                             onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
                             onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
-                            aria-label="Ignorer la restauration"
+                            aria-label={t('player.dismissRestore')}
                         >
                             ✕
                         </button>
                         <button
                             onClick={restorePlayback}
-                            aria-label="Reprendre la lecture"
+                            aria-label={t('player.resumePlayback')}
                             style={{
                                 background: restoredState.type === 'video' ? '#e50914' : '#1db954',
                                 border: 'none',
@@ -332,7 +334,7 @@ export function MiniPlayer() {
                                     fontWeight: '600',
                                     textShadow: '0 1px 3px rgba(0,0,0,0.5)'
                                 }}>
-                                    {state.title || 'Sans titre'}
+                                    {state.title || t('common.untitled')}
                                 </div>
                             </div>
                             <span style={{ 
@@ -451,7 +453,7 @@ export function MiniPlayer() {
                                 textOverflow: 'ellipsis',
                                 marginBottom: '2px'
                             }}>
-                                {state.title || 'Sans titre'}
+                                {state.title || t('common.untitled')}
                             </div>
                             <div style={{
                                 color: 'rgba(255,255,255,0.7)',
@@ -488,7 +490,7 @@ export function MiniPlayer() {
                             <button
                                 onClick={playPrevious}
                                 disabled={state.currentTrackIndex === 0}
-                                aria-label="Piste précédente"
+                                aria-label={t('player.previousTrack')}
                                 style={{
                                     background: 'none',
                                     border: 'none',
@@ -511,7 +513,7 @@ export function MiniPlayer() {
                         {/* Play/Pause */}
                         <button
                             onClick={() => state.isPlaying ? pause() : resume()}
-                            aria-label={state.isPlaying ? 'Mettre en pause' : 'Lire'}
+                            aria-label={state.isPlaying ? t('player.pause') : t('player.play')}
                             style={{
                                 background: '#fff',
                                 border: 'none',
@@ -537,7 +539,7 @@ export function MiniPlayer() {
                             <button
                                 onClick={playNext}
                                 disabled={state.currentTrackIndex === state.playlist.length - 1}
-                                aria-label="Piste suivante"
+                                aria-label={t('player.nextTrack')}
                                 style={{
                                     background: 'none',
                                     border: 'none',
@@ -560,7 +562,7 @@ export function MiniPlayer() {
                         {/* Fermer */}
                         <button
                             onClick={stop}
-                            aria-label="Fermer le lecteur"
+                            aria-label={t('player.closePlayer')}
                             style={{
                                 background: 'none',
                                 border: 'none',

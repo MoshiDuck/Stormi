@@ -1,15 +1,17 @@
 /**
  * Page 404 : route non trouvée.
  * Deux actions claires : retour accueil ou ajouter des fichiers.
+ * Note : le titre meta utilise la langue par défaut (fr) en SSR ; le contenu visible utilise useLanguage().
  */
 import React from 'react';
 import { Link } from 'react-router';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { translations } from '~/utils/i18n';
 
 export function meta() {
     return [
-        { title: 'Page non trouvée | Stormi' },
+        { title: translations.fr.meta.pageTitleNotFound },
         { name: 'robots', content: 'noindex' },
     ];
 }

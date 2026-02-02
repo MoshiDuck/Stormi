@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { usePlayer } from '~/contexts/PlayerContext';
+import { useLanguage } from '~/contexts/LanguageContext';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { darkTheme } from '~/utils/ui/theme';
@@ -32,6 +33,7 @@ interface LocationState {
 
 export default function ReaderRoute() {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const { category: categoryParam, fileId: fileIdParam } = useParams<{ category: string; fileId: string }>();
     const location = useLocation();
     const navigate = useNavigate();
@@ -259,7 +261,7 @@ export default function ReaderRoute() {
                 }
             } catch (err) {
                 console.error('Erreur chargement fichier:', err);
-                setError(err instanceof Error ? err.message : 'Erreur de chargement');
+                setError(err instanceof Error ? err.message : t('errors.loadFailed'));
                 setLoading(false);
             }
         };
@@ -495,7 +497,7 @@ export default function ReaderRoute() {
                         }
                     `}</style>
                     <p style={{ marginTop: '20px', fontSize: '16px', color: '#b3b3b3' }}>
-                        Chargement du fichier...
+                        {t('common.loading')}
                     </p>
                 </div>
             </>
@@ -604,7 +606,7 @@ export default function ReaderRoute() {
                         {/* Bouton Mini Player */}
                         <button
                             onClick={handleMiniPlayer}
-                            aria-label="Mini lecteur"
+                            aria-label={t('player.miniPlayer')}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -868,7 +870,7 @@ export default function ReaderRoute() {
                         {/* Bouton Mini Player */}
                         <button
                             onClick={handleMiniPlayer}
-                            aria-label="Mini lecteur"
+                            aria-label={t('player.miniPlayer')}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -942,7 +944,7 @@ export default function ReaderRoute() {
                                 {albumThumbnail ? (
                                     <img 
                                         src={albumThumbnail} 
-                                        alt={albumName || 'Album'} 
+                                        alt={albumName || t('musics.album')} 
                                         style={{
                                             width: '100%',
                                             height: '100%',
@@ -1046,7 +1048,7 @@ export default function ReaderRoute() {
                             }}>
                                 <div>
                                     <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#fff' }}>
-                                        {playlistContext?.type === 'artist' ? '🎤 Artiste' : '💿 Album'}
+                                        {playlistContext?.type === 'artist' ? `🎤 ${t('musics.artist')}` : `💿 ${t('musics.album')}`}
                                     </h3>
                                     <p style={{ margin: '4px 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
                                         {playlistContext?.name}
@@ -1062,7 +1064,7 @@ export default function ReaderRoute() {
                             }}>
                                 {playlist.map((track, index) => {
                                     const isPlaying = index === currentTrackIndex;
-                                    const trackTitle = cleanString(track.title) || cleanString(track.filename)?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                                    const trackTitle = cleanString(track.title) || cleanString(track.filename)?.replace(/\.[^/.]+$/, '') || t('common.untitled');
                                     return (
                                         <div
                                             key={track.file_id}
@@ -1144,7 +1146,7 @@ export default function ReaderRoute() {
                                     <button
                                         onClick={playPrevious}
                                         disabled={currentTrackIndex === 0}
-                                        aria-label="Piste précédente"
+                                        aria-label={t('player.previousTrack')}
                                         style={{
                                             background: 'none',
                                             border: 'none',
@@ -1164,7 +1166,7 @@ export default function ReaderRoute() {
                                     <button
                                         onClick={playNext}
                                         disabled={currentTrackIndex === playlist.length - 1}
-                                        aria-label="Piste suivante"
+                                        aria-label={t('player.nextTrack')}
                                         style={{
                                             background: 'none',
                                             border: 'none',

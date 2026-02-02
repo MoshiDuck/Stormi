@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
+import { useLanguage } from '~/contexts/LanguageContext';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { SplashScreen } from '~/components/ui/SplashScreen';
 
@@ -19,6 +20,7 @@ export function AuthGuard({
                               redirectTo = '/splash'
                           }: AuthGuardProps) {
     const { user, loading } = useAuth();
+    const { t } = useLanguage();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -40,7 +42,7 @@ export function AuthGuard({
     }
 
     if (!requireAuth && user) {
-        return <LoadingSpinner message="Redirection…" />;
+        return <LoadingSpinner message={t('splash.redirecting')} />;
     }
 
     return <>{children}</>;

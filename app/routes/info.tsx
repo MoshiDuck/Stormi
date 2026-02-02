@@ -609,7 +609,7 @@ export default function InfoRoute() {
                                 }}
                             >
                                 <span>+</span>
-                                <span>Ma liste</span>
+                                <span>{t('info.myList')}</span>
                             </button>
                         </div>
                     </div>
@@ -675,7 +675,7 @@ export default function InfoRoute() {
                                             }}
                                             tabIndex={0}
                                             role="button"
-                                            aria-label={`Lire épisode ${episode.episodeNumber}: ${episode.title}`}
+                                            aria-label={`${t('actions.playEpisode')} ${episode.episodeNumber}: ${episode.title}`}
                                             style={{
                                                 display: 'flex',
                                                 gap: '16px',
@@ -821,7 +821,7 @@ export default function InfoRoute() {
                                                         }
                                                     });
                                                 }}
-                                                aria-label={`Lire l'épisode ${episode.episodeNumber || ''}`}
+                                                aria-label={`${t('actions.playEpisode')} ${episode.episodeNumber || ''}`}
                                                 style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
@@ -886,7 +886,7 @@ export default function InfoRoute() {
                                         }}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`Voir ${relatedName}`}
+                                        aria-label={`${t('actions.view')} ${relatedName}`}
                                         style={{
                                             cursor: 'pointer',
                                             transition: 'transform 0.2s',

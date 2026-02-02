@@ -19,6 +19,7 @@ import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { darkTheme } from '~/utils/ui/theme';
 import { useAuth } from '~/hooks/useAuth';
+import { useLanguage } from '~/contexts/LanguageContext';
 
 const SPLASH_LOADING_TIMEOUT_MS = 5000;
 /** Durée minimale d’affichage du splash (évite fenêtre noire / flash avant redirection). */
@@ -36,6 +37,7 @@ const PARTICLE_POSITIONS: Array<{ left: number; top: number; delay: number }> = 
 export function SplashScreen() {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
+    const { t } = useLanguage();
     const [loadingTimedOut, setLoadingTimedOut] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -65,11 +67,11 @@ export function SplashScreen() {
     }, [loading, user, navigate]);
 
     const statusMessage = useMemo(() => {
-        if (loadingTimedOut) return 'Chargement prolongé. Vous pouvez réessayer.';
-        if (loading) return 'Chargement…';
-        if (user) return 'Redirection…';
-        return 'Connexion…';
-    }, [loading, loadingTimedOut, user]);
+        if (loadingTimedOut) return t('splash.loadingLong');
+        if (loading) return t('splash.loading');
+        if (user) return t('splash.redirecting');
+        return t('splash.connecting');
+    }, [loading, loadingTimedOut, user, t]);
 
     return (
         <div
@@ -88,7 +90,7 @@ export function SplashScreen() {
                 contain: 'strict',
             }}
             role="banner"
-            aria-label="Écran de démarrage Stormi"
+            aria-label={t('splash.ariaLabel')}
         >
             {/* Annonce pour lecteurs d’écran */}
             <div

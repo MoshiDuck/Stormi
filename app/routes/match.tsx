@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useConfig } from '~/hooks/useConfig';
 import { useAuth } from '~/hooks/useAuth';
+import { useLanguage } from '~/contexts/LanguageContext';
 import { searchMovies, searchTVShows, searchMusicOnSpotify, searchArtistsOnSpotify, searchAlbumsForArtistOnSpotify, downloadAndStoreThumbnail, type MediaMatch } from '~/utils/media/mediaMetadata';
 import { darkTheme } from '~/utils/ui/theme';
 import type { FileCategory } from '~/utils/file/fileClassifier';
@@ -17,6 +18,7 @@ export default function MatchRoute() {
     const navigate = useNavigate();
     const { config } = useConfig();
     const { user } = useAuth();
+    const { t } = useLanguage();
     
     const [loading, setLoading] = useState(true);
     const [step, setStep] = useState<MatchStep>('artist');
@@ -90,7 +92,7 @@ export default function MatchRoute() {
             });
 
             if (!response.ok) {
-                throw new Error('Fichier non trouvé');
+                throw new Error(t('match.fileNotFound'));
             }
 
             const data = await response.json() as { 
@@ -247,7 +249,7 @@ export default function MatchRoute() {
             }
         } catch (error) {
             console.error('Erreur recherche artistes:', error);
-            setSearchError('Impossible de rechercher les artistes. Vérifiez votre connexion ou réessayez.');
+            setSearchError(t('match.searchArtistsError'));
         } finally {
             setSearching(false);
             setLoading(false);
@@ -299,7 +301,7 @@ export default function MatchRoute() {
             setAlbums(albumsList);
         } catch (error) {
             console.error('Erreur recherche albums:', error);
-            setSearchError('Impossible de rechercher les albums. Vérifiez votre connexion ou réessayez.');
+            setSearchError(t('match.searchAlbumsError'));
             setAlbums([]);
         } finally {
             setSearching(false);
@@ -334,7 +336,7 @@ export default function MatchRoute() {
             setAlbums(albumsList);
         } catch (error) {
             console.error('Erreur chargement albums artiste:', error);
-            setSearchError('Impossible de charger les albums. Vérifiez votre connexion ou réessayez.');
+            setSearchError(t('match.loadAlbumsError'));
             setAlbums([]);
         } finally {
             setLoadingAllAlbums(false);
@@ -362,7 +364,7 @@ export default function MatchRoute() {
             setMatches(allMatches);
         } catch (error) {
             console.error('Erreur recherche correspondances:', error);
-            setSearchError('Impossible de rechercher les films/séries. Vérifiez votre connexion ou réessayez.');
+            setSearchError(t('match.searchMoviesError'));
         } finally {
             setSearching(false);
             setLoading(false);
@@ -381,7 +383,7 @@ export default function MatchRoute() {
 
     const handleTitleSubmit = () => {
         if (!selectedArtist || !titleQuery.trim()) {
-            alert('Veuillez entrer un titre');
+            alert(t('match.pleaseEnterTitle'));
             return;
         }
         setStep('album');
@@ -418,13 +420,13 @@ export default function MatchRoute() {
         
         // Pour musique : vérifier qu'on a au moins un artiste sélectionné
         if (category === 'musics' && !selectedArtist) {
-            alert('Veuillez sélectionner un artiste');
+            alert(t('match.pleaseSelectArtist'));
             return;
         }
         
         // Pour vidéo : vérifier qu'on a une sélection
         if (category === 'videos' && !selectedMatch) {
-            alert('Veuillez sélectionner un film ou une série');
+            alert(t('match.pleaseSelectMovie'));
             return;
         }
         
@@ -490,7 +492,7 @@ export default function MatchRoute() {
             });
             
             if (!response.ok) {
-                throw new Error('Erreur lors de la sauvegarde');
+                throw new Error(t('errors.saveFailed'));
             }
             
             // Rediriger vers la page appropriée selon la catégorie
@@ -501,7 +503,7 @@ export default function MatchRoute() {
             }
         } catch (error) {
             console.error('Erreur sauvegarde correspondance:', error);
-            alert('Erreur lors de la sauvegarde. Veuillez réessayer.');
+            alert(t('errors.saveFailedTryAgain'));
             setLoading(false);
         }
     };
@@ -526,7 +528,7 @@ export default function MatchRoute() {
                             margin: '0 auto 16px'
                         }} />
                         <p style={{ color: darkTheme.text.secondary }}>
-                            Chargement des informations...
+                            {t('match.loadingInfo')}
                         </p>
                     </div>
                 </div>
@@ -550,7 +552,7 @@ export default function MatchRoute() {
                             marginBottom: '8px',
                             color: darkTheme.text.primary
                         }}>
-                            Identifier ce {category === 'musics' ? 'morceau' : 'film/série'}
+                            {category === 'musics' ? t('match.identifyTrack') : t('match.identifyMovie')}
                         </h1>
                         <p style={{
                             color: darkTheme.text.secondary,
@@ -558,7 +560,7 @@ export default function MatchRoute() {
                             marginBottom: '8px'
                         }}>
                             {fileInfo?.filename && (
-                                <>Fichier : <strong>{fileInfo.filename}</strong></>
+                                <>{t('match.fileLabel')} : <strong>{fileInfo.filename}</strong></>
                             )}
                         </p>
                         {fileInfo?.title && fileInfo.title !== fileInfo.filename?.replace(/\.[^/.]+$/, '') && (
@@ -567,7 +569,7 @@ export default function MatchRoute() {
                                 fontSize: '14px',
                                 fontStyle: 'italic'
                             }}>
-                                Titre détecté dans les métadonnées : <strong>{fileInfo.title}</strong>
+                                {t('match.titleDetected')} : <strong>{fileInfo.title}</strong>
                             </p>
                         )}
                         {fileInfo?.artist && category === 'musics' && (
@@ -576,7 +578,7 @@ export default function MatchRoute() {
                                 fontSize: '14px',
                                 fontStyle: 'italic'
                             }}>
-                                Artiste détecté : <strong>{fileInfo.artist}</strong>
+                                {t('match.artistDetected')} : <strong>{fileInfo.artist}</strong>
                             </p>
                         )}
                     </div>
@@ -599,7 +601,7 @@ export default function MatchRoute() {
                                 textAlign: 'center',
                                 fontWeight: step === 'artist' ? '600' : '400'
                             }}>
-                                1. Choisir l'artiste
+                                1. {t('match.step1Artist')}
                             </div>
                             <div style={{
                                 flex: 1,
@@ -611,7 +613,7 @@ export default function MatchRoute() {
                                 fontWeight: step === 'title' ? '600' : '400',
                                 opacity: step === 'album' || step === 'confirm' || step === 'title' ? 1 : 0.5
                             }}>
-                                2. Entrer le titre
+                                2. {t('match.step2Title')}
                             </div>
                             <div style={{
                                 flex: 1,
@@ -656,7 +658,7 @@ export default function MatchRoute() {
                                     marginBottom: '16px',
                                     color: darkTheme.text.primary
                                 }}>
-                                    Rechercher l'artiste
+                                    {t('match.searchArtistTitle')}
                                 </h2>
                                 {fileInfo?.artist && (
                                     <p style={{
@@ -665,7 +667,7 @@ export default function MatchRoute() {
                                         marginBottom: '12px',
                                         fontStyle: 'italic'
                                     }}>
-                                        Artiste détecté dans les métadonnées : <strong>{fileInfo.artist}</strong>
+                                        {t('match.artistDetectedInMetadata')} : <strong>{fileInfo.artist}</strong>
                                     </p>
                                 )}
                                 <div style={{ display: 'flex', gap: '12px' }}>
@@ -678,7 +680,7 @@ export default function MatchRoute() {
                                                 performArtistSearch(searchQuery);
                                             }
                                         }}
-                                        placeholder="Nom de l'artiste..."
+                                        placeholder={t('match.artistPlaceholder')}
                                         style={{
                                             flex: 1,
                                             padding: '12px 16px',
@@ -705,7 +707,7 @@ export default function MatchRoute() {
                                             transition: 'background-color 0.2s'
                                         }}
                                     >
-                                        {searching ? 'Recherche...' : 'Rechercher'}
+                                        {searching ? t('match.searching') : t('match.searchButton')}
                                     </button>
                             </div>
                         </div>
@@ -742,7 +744,7 @@ export default function MatchRoute() {
                                             fontSize: '14px'
                                         }}
                                     >
-                                        Réessayer
+                                        {t('common.retry')}
                                     </button>
                                 </div>
                             )}
@@ -766,7 +768,7 @@ export default function MatchRoute() {
                                             }}
                                             tabIndex={0}
                                             role="button"
-                                            aria-label={`Sélectionner ${artist.name}`}
+                                            aria-label={`${t('match.selectArtist')} ${artist.name}`}
                                             style={{
                                                 backgroundColor: darkTheme.background.secondary,
                                                 borderRadius: '12px',
@@ -865,7 +867,7 @@ export default function MatchRoute() {
                                             color: darkTheme.text.secondary,
                                             fontSize: '14px'
                                         }}>
-                                            Artiste sélectionné : <strong>{selectedArtist.name}</strong>
+                                            {t('match.selectedArtistLabel')} : <strong>{selectedArtist.name}</strong>
                                         </p>
                                     </div>
                                     <button
@@ -901,7 +903,7 @@ export default function MatchRoute() {
                                                 handleTitleSubmit();
                                             }
                                         }}
-                                        placeholder="Titre de la chanson..."
+                                        placeholder={t('match.songTitlePlaceholder')}
                                         style={{
                                             flex: 1,
                                             padding: '12px 16px',
@@ -927,7 +929,7 @@ export default function MatchRoute() {
                                             cursor: (searching || !titleQuery.trim()) ? 'not-allowed' : 'pointer'
                                         }}
                                     >
-                                        {searching ? 'Recherche...' : 'Rechercher'}
+                                        {searching ? t('match.searching') : t('match.searchButton')}
                                     </button>
                                 </div>
                             </div>
@@ -958,8 +960,8 @@ export default function MatchRoute() {
                                             marginBottom: '4px'
                                         }}>
                                             {showingAllAlbums 
-                                                ? `Tous les albums de ${selectedArtist.name}`
-                                                : `Albums contenant "${titleQuery}"`
+                                                ? `${t('match.allAlbumsBy')} ${selectedArtist.name}`
+                                                : `${t('match.albumsContaining')} "${titleQuery}"`
                                             }
                                         </h2>
                                         <p style={{
@@ -1055,7 +1057,7 @@ export default function MatchRoute() {
                                                 }}
                                                 tabIndex={0}
                                                 role="button"
-                                                aria-label={`${isSelected ? 'Désélectionner' : 'Sélectionner'} ${album.album || album.title}`}
+                                                aria-label={`${isSelected ? t('match.deselectAlbum') : t('match.selectAlbum')} ${album.album || album.title}`}
                                                 aria-pressed={isSelected}
                                                 style={{
                                                     backgroundColor: darkTheme.background.secondary,
@@ -1155,7 +1157,7 @@ export default function MatchRoute() {
                                     padding: '40px',
                                     color: darkTheme.text.tertiary
                                 }}>
-                                    {loadingAllAlbums ? 'Chargement des albums...' : 'Recherche en cours...'}
+                                    {loadingAllAlbums ? t('match.loadingAlbums') : t('match.searching')}
                                 </div>
                             ) : (
                                 <div style={{
@@ -1182,7 +1184,7 @@ export default function MatchRoute() {
                                                 transition: 'background-color 0.2s'
                                             }}
                                         >
-                                            {loadingAllAlbums ? 'Chargement...' : `Voir tous les albums de ${selectedArtist.name}`}
+                                            {loadingAllAlbums ? t('common.loading') : `${t('match.viewAllAlbums')} ${selectedArtist.name}`}
                                         </button>
                                     )}
                                 </div>
@@ -1262,7 +1264,7 @@ export default function MatchRoute() {
                                     marginBottom: '16px',
                                     color: darkTheme.text.primary
                                 }}>
-                                    Rechercher un film ou une série
+                                    {t('match.searchMovieOrShow')}
                                 </h2>
                                 <div style={{ display: 'flex', gap: '12px' }}>
                                     <input
@@ -1274,7 +1276,7 @@ export default function MatchRoute() {
                                                 performMovieSearch(searchQuery);
                                             }
                                         }}
-                                        placeholder="Titre du film ou de la série..."
+                                        placeholder={t('match.movieOrShowPlaceholder')}
                                         style={{
                                             flex: 1,
                                             padding: '12px 16px',
@@ -1300,7 +1302,7 @@ export default function MatchRoute() {
                                             cursor: searching || !searchQuery.trim() ? 'not-allowed' : 'pointer'
                                         }}
                                     >
-                                        {searching ? 'Recherche...' : 'Rechercher'}
+                                        {searching ? t('match.searching') : t('match.searchButton')}
                                     </button>
                                 </div>
                             </div>
@@ -1337,7 +1339,7 @@ export default function MatchRoute() {
                                             fontSize: '14px'
                                         }}
                                     >
-                                        Réessayer
+                                        {t('common.retry')}
                                     </button>
                                 </div>
                             )}
@@ -1361,7 +1363,7 @@ export default function MatchRoute() {
                                             }}
                                             tabIndex={0}
                                             role="button"
-                                            aria-label={`Sélectionner ${match.title}${match.year ? ` (${match.year})` : ''}`}
+                                            aria-label={`${t('match.selectMatch')} ${match.title}${match.year ? ` (${match.year})` : ''}`}
                                             style={{
                                                 backgroundColor: darkTheme.background.secondary,
                                                 borderRadius: '12px',

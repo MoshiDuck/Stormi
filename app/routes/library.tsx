@@ -7,6 +7,7 @@ import type { FileCategory } from '~/utils/file/fileClassifier';
 import { LibraryTabBar, type LibraryTab } from '~/components/ui/LibraryTabBar';
 import { formatFileSize, formatDate } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { translations } from '~/utils/i18n';
 import { DraggableItem } from '~/components/ui/DraggableItem';
 import { useFileActions } from '~/hooks/useFileActions';
 import { useToast } from '~/components/ui/Toast';
@@ -46,8 +47,8 @@ const LIBRARY_ICONS: Record<LibraryTab, string> = {
 
 export function meta() {
     return [
-        { title: 'Bibliothèque | Stormi' },
-        { name: 'description', content: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.' },
+        { title: translations.fr.meta.pageTitleLibrary },
+        { name: 'description', content: translations.fr.meta.pageDescriptionLibrary },
     ];
 }
 
@@ -154,7 +155,7 @@ export default function LibraryRoute() {
                     }}
                     tabIndex={0}
                     role="button"
-                    aria-label={`Voir ${data.filename || 'cette image'}`}
+                    aria-label={`${t('actions.view')} ${data.filename || t('actions.thisImage')}`}
                     style={{
                         width,
                         minHeight: 80,
@@ -176,13 +177,13 @@ export default function LibraryRoute() {
                 >
                     <img
                         src={getFileUrl(data)}
-                        alt={data.filename || 'Image'}
+                        alt={data.filename || t('common.imageFallback')}
                         style={{ width: '100%', height: 'auto', display: 'block' }}
                     />
                 </div>
             </DraggableItem>
         ),
-        [handleCardClick, getFileUrl]
+        [handleCardClick, getFileUrl, t]
     );
 
     const renderGenericCard = (file: FileItem, icon: string) => (
@@ -206,7 +207,7 @@ export default function LibraryRoute() {
                 }}
                 tabIndex={0}
                 role="button"
-                aria-label={`Ouvrir ${file.filename || 'ce fichier'}`}
+                aria-label={`${t('actions.open')} ${file.filename || t('actions.thisFile')}`}
                 style={{
                     backgroundColor: darkTheme.background.secondary,
                     borderRadius: '8px',
@@ -236,7 +237,7 @@ export default function LibraryRoute() {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    {file.filename || 'Sans nom'}
+                    {file.filename || t('common.unnamed')}
                 </div>
                 <div style={{ color: darkTheme.text.tertiary, fontSize: '12px' }}>{formatFileSize(file.size)}</div>
             </div>

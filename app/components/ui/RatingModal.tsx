@@ -1,6 +1,7 @@
 // INFO : app/components/ui/RatingModal.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 
 interface RatingModalProps {
@@ -12,6 +13,7 @@ interface RatingModalProps {
 }
 
 export function RatingModal({ isOpen, onClose, onRate, title, thumbnail }: RatingModalProps) {
+    const { t } = useLanguage();
     const [hoveredRating, setHoveredRating] = useState<number | null>(null);
     const [selectedRating, setSelectedRating] = useState<number | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +152,7 @@ export function RatingModal({ isOpen, onClose, onRate, title, thumbnail }: Ratin
                                 onMouseEnter={() => setHoveredRating(star)}
                                 onMouseLeave={() => setHoveredRating(null)}
                                 disabled={isSubmitting}
-                                aria-label={`Noter ${star} étoile${star > 1 ? 's' : ''}`}
+                                aria-label={star > 1 ? `${t('rating.rateStarsPlural')} ${star}` : `${t('rating.rateStars')} ${star}`}
                                 style={{
                                     background: 'none',
                                     border: 'none',

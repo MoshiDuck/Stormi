@@ -111,7 +111,7 @@ export default function LoginRoute() {
                     boxShadow: darkTheme.shadow.medium
                 }}>
                     <ErrorDisplay 
-                        error={t('login.configError') + ': GOOGLE_CLIENT_ID non configuré côté Cloudflare. Veuillez configurer votre application.'} 
+                        error={t('login.configError') + ': ' + t('login.configErrorDetail')} 
                     />
                 </div>
             </div>
@@ -189,7 +189,7 @@ export default function LoginRoute() {
                                 loading={authInitialLoading}
                                 onElectronAuth={handleElectronAuth}
                                 onWebAuth={handleWebAuth}
-                                onError={() => setError('Erreur lors de l\'authentification Google')}
+                                onError={() => setError(t('login.googleAuthError'))}
                             />
                         </div>
 

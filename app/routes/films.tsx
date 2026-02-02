@@ -154,7 +154,7 @@ export default function FilmsRoute() {
                     { headers: { 'Authorization': `Bearer ${token}` } }
                 );
 
-                if (!response.ok) throw new Error('Erreur lors de la récupération des fichiers');
+                if (!response.ok) throw new Error(t('errors.fetchFilesFailed'));
 
                 const data = await response.json() as { files: FileItem[] };
                 let files = data.files || [];
@@ -177,7 +177,7 @@ export default function FilmsRoute() {
                 organizeMovies(files, progressions);
                 setLoading(false);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Erreur inconnue');
+                setError(err instanceof Error ? err.message : t('errors.unknown'));
                 setLoading(false);
             }
         };
@@ -388,7 +388,7 @@ export default function FilmsRoute() {
     // Carte Film Netflix
     const MovieCard = ({ file, genre, onClick }: { file: FileItem; genre?: string; onClick: () => void }) => {
         const thumbnailUrl = getThumbnailUrl(file);
-        const displayName = file.title || file.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+        const displayName = file.title || file.filename?.replace(/\.[^/.]+$/, '') || t('common.untitled');
         const cardId = genre ? `${genre}-${file.file_id}` : file.file_id;
         const genres = file.genres ? JSON.parse(file.genres) : [];
         
@@ -526,7 +526,7 @@ export default function FilmsRoute() {
                                         e.stopPropagation();
                                         onClick();
                                     }}
-                                    aria-label="Lire le film"
+                                    aria-label={t('actions.playMovie')}
                                     style={{
                                         width: '48px',
                                         height: '48px',
@@ -555,7 +555,7 @@ export default function FilmsRoute() {
                                 </button>
                                 <button 
                                     onClick={(e) => e.stopPropagation()}
-                                    aria-label="Ajouter à ma liste"
+                                    aria-label={t('media.addToList')}
                                     style={{
                                         width: '48px',
                                         height: '48px',
@@ -693,7 +693,7 @@ export default function FilmsRoute() {
                     onKeyDown={handleKeyDown}
                     tabIndex={0}
                     role="button"
-                    aria-label={`Voir ${file.title || file.filename || 'ce film'}`}
+                    aria-label={`${t('actions.view')} ${file.title || file.filename || t('actions.thisMovie')}`}
                     style={{
                         position: 'relative',
                         width: '185px',
@@ -719,7 +719,7 @@ export default function FilmsRoute() {
                             onKeyDown={handleKeyDown}
                             tabIndex={0}
                             role="button"
-                            aria-label={`Voir ${file.title || file.filename || 'ce film'}`}
+                            aria-label={`${t('actions.view')} ${file.title || file.filename || t('actions.thisMovie')}`}
                             style={{
                                 position: 'fixed',
                                 top: `${customPosition.top}px`,
@@ -754,7 +754,7 @@ export default function FilmsRoute() {
             onKeyDown={handleKeyDown}
             tabIndex={0}
             role="button"
-            aria-label={`Identifier ${file.filename || 'ce fichier'}`}
+            aria-label={`${t('actions.identify')} ${file.filename || t('actions.thisFile')}`}
             style={{
                 width: '185px',
                 flexShrink: 0,
@@ -1024,7 +1024,7 @@ export default function FilmsRoute() {
                                         }}
                                     >
                                         <span style={{ fontSize: '20px' }}>▶</span>
-                                        <span>Lecture</span>
+                                        <span>{t('media.play')}</span>
                                     </button>
                                     <button
                                         onClick={() => handleVideoClick(heroMovie.file_id, heroMovie.category)}
@@ -1053,7 +1053,7 @@ export default function FilmsRoute() {
                                         }}
                                     >
                                         <span style={{ fontSize: '20px' }}>ℹ</span>
-                                        <span>Plus d'infos</span>
+                                        <span>{t('media.moreInfo')}</span>
                                     </button>
                                 </div>
                             </div>
@@ -1080,7 +1080,7 @@ export default function FilmsRoute() {
                     
                     {/* Continuer de regarder */}
                     {organizedMovies.continueWatching.length > 0 && (
-                        <NetflixCarousel title="Continuer de regarder">
+                        <NetflixCarousel title={t('home.continueWatching')}>
                             {organizedMovies.continueWatching.map((file) => (
                                 <DraggableItem
                                     key={file.file_id}
@@ -1122,7 +1122,7 @@ export default function FilmsRoute() {
                     
                     {/* Top 10 */}
                     {organizedMovies.top10.length > 0 && (
-                        <NetflixCarousel title="Top 10 - Les mieux notés">
+                        <NetflixCarousel title={t('videos.top10')}>
                             {organizedMovies.top10.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
@@ -1218,7 +1218,7 @@ export default function FilmsRoute() {
                     
                     {/* Ajoutés récemment */}
                     {organizedMovies.recentlyAdded.length > 0 && (
-                        <NetflixCarousel title={t('videos.recentlyAdded') || 'Ajoutés récemment'} icon="🆕">
+                        <NetflixCarousel title={t('videos.recentlyAdded')} icon="🆕">
                             {organizedMovies.recentlyAdded.map((file) => (
                                 <DraggableItem
                                     key={file.file_id}
