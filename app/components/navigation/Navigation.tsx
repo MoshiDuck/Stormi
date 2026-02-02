@@ -152,6 +152,36 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                         </Link>
 
                         <Link
+                            to="/lecteur-local"
+                            prefetch="intent"
+                            aria-current={isActive('/lecteur-local') ? 'page' : undefined}
+                            style={{
+                                color: isActive('/lecteur-local') ? darkTheme.accent.blue : darkTheme.text.secondary,
+                                textDecoration: 'none',
+                                padding: '10px 16px',
+                                borderRadius: darkTheme.radius.medium,
+                                backgroundColor: isActive('/lecteur-local') ? darkTheme.surface.info : 'transparent',
+                                transition: darkTheme.transition.normal,
+                                fontWeight: isActive('/lecteur-local') ? '600' : '500',
+                                fontSize: '15px'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive('/lecteur-local')) {
+                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                    e.currentTarget.style.color = darkTheme.text.primary;
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive('/lecteur-local')) {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = darkTheme.text.secondary;
+                                }
+                            }}
+                        >
+                            {t('nav.localPlayer')}
+                        </Link>
+
+                        <Link
                             to="/profile"
                             prefetch="intent"
                             aria-current={isActive('/profile') ? 'page' : undefined}

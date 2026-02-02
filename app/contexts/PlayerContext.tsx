@@ -78,7 +78,7 @@ function clearPlayerState(): void {
     }
 }
 
-interface PlaylistTrack {
+export interface PlaylistTrack {
     file_id: string;
     title: string;
     filename: string;
@@ -87,6 +87,10 @@ interface PlaylistTrack {
     albums?: string;
     album_thumbnails?: string;
     thumbnail_url?: string;
+    /** URL directe pour les fichiers locaux (blob URL) */
+    url?: string;
+    /** Type média pour les pistes locales ou playlists mixtes */
+    type?: 'audio' | 'video';
 }
 
 interface PlayerState {
@@ -130,6 +134,12 @@ interface PlayerContextType {
         currentTime?: number;
         startAsMiniPlayer?: boolean;
     }) => void;
+    /** Lancer la lecture de fichiers locaux (un ou plusieurs), avec playlist possible. Retourne la playlist pour navigation (ex. reader). */
+    playLocal: (params: {
+        files: File[];
+        startIndex?: number;
+        startAsMiniPlayer?: boolean;
+    }) => PlaylistTrack[] | null;
     pause: () => void;
     resume: () => void;
     stop: () => void;
@@ -183,11 +193,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
     const [pendingSeek, setPendingSeek] = useState<number | null>(null);
 
-    // Vérifier s'il y a un état à restaurer au montage
+    // Vérifier s'il y a un état à restaurer au montage (jamais pour les fichiers locaux)
     useEffect(() => {
         const saved = loadPlayerState();
-        if (saved && saved.fileId && saved.fileUrl && saved.currentTime > 10) {
-            // Il y a une lecture interrompue avec au moins 10 secondes de progression
+        if (saved && saved.fileId && saved.fileUrl && saved.currentTime > 10 && saved.category !== 'local') {
             setRestoredState(saved);
             setCanRestore(true);
         }
@@ -258,12 +267,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         }, 2000); // Throttle à 2 secondes
     }, [state]);
 
-    // Sauvegarder quand l'état change significativement
+    // Sauvegarder quand l'état change significativement (pas pour les fichiers locaux)
     useEffect(() => {
-        if (state.fileId) {
+        if (state.fileId && state.category !== 'local') {
             saveCurrentState();
         }
-    }, [state.fileId, state.currentTrackIndex, state.volume, state.isMiniPlayer, saveCurrentState]);
+    }, [state.fileId, state.category, state.currentTrackIndex, state.volume, state.isMiniPlayer, saveCurrentState]);
 
     // Sauvegarder le temps de lecture toutes les 10 secondes
     useEffect(() => {
@@ -276,10 +285,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return () => clearInterval(interval);
     }, [state.isPlaying, state.fileId, saveCurrentState]);
 
-    // Sauvegarder avant fermeture/refresh de la page
+    // Sauvegarder avant fermeture/refresh de la page (pas pour les fichiers locaux)
     useEffect(() => {
         const handleBeforeUnload = () => {
-            if (state.fileId && state.fileUrl) {
+            if (state.fileId && state.fileUrl && state.category !== 'local') {
                 // Sauvegarde synchrone
                 try {
                     const toSave: PersistedPlayerState = {
@@ -345,6 +354,53 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         }));
     }, []);
 
+    const playLocal = useCallback((params: {
+        files: File[];
+        startIndex?: number;
+        startAsMiniPlayer?: boolean;
+    }): PlaylistTrack[] | null => {
+        const isMedia = (f: File) =>
+            f.type.startsWith('audio/') ||
+            f.type.startsWith('video/') ||
+            f.type === 'video/x-matroska' ||
+            /\.(mkv|webm|mp4|mov|avi|m4a|mp3|wav|ogg|flac)$/i.test(f.name);
+        const mediaType = (f: File): 'audio' | 'video' =>
+            f.type.startsWith('audio/') || /\.(m4a|mp3|wav|ogg|flac)$/i.test(f.name) ? 'audio' : 'video';
+
+        const mediaFiles = params.files.filter(isMedia);
+        if (mediaFiles.length === 0) return null;
+
+        const startIndex = Math.min(params.startIndex ?? 0, mediaFiles.length - 1);
+
+        const playlist: PlaylistTrack[] = mediaFiles.map((file, i) => ({
+            file_id: `local-${i}`,
+            title: file.name.replace(/\.[^/.]+$/, '') || file.name,
+            filename: file.name,
+            category: 'local',
+            url: URL.createObjectURL(file),
+            type: mediaType(file),
+        }));
+
+        setState(prev => ({
+            ...prev,
+            isPlaying: true,
+            currentTime: 0,
+            fileId: playlist[startIndex].file_id,
+            category: 'local',
+            fileUrl: playlist[startIndex].url!,
+            title: playlist[startIndex].title,
+            artist: null,
+            thumbnail: null,
+            type: playlist[startIndex].type,
+            playlist,
+            playlistContext: null,
+            currentTrackIndex: startIndex,
+            isMiniPlayer: params.startAsMiniPlayer ?? false,
+        }));
+
+        return playlist;
+    }, []);
+
     const pause = useCallback(() => {
         const media = getActiveMedia();
         if (media) {
@@ -367,7 +423,14 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             media.pause();
             media.currentTime = 0;
         }
-        // Effacer l'état persisté quand on arrête volontairement
+        // Révoquer les blob URLs des fichiers locaux
+        if (state.category === 'local' && state.playlist.length > 0) {
+            state.playlist.forEach(t => {
+                if (t.url && t.url.startsWith('blob:')) {
+                    try { URL.revokeObjectURL(t.url); } catch {}
+                }
+            });
+        }
         clearPlayerState();
         setState(prev => ({
             ...prev,
@@ -383,7 +446,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             playlistContext: null,
             isMiniPlayer: false,
         }));
-    }, [getActiveMedia]);
+    }, [getActiveMedia, state.category, state.playlist]);
 
     const seek = useCallback((time: number) => {
         const media = getActiveMedia();
@@ -406,45 +469,44 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const playTrackAtIndex = useCallback((index: number) => {
         if (index >= 0 && index < state.playlist.length) {
             const track = state.playlist[index];
-            const fileUrl = `https://stormi.uk/api/files/${track.category}/${track.file_id}`;
-            
+            const fileUrl = track.url ?? `https://stormi.uk/api/files/${track.category}/${track.file_id}`;
+            const mediaType: 'audio' | 'video' = track.type ?? (track.category === 'musics' ? 'audio' : 'video');
+
             let artist: string | null = null;
             let thumbnail: string | null = null;
-            
-            try {
-                if (track.artists) {
-                    try {
-                        const parsed = typeof track.artists === 'string' ? JSON.parse(track.artists) : track.artists;
-                        let artists: string[] = [];
-                        if (Array.isArray(parsed)) {
-                            artists = parsed.filter((a: any) => typeof a === 'string' && a.trim().length > 0);
-                        } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
-                            artists = [parsed];
-                        }
-                        if (artists.length > 0) artist = artists[0];
-                    } catch {
-                        // Si le parsing échoue, ignorer
+
+            if (!track.url) {
+                try {
+                    if (track.artists) {
+                        try {
+                            const parsed = typeof track.artists === 'string' ? JSON.parse(track.artists) : track.artists;
+                            let artists: string[] = [];
+                            if (Array.isArray(parsed)) {
+                                artists = parsed.filter((a: any) => typeof a === 'string' && a.trim().length > 0);
+                            } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
+                                artists = [parsed];
+                            }
+                            if (artists.length > 0) artist = artists[0];
+                        } catch {}
                     }
-                }
-                if (track.album_thumbnails) {
-                    try {
-                        const parsed = typeof track.album_thumbnails === 'string' ? JSON.parse(track.album_thumbnails) : track.album_thumbnails;
-                        let thumbnails: string[] = [];
-                        if (Array.isArray(parsed)) {
-                            thumbnails = parsed.filter((t: any) => typeof t === 'string' && t.trim().length > 0);
-                        } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
-                            thumbnails = [parsed];
-                        }
-                        if (thumbnails.length > 0) thumbnail = thumbnails[0];
-                    } catch {
-                        // Si le parsing échoue, ignorer
+                    if (track.album_thumbnails) {
+                        try {
+                            const parsed = typeof track.album_thumbnails === 'string' ? JSON.parse(track.album_thumbnails) : track.album_thumbnails;
+                            let thumbnails: string[] = [];
+                            if (Array.isArray(parsed)) {
+                                thumbnails = parsed.filter((t: any) => typeof t === 'string' && t.trim().length > 0);
+                            } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
+                                thumbnails = [parsed];
+                            }
+                            if (thumbnails.length > 0) thumbnail = thumbnails[0];
+                        } catch {}
                     }
-                }
-                if (!thumbnail && track.thumbnail_url) {
-                    thumbnail = track.thumbnail_url;
-                }
-            } catch {}
-            
+                    if (!thumbnail && track.thumbnail_url) {
+                        thumbnail = track.thumbnail_url;
+                    }
+                } catch {}
+            }
+
             setState(prev => ({
                 ...prev,
                 fileId: track.file_id,
@@ -453,6 +515,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
                 title: track.title || track.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre',
                 artist,
                 thumbnail,
+                type: mediaType,
                 currentTrackIndex: index,
                 isPlaying: true,
             }));
@@ -544,6 +607,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             restorePlayback,
             dismissRestore,
             play,
+            playLocal,
             pause,
             resume,
             stop,

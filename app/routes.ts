@@ -27,6 +27,7 @@ export default [
         route("archives", "routes/archives.tsx"),
         route("executables", "routes/executables.tsx"),
         route("others", "routes/others.tsx"),
+        route("lecteur-local", "routes/lecteur-local.tsx"),
         route("reader/:category/:fileId", "routes/reader.tsx"),
         route("match/:category/:fileId", "routes/match.tsx"),
         route("info/:category/:fileId", "routes/info.tsx"),

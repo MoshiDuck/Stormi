@@ -9,8 +9,23 @@ export interface Translations {
         home: string;
         upload: string;
         files: string;
+        localPlayer: string;
         profile: string;
         logout: string;
+    };
+    // Lecteur local (page dédiée)
+    localPlayer: {
+        title: string;
+        subtitle: string;
+        dropZone: string;
+        dropZoneOr: string;
+        browse: string;
+        play: string;
+        remove: string;
+        emptyState: string;
+        emptyStateHint: string;
+        acceptedFormats: string;
+        playlistCount: string;
     };
     // Common
     common: {
@@ -164,8 +179,22 @@ const translations: Record<Language, Translations> = {
             home: 'Accueil',
             upload: 'Upload',
             files: 'Fichiers',
+            localPlayer: 'Lecteur local',
             profile: 'Profil',
             logout: 'Déconnexion'
+        },
+        localPlayer: {
+            title: 'Lecteur local',
+            subtitle: 'Ajoutez des fichiers audio ou vidéo depuis votre appareil pour les lire en lecture continue.',
+            dropZone: 'Glissez-déposez vos fichiers ici',
+            dropZoneOr: 'ou',
+            browse: 'Parcourir',
+            play: 'Lancer la lecture',
+            remove: 'Retirer',
+            emptyState: 'Aucun fichier sélectionné',
+            emptyStateHint: 'Ajoutez des pistes audio ou vidéo pour constituer une playlist.',
+            acceptedFormats: 'Audio et vidéo (MP3, WAV, MP4, WebM, etc.)',
+            playlistCount: 'Playlist ({count} fichier(s))'
         },
         common: {
             loading: 'Chargement en cours...',
@@ -307,8 +336,22 @@ const translations: Record<Language, Translations> = {
             home: 'Home',
             upload: 'Upload',
             files: 'Files',
+            localPlayer: 'Local player',
             profile: 'Profile',
             logout: 'Logout'
+        },
+        localPlayer: {
+            title: 'Local player',
+            subtitle: 'Add audio or video files from your device to play them in sequence.',
+            dropZone: 'Drag and drop your files here',
+            dropZoneOr: 'or',
+            browse: 'Browse',
+            play: 'Start playback',
+            remove: 'Remove',
+            emptyState: 'No files selected',
+            emptyStateHint: 'Add audio or video tracks to build a playlist.',
+            acceptedFormats: 'Audio and video (MP3, WAV, MP4, WebM, etc.)',
+            playlistCount: 'Playlist ({count} file(s))'
         },
         common: {
             loading: 'Loading...',
@@ -448,8 +491,22 @@ const translations: Record<Language, Translations> = {
             home: 'Inicio',
             upload: 'Subir',
             files: 'Archivos',
+            localPlayer: 'Reproductor local',
             profile: 'Perfil',
             logout: 'Cerrar sesión'
+        },
+        localPlayer: {
+            title: 'Reproductor local',
+            subtitle: 'Añade archivos de audio o vídeo desde tu dispositivo para reproducirlos en secuencia.',
+            dropZone: 'Arrastra y suelta tus archivos aquí',
+            dropZoneOr: 'o',
+            browse: 'Examinar',
+            play: 'Iniciar reproducción',
+            remove: 'Quitar',
+            emptyState: 'Ningún archivo seleccionado',
+            emptyStateHint: 'Añade pistas de audio o vídeo para crear una lista de reproducción.',
+            acceptedFormats: 'Audio y vídeo (MP3, WAV, MP4, WebM, etc.)',
+            playlistCount: 'Lista ({count} archivo(s))'
         },
         common: {
             loading: 'Cargando...',
@@ -591,8 +648,22 @@ const translations: Record<Language, Translations> = {
             home: 'Startseite',
             upload: 'Hochladen',
             files: 'Dateien',
+            localPlayer: 'Lokaler Player',
             profile: 'Profil',
             logout: 'Abmelden'
+        },
+        localPlayer: {
+            title: 'Lokaler Player',
+            subtitle: 'Fügen Sie Audio- oder Videodateien von Ihrem Gerät hinzu, um sie nacheinander abzuspielen.',
+            dropZone: 'Dateien hierher ziehen und ablegen',
+            dropZoneOr: 'oder',
+            browse: 'Durchsuchen',
+            play: 'Wiedergabe starten',
+            remove: 'Entfernen',
+            emptyState: 'Keine Dateien ausgewählt',
+            emptyStateHint: 'Fügen Sie Audio- oder Videospuren hinzu, um eine Playlist zu erstellen.',
+            acceptedFormats: 'Audio und Video (MP3, WAV, MP4, WebM, etc.)',
+            playlistCount: 'Playlist ({count} Datei(en))'
         },
         common: {
             loading: 'Wird geladen...',

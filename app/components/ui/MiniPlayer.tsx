@@ -217,19 +217,29 @@ export function MiniPlayer() {
     const progress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
 
     const handleExpand = () => {
-        // Stocker le temps actuel avant d'arrêter
         const currentTime = state.currentTime;
         toggleMiniPlayer(false);
         if (state.category && state.fileId) {
-            navigate(`/reader/${state.category}/${state.fileId}`, {
-                state: {
-                    playlist: state.playlist,
-                    playlistContext: state.playlistContext,
-                    startIndex: state.currentTrackIndex,
-                    continuePlayback: true,
-                    currentTime: currentTime
-                }
-            });
+            if (state.category === 'local' && state.playlist.length > 0) {
+                navigate(`/reader/local/${state.currentTrackIndex}`, {
+                    state: {
+                        playlist: state.playlist,
+                        startIndex: state.currentTrackIndex,
+                        continuePlayback: true,
+                        currentTime
+                    }
+                });
+            } else {
+                navigate(`/reader/${state.category}/${state.fileId}`, {
+                    state: {
+                        playlist: state.playlist,
+                        playlistContext: state.playlistContext,
+                        startIndex: state.currentTrackIndex,
+                        continuePlayback: true,
+                        currentTime
+                    }
+                });
+            }
         }
     };
 

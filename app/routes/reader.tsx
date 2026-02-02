@@ -17,6 +17,9 @@ interface PlaylistTrack {
     album_thumbnails?: string;
     thumbnail_url?: string;
     category: string;
+    /** URL directe pour les fichiers locaux */
+    url?: string;
+    type?: 'audio' | 'video';
 }
 
 interface LocationState {
@@ -55,6 +58,9 @@ export default function ReaderRoute() {
     
     // État pour le temps à restaurer (déclaré tôt pour être utilisé dans les effets)
     const [pendingSeekTime, setPendingSeekTime] = useState<number | null>(null);
+    /** Ref pour restaurer la position au retour du mini player (évite les races avec le DOM) */
+    const seekTimeRef = useRef<number | null>(null);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
     
     // État pour la progression de lecture
     const [currentProgress, setCurrentProgress] = useState<{ current_time: number; duration: number; progress_percent: number } | null>(null);
@@ -66,17 +72,14 @@ export default function ReaderRoute() {
     // Récupérer la playlist depuis le state de navigation
     const locationState = location.state as LocationState | null;
     
-    // Désactiver le mini player et récupérer le temps quand on est sur le reader
+    // Au montage : récupérer le temps du player si même fichier (retour mini player) et fermer le mini
     useEffect(() => {
-        // Si le player global est actif avec le même fichier, récupérer le temps
         const savedTime = player.state.fileId === fileId ? player.state.currentTime : 0;
         if (savedTime > 0) {
             setPendingSeekTime(savedTime);
+            seekTimeRef.current = savedTime;
         }
-        // Désactiver le mini player mais ne pas arrêter le player 
-        // (il sera arrêté quand le reader local prendra le relais)
         player.toggleMiniPlayer(false);
-        // Ne pas appeler stop() ici car ça efface l'état avant qu'on puisse l'utiliser
     }, []);
     
     // Charger la playlist depuis le state de navigation
@@ -99,56 +102,68 @@ export default function ReaderRoute() {
             }
         }
         
-        // Si on revient du mini player, sauvegarder le temps à restaurer
-        if (locationState?.continuePlayback && locationState?.currentTime) {
-            setPendingSeekTime(locationState.currentTime);
+        // Si on revient du mini player, sauvegarder le temps à restaurer (ref + state pour seek fiable)
+        if (locationState?.continuePlayback && locationState?.currentTime != null) {
+            const t = Number(locationState.currentTime);
+            setPendingSeekTime(t);
+            seekTimeRef.current = t;
         }
     }, [locationState, fileId]);
     
-    // Restaurer la position de lecture quand le média est prêt
+    // Appliquer le seek dès que la vidéo a des métadonnées (au retour du mini player)
+    const handleVideoLoadedMetadata = useCallback(() => {
+        if (videoRef.current && seekTimeRef.current != null && seekTimeRef.current > 0) {
+            videoRef.current.currentTime = seekTimeRef.current;
+            seekTimeRef.current = null;
+            setPendingSeekTime(null);
+        }
+    }, []);
+
+    // Appliquer le seek pour l'audio dès qu'il est prêt (au retour du mini player)
+    const handleAudioCanPlay = useCallback(() => {
+        if (audioRef.current && seekTimeRef.current != null && seekTimeRef.current > 0) {
+            audioRef.current.currentTime = seekTimeRef.current;
+            seekTimeRef.current = null;
+            setPendingSeekTime(null);
+        }
+    }, []);
+
+    // Fallback : restaurer la position si ref est set mais les handlers n'ont pas encore eu l'élément
     useEffect(() => {
-        if (pendingSeekTime === null || !blobUrl || loading) return;
-        
-        const restorePlayback = () => {
-            // Pour l'audio
-            if (category === 'musics' && audioRef.current) {
-                const handleCanPlay = () => {
-                    if (pendingSeekTime > 0) {
-                        audioRef.current!.currentTime = pendingSeekTime;
-                    }
-                    setPendingSeekTime(null);
-                };
-                
-                if (audioRef.current.readyState >= 3) {
-                    handleCanPlay();
-                } else {
-                    audioRef.current.addEventListener('canplay', handleCanPlay, { once: true });
-                }
-            }
-            // Pour la vidéo
-            else if (category === 'videos') {
-                const videoEl = document.querySelector('video');
-                if (videoEl) {
-                    const handleCanPlay = () => {
-                        if (pendingSeekTime > 0) {
-                            videoEl.currentTime = pendingSeekTime;
-                        }
-                        setPendingSeekTime(null);
-                    };
-                    
-                    if (videoEl.readyState >= 3) {
-                        handleCanPlay();
-                    } else {
-                        videoEl.addEventListener('canplay', handleCanPlay, { once: true });
-                    }
-                }
+        if (seekTimeRef.current == null || !blobUrl || loading) return;
+        const t = seekTimeRef.current;
+        const tryVideo = () => {
+            if (videoRef.current && t > 0) {
+                videoRef.current.currentTime = t;
+                seekTimeRef.current = null;
+                setPendingSeekTime(null);
             }
         };
-        
-        // Attendre un peu que le DOM soit prêt
-        const timer = setTimeout(restorePlayback, 100);
+        const tryAudio = () => {
+            if (audioRef.current && t > 0) {
+                audioRef.current.currentTime = t;
+                seekTimeRef.current = null;
+                setPendingSeekTime(null);
+            }
+        };
+        const timer = setTimeout(() => {
+            if (category === 'videos' || category === 'local') {
+                tryVideo();
+                if (seekTimeRef.current != null) {
+                    const v = document.querySelector('video');
+                    if (v) {
+                        v.currentTime = t;
+                        seekTimeRef.current = null;
+                        setPendingSeekTime(null);
+                    }
+                }
+            }
+            if (category === 'musics' || (category === 'local' && seekTimeRef.current != null)) {
+                tryAudio();
+            }
+        }, 150);
         return () => clearTimeout(timer);
-    }, [pendingSeekTime, blobUrl, loading, category]);
+    }, [blobUrl, loading, category]);
     
     useEffect(() => {
         if (!category || !fileId) {
@@ -157,10 +172,33 @@ export default function ReaderRoute() {
             return;
         }
 
+        // Fichiers locaux : pas d'appel API, tout vient du state de navigation
+        if (category === 'local') {
+            const state = locationState;
+            if (!state?.playlist?.length) {
+                setError('Playlist locale manquante');
+                setLoading(false);
+                return;
+            }
+            const idx = Math.min(parseInt(fileId, 10) || 0, state.playlist.length - 1);
+            const track = state.playlist[idx];
+            if (!track?.url) {
+                setError('Piste locale introuvable');
+                setLoading(false);
+                return;
+            }
+            setBlobUrl(track.url);
+            setPlaylist(state.playlist);
+            setCurrentTrackIndex(state.startIndex ?? idx);
+            setFileInfo({ title: track.title, filename: track.filename });
+            setLoading(false);
+            return;
+        }
+
         const loadFile = async () => {
             try {
                 if (typeof window === 'undefined') return;
-                
+
                 const token = localStorage.getItem('stormi_token');
                 if (!token) {
                     setError('Non authentifié');
@@ -201,12 +239,10 @@ export default function ReaderRoute() {
                 // Pour vidéo/audio, utiliser l'URL directe pour le streaming (pas de token nécessaire sur cette route)
                 // Pour les autres fichiers, on peut télécharger le blob
                 if (category === 'videos' || category === 'musics') {
-                    // Utiliser l'URL directe pour streaming
                     const streamUrl = `https://stormi.uk/api/files/${category}/${fileId}`;
                     setBlobUrl(streamUrl);
                     setLoading(false);
                 } else {
-                    // Pour les autres fichiers (images, docs), télécharger en blob
                     const fileUrl = `https://stormi.uk/api/files/${category}/${fileId}`;
                     const response = await fetch(fileUrl, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -230,17 +266,19 @@ export default function ReaderRoute() {
 
         loadFile();
 
-        // Cleanup: révoquer le blob URL au démontage (seulement pour les blobs, pas les URLs directes)
+        // Cleanup: révoquer le blob URL au démontage (sauf pour local, géré par le player)
         return () => {
-            if (blobUrl && blobUrl.startsWith('blob:')) {
+            if (category !== 'local' && blobUrl && blobUrl.startsWith('blob:')) {
                 URL.revokeObjectURL(blobUrl);
             }
         };
-    }, [category, fileId]);
+    }, [category, fileId, locationState]);
     
 
-    const isVideo = (cat: FileCategory | null): boolean => cat === 'videos';
-    const isAudio = (cat: FileCategory | null): boolean => cat === 'musics';
+    const isVideo = (cat: FileCategory | string | null): boolean =>
+        cat === 'videos' || (cat === 'local' && playlist[currentTrackIndex]?.type === 'video');
+    const isAudio = (cat: FileCategory | string | null): boolean =>
+        cat === 'musics' || (cat === 'local' && playlist[currentTrackIndex]?.type === 'audio');
     const isImage = (cat: FileCategory | null): boolean => cat === 'images';
     const isDocument = (cat: FileCategory | null): boolean => cat === 'documents';
 
@@ -249,8 +287,12 @@ export default function ReaderRoute() {
         if (index >= 0 && index < playlist.length) {
             const track = playlist[index];
             setCurrentTrackIndex(index);
-            // Naviguer vers la nouvelle piste en passant la playlist dans le state
-            navigate(`/reader/${track.category}/${track.file_id}`, { 
+            // Pour les fichiers locaux, l'URL doit utiliser l'index numérique (file_id = "local-0" ne parse pas)
+            const path =
+                track.category === 'local'
+                    ? `/reader/local/${index}`
+                    : `/reader/${track.category}/${track.file_id}`;
+            navigate(path, {
                 replace: true,
                 state: {
                     playlist,
@@ -282,61 +324,65 @@ export default function ReaderRoute() {
 
     // Fonction pour activer le mini player
     const handleMiniPlayer = () => {
-        if (!blobUrl || (category !== 'musics' && category !== 'videos')) return;
-        
-        // Récupérer le temps actuel de lecture
+        const isMedia = category === 'musics' || category === 'videos' || category === 'local';
+        if (!blobUrl || !isMedia) return;
+
         let currentTime = 0;
         if (category === 'musics' && audioRef.current) {
             currentTime = audioRef.current.currentTime;
-        } else if (category === 'videos') {
+        } else if (category === 'videos' || category === 'local') {
             const videoEl = document.querySelector('video');
             if (videoEl) {
                 currentTime = videoEl.currentTime;
             }
         }
-        
-        // Parser les infos pour le mini player
+        if (category === 'local' && audioRef.current) {
+            currentTime = audioRef.current.currentTime;
+        }
+
         let artist: string | null = null;
         let thumbnail: string | null = null;
-        
-        try {
-            if (fileInfo?.artists) {
-                try {
-                    const parsed = typeof fileInfo.artists === 'string' ? JSON.parse(fileInfo.artists) : fileInfo.artists;
-                    let artists: string[] = [];
-                    if (Array.isArray(parsed)) {
-                        artists = parsed.filter((a: any) => typeof a === 'string' && a.trim().length > 0);
-                    } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
-                        artists = [parsed];
-                    }
-                    if (artists.length > 0) artist = artists[0];
-                } catch {
-                    // Si le parsing échoue, ignorer
+
+        if (category !== 'local') {
+            try {
+                if (fileInfo?.artists) {
+                    try {
+                        const parsed = typeof fileInfo.artists === 'string' ? JSON.parse(fileInfo.artists) : fileInfo.artists;
+                        let artists: string[] = [];
+                        if (Array.isArray(parsed)) {
+                            artists = parsed.filter((a: any) => typeof a === 'string' && a.trim().length > 0);
+                        } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
+                            artists = [parsed];
+                        }
+                        if (artists.length > 0) artist = artists[0];
+                    } catch {}
                 }
-            }
-            if (fileInfo?.album_thumbnails) {
-                try {
-                    const parsed = typeof fileInfo.album_thumbnails === 'string' ? JSON.parse(fileInfo.album_thumbnails) : fileInfo.album_thumbnails;
-                    let thumbnails: string[] = [];
-                    if (Array.isArray(parsed)) {
-                        thumbnails = parsed.filter((t: any) => typeof t === 'string' && t.trim().length > 0);
-                    } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
-                        thumbnails = [parsed];
-                    }
-                    if (thumbnails.length > 0) thumbnail = thumbnails[0];
-                } catch {
-                    // Si le parsing échoue, ignorer
+                if (fileInfo?.album_thumbnails) {
+                    try {
+                        const parsed = typeof fileInfo.album_thumbnails === 'string' ? JSON.parse(fileInfo.album_thumbnails) : fileInfo.album_thumbnails;
+                        let thumbnails: string[] = [];
+                        if (Array.isArray(parsed)) {
+                            thumbnails = parsed.filter((t: any) => typeof t === 'string' && t.trim().length > 0);
+                        } else if (typeof parsed === 'string' && parsed.trim().length > 0) {
+                            thumbnails = [parsed];
+                        }
+                        if (thumbnails.length > 0) thumbnail = thumbnails[0];
+                    } catch {}
                 }
-            }
-            if (!thumbnail && fileInfo?.thumbnail_url) {
-                thumbnail = fileInfo.thumbnail_url;
-            }
-        } catch {}
-        
-        // Calculer le titre
+                if (!thumbnail && fileInfo?.thumbnail_url) {
+                    thumbnail = fileInfo.thumbnail_url;
+                }
+            } catch {}
+        }
+
         const title = fileInfo?.title || fileInfo?.filename?.replace(/\.[^/.]+$/, '') || fileId;
-        
-        // Démarrer la lecture dans le contexte global avec le temps actuel ET en mode mini
+        const mediaType: 'audio' | 'video' =
+            category === 'local'
+                ? (playlist[currentTrackIndex]?.type ?? 'video')
+                : category === 'musics'
+                    ? 'audio'
+                    : 'video';
+
         player.play({
             fileId,
             category: category!,
@@ -344,20 +390,21 @@ export default function ReaderRoute() {
             title,
             artist: artist || undefined,
             thumbnail: thumbnail || undefined,
-            type: category === 'musics' ? 'audio' : 'video',
+            type: mediaType,
             playlist,
             playlistContext: playlistContext || undefined,
             startIndex: currentTrackIndex,
-            currentTime, // Passer le temps actuel
-            startAsMiniPlayer: true // Démarrer directement en mode mini player
+            currentTime,
+            startAsMiniPlayer: true
         });
-        
-        // Naviguer vers la page appropriée
+
         navigateBack();
     };
     
     const navigateBack = () => {
-        if (category === 'musics') {
+        if (category === 'local') {
+            navigate('/home');
+        } else if (category === 'musics') {
             navigate('/musics');
         } else if (category === 'images') {
             navigate('/images');
@@ -369,6 +416,10 @@ export default function ReaderRoute() {
     };
     
     const handleBack = () => {
+        if (category === 'local') {
+            navigateBack();
+            return;
+        }
         // Sauvegarder la progression finale avant de quitter
         if (category === 'videos' && currentProgress && user?.id) {
             const token = localStorage.getItem('auth_token');
@@ -596,6 +647,7 @@ export default function ReaderRoute() {
                     }}>
                         <video
                             ref={(el) => {
+                                videoRef.current = el;
                                 if (el && category === 'videos') {
                                     // Sauvegarder la progression périodiquement
                                     const handleTimeUpdate = async () => {
@@ -645,6 +697,7 @@ export default function ReaderRoute() {
                                     };
                                 }
                             }}
+                            onLoadedMetadata={handleVideoLoadedMetadata}
                             controls
                             autoPlay
                             style={{
@@ -1141,6 +1194,7 @@ export default function ReaderRoute() {
                                     height: '40px',
                                     borderRadius: '8px'
                                 }}
+                                onCanPlay={handleAudioCanPlay}
                                 onEnded={handleTrackEnded}
                                 onError={(e) => {
                                     console.error('❌ [READER] Erreur audio:', e);
