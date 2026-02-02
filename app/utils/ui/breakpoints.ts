@@ -55,3 +55,9 @@ export const CONTENT_MAX_WIDTH = {
 
 /** Hauteur de la barre de navigation basse (téléphone / tablette) */
 export const BOTTOM_NAV_HEIGHT = 64;
+
+/** Hauteur approximative de la barre de navigation du haut (pour padding-top du main quand la barre est fixed) */
+export const NAV_TOP_HEIGHT = 60;
+
+/** Marge de sécurité sous la barre du haut pour éviter que le contenu soit masqué (scroll, zoom, etc.) */
+export const NAV_TOP_SAFETY = 12;

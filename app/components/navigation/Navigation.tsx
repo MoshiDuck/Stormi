@@ -154,9 +154,13 @@ export function Navigation({ user, onLogout }: NavigationProps) {
 
             <style>{`
                 .nav-bar {
-                    position: sticky;
+                    position: fixed;
                     top: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
                     z-index: 100;
+                    padding: calc(12px + env(safe-area-inset-top, 0px)) 0 12px;
                     background: ${darkTheme.background.nav};
                     background: linear-gradient(
                         180deg,
@@ -166,8 +170,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     backdrop-filter: blur(12px);
                     -webkit-backdrop-filter: blur(12px);
                     border-bottom: 1px solid ${darkTheme.border.primary};
-                    padding: 12px 0;
-                    margin-bottom: 24px;
+                    margin-bottom: 0;
                     box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04);
                 }
 
@@ -191,7 +194,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                 @media (max-width: 1023px) {
                     .nav-bar-inner { padding: 0 12px; }
                     .nav-bar-left { gap: 12px; }
-                    .nav-bar { margin-bottom: 12px; padding: 10px 0; }
+                    .nav-bar { padding: calc(10px + env(safe-area-inset-top, 0px)) 0 10px; }
                 }
 
                 .nav-logo-link {

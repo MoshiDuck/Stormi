@@ -19,7 +19,7 @@ import { BottomNav } from '~/components/navigation/BottomNav';
 import { PageTransition } from '~/components/navigation/PageTransition';
 import { AppLayoutLoadingBar } from '~/components/navigation/AppLayoutLoadingBar';
 import { darkTheme } from '~/utils/ui/theme';
-import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
+import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT, NAV_TOP_HEIGHT, NAV_TOP_SAFETY } from '~/utils/ui/breakpoints';
 
 export default function AppLayout() {
     const { user, logout } = useAuth();
@@ -52,6 +52,7 @@ export default function AppLayout() {
                         width: '100%',
                         margin: '0 auto',
                         padding: `0 ${padding}px ${showBottomNav ? 16 : 40}px`,
+                        paddingTop: `calc(${NAV_TOP_HEIGHT + NAV_TOP_SAFETY}px + env(safe-area-inset-top, 0px))`,
                         paddingBottom: showBottomNav
                             ? `calc(${BOTTOM_NAV_HEIGHT}px + 16px + env(safe-area-inset-bottom, 0px))`
                             : 40,
