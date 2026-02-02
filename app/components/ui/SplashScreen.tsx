@@ -178,10 +178,10 @@ export function SplashScreen() {
                             fontWeight: 700,
                         }}
                     >
-                        Storm
+                        Stor
                     </span>
                     <span
-                        className="splash-i"
+                        className="splash-mi"
                         style={{
                             display: 'inline-block',
                             background: 'linear-gradient(135deg, #fbbf24 0%, #fde047 30%, #fbbf24 60%, #f59e0b 100%)',
@@ -194,7 +194,7 @@ export function SplashScreen() {
                             fontWeight: 800,
                         }}
                     >
-                        i
+                        mi
                     </span>
                 </h1>
                 {/* Tagline courte — masquée sur très petit écran */}
@@ -256,7 +256,7 @@ export function SplashScreen() {
                     transform: scale(0.92) translateY(12px);
                     animation: splash-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
                 }
-                .splash-i {
+                .splash-mi {
                     opacity: 0;
                     transform: scale(0.92) translateY(12px);
                     animation: splash-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards,
@@ -299,12 +299,12 @@ export function SplashScreen() {
                 @media (prefers-reduced-motion: reduce) {
                     .splash-gradient-bg,
                     .splash-storm,
-                    .splash-i,
+                    .splash-mi,
                     .splash-tagline,
                     .splash-particle {
                         animation: splash-reveal 0.2s ease-out forwards !important;
                     }
-                    .splash-i { animation-delay: 0.05s; }
+                    .splash-mi { animation-delay: 0.05s; }
                     .splash-tagline { animation-delay: 0.1s; }
                     .splash-particle { animation: none !important; opacity: 0.15; }
                 }
