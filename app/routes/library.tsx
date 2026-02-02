@@ -59,7 +59,7 @@ export default function LibraryRoute() {
     const { showToast, ToastContainer } = useToast();
 
     const tabParam = searchParams.get('tab') as LibraryTab | null;
-    const validTabs: LibraryTab[] = ['images', 'documents', 'archives', 'executables', 'others'];
+    const validTabs: LibraryTab[] = ['images', 'documents', 'archives', 'others', 'executables'];
     const [selectedTab, setSelectedTab] = useState<LibraryTab>(() =>
         tabParam && validTabs.includes(tabParam) ? tabParam : 'images'
     );

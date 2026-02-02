@@ -62,11 +62,12 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     </Link>
 
                     <div style={{ display: 'flex', gap: '20px' }}>
-                        <Link
-                            to="/home"
-                            prefetch="intent"
-                            aria-current={isActive('/home') ? 'page' : undefined}
-                            style={{
+                    <Link
+                        to="/home"
+                        prefetch="intent"
+                        aria-current={isActive('/home') ? 'page' : undefined}
+                        aria-label={t('nav.homeAriaLabel')}
+                        style={{
                                 color: isActive('/home') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
                                 padding: '10px 16px',
@@ -96,7 +97,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             to="/upload"
                             prefetch="intent"
                             aria-current={isActive('/upload') ? 'page' : undefined}
-                            aria-label={t('nav.add')}
+                            aria-label={t('nav.addAriaLabel')}
                             style={{
                                 color: isActive('/upload') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
@@ -125,7 +126,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
 
                         <Link
                             to="/films"
-                            aria-label={t('nav.watch')}
+                            aria-label={t('nav.watchAriaLabel')}
                             prefetch="intent"
                             aria-current={isActive('/films') || isActive('/series') ? 'page' : undefined}
                             style={{
@@ -156,7 +157,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
 
                         <Link
                             to="/musics"
-                            aria-label={t('nav.listen')}
+                            aria-label={t('nav.listenAriaLabel')}
                             prefetch="intent"
                             aria-current={isActive('/musics') ? 'page' : undefined}
                             style={{
@@ -187,7 +188,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
 
                         <Link
                             to="/library"
-                            aria-label={t('nav.library')}
+                            aria-label={t('nav.libraryAriaLabel')}
                             prefetch="intent"
                             aria-current={isActive('/library') ? 'page' : undefined}
                             style={{
@@ -220,7 +221,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             to="/lecteur-local"
                             prefetch="intent"
                             aria-current={isActive('/lecteur-local') ? 'page' : undefined}
-                            aria-label={t('nav.localPlayer')}
+                            aria-label={t('nav.localPlayerAriaLabel')}
                             style={{
                                 color: isActive('/lecteur-local') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
@@ -251,6 +252,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             to="/profile"
                             prefetch="intent"
                             aria-current={isActive('/profile') ? 'page' : undefined}
+                            aria-label={t('nav.profileAriaLabel')}
                             style={{
                                 color: isActive('/profile') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',

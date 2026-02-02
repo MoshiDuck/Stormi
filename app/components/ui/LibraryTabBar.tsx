@@ -1,5 +1,5 @@
 // INFO : app/components/ui/LibraryTabBar.tsx
-// Barre d'onglets pour la page Bibliothèque (Images, Documents, Archives, Exécutables, Autres)
+// Barre d'onglets pour la page Bibliothèque (ordre : usage décroissant — IA Phase 2)
 
 import React from 'react';
 import { useSearchParams } from 'react-router';
@@ -9,12 +9,13 @@ import type { FileCategory } from '~/utils/file/fileClassifier';
 
 export type LibraryTab = 'images' | 'documents' | 'archives' | 'executables' | 'others';
 
+/** Ordre recommandé : Images, Documents, Archives, Autres, Exécutables (usage décroissant). */
 const LIBRARY_TABS: Array<{ key: LibraryTab; category: FileCategory; icon: string }> = [
     { key: 'images', category: 'images', icon: '🖼️' },
     { key: 'documents', category: 'documents', icon: '📄' },
     { key: 'archives', category: 'archives', icon: '📦' },
-    { key: 'executables', category: 'executables', icon: '⚙️' },
     { key: 'others', category: 'others', icon: '📎' },
+    { key: 'executables', category: 'executables', icon: '⚙️' },
 ];
 
 interface LibraryTabBarProps {

@@ -3,6 +3,8 @@
 **Document de travail** — Architecture d'information et parcours utilisateur  
 Méthode : Design thinking, heuristiques Nielsen, card-sorting, principes WCAG 2.1 AA
 
+> **Voir aussi** : [IA_UX_REORGANISATION_OPTIONS.md](./IA_UX_REORGANISATION_OPTIONS.md) — Options détaillées (A/B/C/D), matrice de décision, parcours cibles, plan de mise en œuvre et validation tree-test.
+
 ---
 
 ## 1. État des lieux (audit rapide)

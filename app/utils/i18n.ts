@@ -16,6 +16,14 @@ export interface Translations {
         localPlayer: string;
         profile: string;
         logout: string;
+        /** Labels accessibles pour lecteurs d'écran (WCAG 2.4.4) */
+        homeAriaLabel: string;
+        addAriaLabel: string;
+        watchAriaLabel: string;
+        listenAriaLabel: string;
+        libraryAriaLabel: string;
+        localPlayerAriaLabel: string;
+        profileAriaLabel: string;
     };
     // Lecteur local (page dédiée)
     localPlayer: {
@@ -80,6 +88,7 @@ export interface Translations {
         spaceAdd: string;
         seeAllVideos: string;
         seeAllMusics: string;
+        addMore: string;
     };
     // Upload
     upload: {
@@ -132,6 +141,7 @@ export interface Translations {
         season: string;
         episode: string;
         recentlyAdded: string;
+        redirectToFilms: string;
     };
     // Empty states
     emptyStates: {
@@ -202,7 +212,14 @@ const translations: Record<Language, Translations> = {
             library: 'Bibliothèque',
             localPlayer: 'Lecteur local',
             profile: 'Profil',
-            logout: 'Déconnexion'
+            logout: 'Déconnexion',
+            homeAriaLabel: 'Page d\'accueil Stormi',
+            addAriaLabel: 'Ajouter des médias',
+            watchAriaLabel: 'Films et séries',
+            listenAriaLabel: 'Musiques',
+            libraryAriaLabel: 'Images, documents et archives',
+            localPlayerAriaLabel: 'Lire des fichiers locaux sans upload',
+            profileAriaLabel: 'Mon compte et paramètres'
         },
         localPlayer: {
             title: 'Lecteur local',
@@ -262,7 +279,8 @@ const translations: Record<Language, Translations> = {
             spaceLibrary: 'Bibliothèque',
             spaceAdd: 'Ajouter',
             seeAllVideos: 'Voir films & séries',
-            seeAllMusics: 'Écouter ma musique'
+            seeAllMusics: 'Écouter ma musique',
+            addMore: 'Ajouter encore'
         },
         upload: {
             title: 'Gestionnaire d\'upload',
@@ -302,7 +320,8 @@ const translations: Record<Language, Translations> = {
             film: 'film',
             season: 'saison',
             episode: 'Épisode',
-            recentlyAdded: 'Ajoutés récemment'
+            recentlyAdded: 'Ajoutés récemment',
+            redirectToFilms: 'Redirection vers Films'
         },
         categories: {
             videos: 'Vidéos',
@@ -311,7 +330,7 @@ const translations: Record<Language, Translations> = {
             documents: 'Documents',
             archives: 'Archives',
             executables: 'Exécutables',
-            others: 'Autres'
+            others: 'Autres fichiers'
         },
         emptyStates: {
             noVideos: 'Aucune vidéo',
@@ -376,7 +395,14 @@ const translations: Record<Language, Translations> = {
             library: 'Library',
             localPlayer: 'Local player',
             profile: 'Profile',
-            logout: 'Logout'
+            logout: 'Logout',
+            homeAriaLabel: 'Stormi home page',
+            addAriaLabel: 'Add media',
+            watchAriaLabel: 'Movies and TV shows',
+            listenAriaLabel: 'Music',
+            libraryAriaLabel: 'Images, documents and archives',
+            localPlayerAriaLabel: 'Play local files without uploading',
+            profileAriaLabel: 'My account and settings'
         },
         localPlayer: {
             title: 'Local player',
@@ -436,7 +462,8 @@ const translations: Record<Language, Translations> = {
             spaceLibrary: 'Library',
             spaceAdd: 'Add',
             seeAllVideos: 'Watch movies & series',
-            seeAllMusics: 'Listen to my music'
+            seeAllMusics: 'Listen to my music',
+            addMore: 'Add more'
         },
         upload: {
             title: 'Upload Manager',
@@ -474,7 +501,8 @@ const translations: Record<Language, Translations> = {
             film: 'movie',
             season: 'season',
             episode: 'Episode',
-            recentlyAdded: 'Recently Added'
+            recentlyAdded: 'Recently Added',
+            redirectToFilms: 'Redirecting to Movies'
         },
         categories: {
             videos: 'Videos',
@@ -483,7 +511,7 @@ const translations: Record<Language, Translations> = {
             documents: 'Documents',
             archives: 'Archives',
             executables: 'Executables',
-            others: 'Others'
+            others: 'Other files'
         },
         emptyStates: {
             noVideos: 'No videos',
@@ -548,7 +576,14 @@ const translations: Record<Language, Translations> = {
             library: 'Biblioteca',
             localPlayer: 'Reproductor local',
             profile: 'Perfil',
-            logout: 'Cerrar sesión'
+            logout: 'Cerrar sesión',
+            homeAriaLabel: 'Página de inicio Stormi',
+            addAriaLabel: 'Añadir medios',
+            watchAriaLabel: 'Películas y series',
+            listenAriaLabel: 'Música',
+            libraryAriaLabel: 'Imágenes, documentos y archivos',
+            localPlayerAriaLabel: 'Reproducir archivos locales sin subir',
+            profileAriaLabel: 'Mi cuenta y ajustes'
         },
         localPlayer: {
             title: 'Reproductor local',
@@ -608,7 +643,8 @@ const translations: Record<Language, Translations> = {
             spaceLibrary: 'Biblioteca',
             spaceAdd: 'Añadir',
             seeAllVideos: 'Ver películas y series',
-            seeAllMusics: 'Escuchar mi música'
+            seeAllMusics: 'Escuchar mi música',
+            addMore: 'Añadir más'
         },
         upload: {
             title: 'Gestor de carga',
@@ -648,7 +684,8 @@ const translations: Record<Language, Translations> = {
             film: 'película',
             season: 'temporada',
             episode: 'Episodio',
-            recentlyAdded: 'Añadidos recientemente'
+            recentlyAdded: 'Añadidos recientemente',
+            redirectToFilms: 'Redirigiendo a Películas'
         },
         categories: {
             videos: 'Videos',
@@ -657,7 +694,7 @@ const translations: Record<Language, Translations> = {
             documents: 'Documentos',
             archives: 'Archivos',
             executables: 'Ejecutables',
-            others: 'Otros'
+            others: 'Otros archivos'
         },
         emptyStates: {
             noVideos: 'Sin videos',
@@ -722,7 +759,14 @@ const translations: Record<Language, Translations> = {
             library: 'Bibliothek',
             localPlayer: 'Lokaler Player',
             profile: 'Profil',
-            logout: 'Abmelden'
+            logout: 'Abmelden',
+            homeAriaLabel: 'Stormi Startseite',
+            addAriaLabel: 'Medien hinzufügen',
+            watchAriaLabel: 'Filme und Serien',
+            listenAriaLabel: 'Musik',
+            libraryAriaLabel: 'Bilder, Dokumente und Archive',
+            localPlayerAriaLabel: 'Lokale Dateien ohne Upload abspielen',
+            profileAriaLabel: 'Mein Konto und Einstellungen'
         },
         localPlayer: {
             title: 'Lokaler Player',
@@ -782,7 +826,8 @@ const translations: Record<Language, Translations> = {
             spaceLibrary: 'Bibliothek',
             spaceAdd: 'Hinzufügen',
             seeAllVideos: 'Filme & Serien ansehen',
-            seeAllMusics: 'Meine Musik hören'
+            seeAllMusics: 'Meine Musik hören',
+            addMore: 'Weitere hinzufügen'
         },
         upload: {
             title: 'Upload-Manager',
@@ -822,7 +867,8 @@ const translations: Record<Language, Translations> = {
             film: 'Film',
             season: 'Staffel',
             episode: 'Episode',
-            recentlyAdded: 'Kürzlich hinzugefügt'
+            recentlyAdded: 'Kürzlich hinzugefügt',
+            redirectToFilms: 'Weiterleitung zu Filmen'
         },
         categories: {
             videos: 'Videos',
@@ -831,7 +877,7 @@ const translations: Record<Language, Translations> = {
             documents: 'Dokumente',
             archives: 'Archive',
             executables: 'Ausführbare Dateien',
-            others: 'Andere'
+            others: 'Andere Dateien'
         },
         emptyStates: {
             noVideos: 'Keine Videos',

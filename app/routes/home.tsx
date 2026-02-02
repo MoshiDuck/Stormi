@@ -341,38 +341,13 @@ export default function HomeRoute() {
                         </p>
                     </div>
 
-                    {/* Vidéos, Musiques, Bibliothèque — cartes cliquables en colonnes */}
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: '20px',
-                        marginBottom: '28px',
-                    }}>
-                    <section
-                        aria-labelledby="home-space-videos"
-                        role="link"
-                        tabIndex={0}
-                        onClick={(e) => { if (!(e.target instanceof HTMLElement) || !e.target.closest('a')) navigate('/films'); }}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/films'); } }}
-                        style={cardBaseStyle}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-4px)';
-                            e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
-                            e.currentTarget.style.borderColor = darkTheme.border.light;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = darkTheme.shadow.small;
-                            e.currentTarget.style.borderColor = darkTheme.border.secondary;
-                        }}
-                    >
-                        <h2 id="home-space-videos" style={sectionTitleStyle}>
-                            <span style={{ fontSize: '20px' }}>🎬</span>
-                            {t('home.spaceVideos')}
-                        </h2>
-                        {!loadingContinueWatching && continueWatching.length > 0 && (
-                            <div style={{ marginBottom: '16px' }}>
-                                <NetflixCarousel title={t('home.continueWatching')} icon="▶">
+                    {/* Continuer de regarder — en premier quand des progressions existent (Phase 2 IA) */}
+                    {!loadingContinueWatching && continueWatching.length > 0 && (
+                        <section
+                            aria-label={t('home.continueWatching')}
+                            style={{ marginBottom: '28px' }}
+                        >
+                            <NetflixCarousel title={t('home.continueWatching')} icon="▶">
                                 {continueWatching.map((item) => {
                                     const thumb = getThumbnailUrl(item);
                                     const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
@@ -437,9 +412,65 @@ export default function HomeRoute() {
                                         </Link>
                                     );
                                 })}
-                                </NetflixCarousel>
-                            </div>
-                        )}
+                            </NetflixCarousel>
+                        </section>
+                    )}
+
+                    {/* Vidéos, Musiques, Bibliothèque — cartes cliquables en colonnes */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: '20px',
+                        marginBottom: '28px',
+                    }}>
+                    <section
+                        aria-labelledby="home-space-videos"
+                        role="link"
+                        tabIndex={0}
+                        onClick={(e) => { if (!(e.target instanceof HTMLElement) || !e.target.closest('a')) navigate('/films'); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/films'); } }}
+                        style={cardBaseStyle}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                            e.currentTarget.style.borderColor = darkTheme.border.light;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                            e.currentTarget.style.borderColor = darkTheme.border.secondary;
+                        }}
+                    >
+                        <h2 id="home-space-videos" style={sectionTitleStyle}>
+                            <span style={{ fontSize: '20px' }}>🎬</span>
+                            {t('home.spaceVideos')}
+                        </h2>
+                        {!loadingContinueWatching && continueWatching.length > 0 ? (
+                            <Link
+                                to="/films"
+                                prefetch="intent"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    color: darkTheme.accent.blue,
+                                    textDecoration: 'none',
+                                    marginTop: '8px',
+                                    transition: darkTheme.transition.normal,
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.textDecoration = 'underline';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.textDecoration = 'none';
+                                }}
+                                aria-label={t('home.seeAllVideos')}
+                            >
+                                {t('home.seeAllVideos')}
+                            </Link>
+                        ) : null}
                     </section>
 
                     <section
@@ -559,6 +590,40 @@ export default function HomeRoute() {
                         </p>
                     </section>
                     </div>
+
+                    {/* CTA secondaire "Ajouter encore" lorsque l'utilisateur a déjà des fichiers */}
+                    {hasLoadedOnce && !loadingStats && stats.fileCount > 0 && (
+                        <div style={{ marginBottom: '28px', textAlign: 'center' }}>
+                            <Link
+                                to="/upload"
+                                prefetch="intent"
+                                style={{
+                                    fontSize: '14px',
+                                    color: darkTheme.accent.blue,
+                                    textDecoration: 'none',
+                                    fontWeight: '500',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '8px 16px',
+                                    borderRadius: darkTheme.radius.medium,
+                                    transition: darkTheme.transition.normal,
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.textDecoration = 'underline';
+                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.textDecoration = 'none';
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                }}
+                                aria-label={t('home.addMore')}
+                            >
+                                <span aria-hidden>📤</span>
+                                {t('home.addMore')}
+                            </Link>
+                        </div>
+                    )}
 
                     {/* Stats repliables */}
                     <div style={{ marginBottom: '40px' }}>
