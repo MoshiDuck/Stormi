@@ -77,9 +77,13 @@ export interface Translations {
         pageTitleUpload: string;
         pageTitleLibrary: string;
         pageTitleProfile: string;
+        pageTitleManageProfile: string;
+        pageTitleHelp: string;
         pageDescriptionHome: string;
         pageDescriptionProfile: string;
         pageDescriptionLibrary: string;
+        pageDescriptionManageProfile: string;
+        pageDescriptionHelp: string;
     };
     // Actions médias (Lecture, Plus d'infos, etc.)
     media: {
@@ -298,6 +302,30 @@ export interface Translations {
         logoutNote: string;
         noteLabel: string;
     };
+    // Profile dropdown (menu au survol)
+    profileMenu: {
+        manageProfile: string;
+        account: string;
+        helpCenter: string;
+    };
+    // Manage profile page (langue, déconnexion, données locales)
+    manageProfile: {
+        title: string;
+        subtitle: string;
+        backToAccount: string;
+    };
+    // Help center page
+    help: {
+        title: string;
+        subtitle: string;
+        faqTitle: string;
+        faqUpload: string;
+        faqUploadAnswer: string;
+        faqStorage: string;
+        faqStorageAnswer: string;
+        contactTitle: string;
+        contactText: string;
+    };
     // Dialogs
     dialogs: {
         logoutTitle: string;
@@ -505,9 +533,13 @@ const translations: Record<Language, Translations> = {
             pageTitleUpload: 'Upload | Stormi',
             pageTitleLibrary: 'Bibliothèque | Stormi',
             pageTitleProfile: 'Profil | Stormi',
+            pageTitleManageProfile: 'Gérer le profil | Stormi',
+            pageTitleHelp: 'Centre d\'aide | Stormi',
             pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
             pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
-            pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.'
+            pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.',
+            pageDescriptionManageProfile: 'Langue, déconnexion et données locales.',
+            pageDescriptionHelp: 'Questions fréquentes et support Stormi.'
         },
         media: {
             play: 'Lecture',
@@ -818,6 +850,27 @@ const translations: Record<Language, Translations> = {
             logoutNote: 'La déconnexion supprimera votre session actuelle mais ne supprimera pas votre compte. Pour supprimer définitivement votre compte, veuillez vous rendre sur votre compte Google.',
             noteLabel: 'Note :'
         },
+        profileMenu: {
+            manageProfile: 'Gérer le profil',
+            account: 'Compte',
+            helpCenter: 'Centre d\'aide'
+        },
+        manageProfile: {
+            title: 'Gérer le profil',
+            subtitle: 'Langue, déconnexion et données locales.',
+            backToAccount: 'Retour au compte'
+        },
+        help: {
+            title: 'Centre d\'aide',
+            subtitle: 'Questions fréquentes et support.',
+            faqTitle: 'Questions fréquentes',
+            faqUpload: 'Comment ajouter des fichiers ?',
+            faqUploadAnswer: 'Utilisez le menu « Ajouter » pour envoyer des médias. Les formats audio, vidéo, images et documents sont acceptés.',
+            faqStorage: 'Où sont stockées mes données ?',
+            faqStorageAnswer: 'Vos fichiers sont hébergés de manière sécurisée sur l\'infrastructure Stormi (Cloudflare R2). Vous conservez l\'accès tant que votre compte est actif.',
+            contactTitle: 'Contact',
+            contactText: 'Pour toute question, contactez le support Stormi.'
+        },
         dialogs: {
             logoutTitle: 'Déconnexion',
             logoutMessage: 'Êtes-vous sûr de vouloir vous déconnecter ?'
@@ -906,9 +959,13 @@ const translations: Record<Language, Translations> = {
             pageTitleUpload: 'Upload | Stormi',
             pageTitleLibrary: 'Library | Stormi',
             pageTitleProfile: 'Profile | Stormi',
+            pageTitleManageProfile: 'Manage profile | Stormi',
+            pageTitleHelp: 'Help center | Stormi',
             pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
             pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
-            pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.'
+            pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.',
+            pageDescriptionManageProfile: 'Language, logout and local data.',
+            pageDescriptionHelp: 'FAQ and Stormi support.'
         },
         media: {
             play: 'Play',
@@ -1217,6 +1274,27 @@ const translations: Record<Language, Translations> = {
             logoutNote: 'Logging out will remove your current session but will not delete your account. To permanently delete your account, please go to your Google account.',
             noteLabel: 'Note:'
         },
+        profileMenu: {
+            manageProfile: 'Manage profile',
+            account: 'Account',
+            helpCenter: 'Help center'
+        },
+        manageProfile: {
+            title: 'Manage profile',
+            subtitle: 'Language, logout and local data.',
+            backToAccount: 'Back to account'
+        },
+        help: {
+            title: 'Help center',
+            subtitle: 'FAQ and support.',
+            faqTitle: 'Frequently asked questions',
+            faqUpload: 'How do I add files?',
+            faqUploadAnswer: 'Use the « Add » menu to upload media. Audio, video, image and document formats are supported.',
+            faqStorage: 'Where is my data stored?',
+            faqStorageAnswer: 'Your files are stored securely on Stormi infrastructure (Cloudflare R2). You keep access as long as your account is active.',
+            contactTitle: 'Contact',
+            contactText: 'For any questions, contact Stormi support.'
+        },
         dialogs: {
             logoutTitle: 'Logout',
             logoutMessage: 'Are you sure you want to logout?'
@@ -1305,9 +1383,13 @@ const translations: Record<Language, Translations> = {
             pageTitleUpload: 'Subir | Stormi',
             pageTitleLibrary: 'Biblioteca | Stormi',
             pageTitleProfile: 'Perfil | Stormi',
+            pageTitleManageProfile: 'Gestionar perfil | Stormi',
+            pageTitleHelp: 'Centro de ayuda | Stormi',
             pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
             pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
-            pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.'
+            pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.',
+            pageDescriptionManageProfile: 'Idioma, cerrar sesión y datos locales.',
+            pageDescriptionHelp: 'Preguntas frecuentes y soporte Stormi.'
         },
         media: {
             play: 'Reproducir',
@@ -1618,6 +1700,27 @@ const translations: Record<Language, Translations> = {
             logoutNote: 'Cerrar sesión eliminará tu sesión actual pero no borrará tu cuenta. Para eliminar tu cuenta permanentemente, ve a tu cuenta de Google.',
             noteLabel: 'Nota:'
         },
+        profileMenu: {
+            manageProfile: 'Gestionar perfil',
+            account: 'Cuenta',
+            helpCenter: 'Centro de ayuda'
+        },
+        manageProfile: {
+            title: 'Gestionar perfil',
+            subtitle: 'Idioma, cerrar sesión y datos locales.',
+            backToAccount: 'Volver a la cuenta'
+        },
+        help: {
+            title: 'Centro de ayuda',
+            subtitle: 'Preguntas frecuentes y soporte.',
+            faqTitle: 'Preguntas frecuentes',
+            faqUpload: '¿Cómo añadir archivos?',
+            faqUploadAnswer: 'Usa el menú « Añadir » para subir medios. Se aceptan formatos de audio, vídeo, imagen y documentos.',
+            faqStorage: '¿Dónde se almacenan mis datos?',
+            faqStorageAnswer: 'Tus archivos se almacenan de forma segura en la infraestructura Stormi (Cloudflare R2). Conservas el acceso mientras tu cuenta esté activa.',
+            contactTitle: 'Contacto',
+            contactText: 'Para cualquier pregunta, contacta con el soporte de Stormi.'
+        },
         dialogs: {
             logoutTitle: 'Cerrar sesión',
             logoutMessage: '¿Estás seguro de que quieres cerrar sesión?'
@@ -1706,9 +1809,13 @@ const translations: Record<Language, Translations> = {
             pageTitleUpload: 'Hochladen | Stormi',
             pageTitleLibrary: 'Bibliothek | Stormi',
             pageTitleProfile: 'Profil | Stormi',
+            pageTitleManageProfile: 'Profil verwalten | Stormi',
+            pageTitleHelp: 'Hilfezentrum | Stormi',
             pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
             pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
-            pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.'
+            pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.',
+            pageDescriptionManageProfile: 'Sprache, Abmeldung und lokale Daten.',
+            pageDescriptionHelp: 'FAQ und Stormi-Support.'
         },
         media: {
             play: 'Abspielen',
@@ -2018,6 +2125,27 @@ const translations: Record<Language, Translations> = {
             confirmClearLocalData: 'Sind Sie sicher, dass Sie alle lokalen Daten löschen möchten?',
             logoutNote: 'Die Abmeldung entfernt Ihre aktuelle Sitzung, löscht aber nicht Ihr Konto. Um Ihr Konto dauerhaft zu löschen, gehen Sie bitte zu Ihrem Google-Konto.',
             noteLabel: 'Hinweis:'
+        },
+        profileMenu: {
+            manageProfile: 'Profil verwalten',
+            account: 'Konto',
+            helpCenter: 'Hilfezentrum'
+        },
+        manageProfile: {
+            title: 'Profil verwalten',
+            subtitle: 'Sprache, Abmeldung und lokale Daten.',
+            backToAccount: 'Zurück zum Konto'
+        },
+        help: {
+            title: 'Hilfezentrum',
+            subtitle: 'Häufig gestellte Fragen und Support.',
+            faqTitle: 'Häufig gestellte Fragen',
+            faqUpload: 'Wie füge ich Dateien hinzu?',
+            faqUploadAnswer: 'Nutzen Sie das Menü « Hinzufügen », um Medien hochzuladen. Audio-, Video-, Bild- und Dokumentformate werden unterstützt.',
+            faqStorage: 'Wo werden meine Daten gespeichert?',
+            faqStorageAnswer: 'Ihre Dateien werden sicher auf der Stormi-Infrastruktur (Cloudflare R2) gehostet. Sie behalten den Zugriff, solange Ihr Konto aktiv ist.',
+            contactTitle: 'Kontakt',
+            contactText: 'Bei Fragen wenden Sie sich an den Stormi-Support.'
         },
         dialogs: {
             logoutTitle: 'Abmelden',

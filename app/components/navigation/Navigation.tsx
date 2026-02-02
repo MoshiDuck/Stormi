@@ -1,11 +1,10 @@
-// INFO : app/components/Navigation.tsx
-import React, { useState } from 'react';
+// INFO : app/components/Navigation.tsx — menu profil au survol (Manage profile, Account, Help center)
+import React from 'react';
 import { Link, useLocation } from 'react-router';
 import type { User } from '~/types/auth';
 import { darkTheme } from '~/utils/ui/theme';
-import { ConfirmDialog } from '~/components/ui/ConfirmDialog';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { LanguageSelector } from '~/components/ui/LanguageSelector';
+import { ProfileDropdown } from '~/components/navigation/ProfileDropdown';
 
 interface NavigationProps {
     user: User;
@@ -14,7 +13,6 @@ interface NavigationProps {
 
 export function Navigation({ user, onLogout }: NavigationProps) {
     const location = useLocation();
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const { t } = useLanguage();
 
     const isActive = (path: string) => location.pathname === path;
@@ -247,96 +245,11 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                         >
                             {t('nav.localPlayer')}
                         </Link>
-
-                        <Link
-                            to="/profile"
-                            prefetch="intent"
-                            aria-current={isActive('/profile') ? 'page' : undefined}
-                            aria-label={t('nav.profileAriaLabel')}
-                            style={{
-                                color: isActive('/profile') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/profile') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/profile') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/profile')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/profile')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.profile')}
-                        </Link>
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <LanguageSelector compact={true} />
-                    
-                    {user.picture && (
-                        <img
-                            src={user.picture}
-                            alt=""
-                            style={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: '50%',
-                                border: `2px solid ${darkTheme.accent.blue}`
-                            }}
-                        />
-                    )}
-
-                    <button
-                        onClick={() => setShowLogoutConfirm(true)}
-                        style={{
-                            backgroundColor: 'transparent',
-                            color: darkTheme.accent.red,
-                            border: `1px solid ${darkTheme.accent.red}`,
-                            padding: '8px 16px',
-                            borderRadius: darkTheme.radius.medium,
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            transition: darkTheme.transition.normal
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkTheme.accent.red;
-                            e.currentTarget.style.color = darkTheme.text.primary;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = darkTheme.accent.red;
-                        }}
-                    >
-                        {t('nav.logout')}
-                    </button>
-                </div>
+                <ProfileDropdown user={user} onLogout={onLogout} />
             </div>
-
-            <ConfirmDialog
-                isOpen={showLogoutConfirm}
-                title={t('dialogs.logoutTitle')}
-                message={t('dialogs.logoutMessage')}
-                confirmText={t('nav.logout')}
-                cancelText={t('common.cancel')}
-                confirmColor={darkTheme.accent.red}
-                onConfirm={() => {
-                    setShowLogoutConfirm(false);
-                    onLogout();
-                }}
-                onCancel={() => setShowLogoutConfirm(false)}
-            />
         </nav>
         </>
     );

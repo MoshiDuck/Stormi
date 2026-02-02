@@ -1,9 +1,9 @@
-// INFO : app/routes/profile.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard.
-import React, { useState } from 'react';
+// INFO : app/routes/profile.tsx — Compte (infos personnelles, compte connecté) ; langue/déconnexion dans Gérer le profil.
+import React from 'react';
+import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { LanguageSelector } from '~/components/ui/LanguageSelector';
 import { translations } from '~/utils/i18n';
 
 export function meta() {
@@ -14,19 +14,8 @@ export function meta() {
 }
 
 export default function ProfileRoute() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { t } = useLanguage();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-    const handleLogout = async () => {
-        if (isLoggingOut) return;
-        setIsLoggingOut(true);
-        try {
-            await logout();
-        } finally {
-            setIsLoggingOut(false);
-        }
-    };
 
     if (!user) {
         return null; // AuthGuard gère la redirection
@@ -40,6 +29,22 @@ export default function ProfileRoute() {
                         padding: '40px',
                         boxShadow: darkTheme.shadow.medium
                     }}>
+                        <div style={{ marginBottom: '24px' }}>
+                            <Link
+                                to="/manage-profile"
+                                prefetch="intent"
+                                style={{
+                                    color: darkTheme.accent.blue,
+                                    textDecoration: 'none',
+                                    fontSize: '14px',
+                                    fontWeight: 500,
+                                    marginBottom: '16px',
+                                    display: 'inline-block',
+                                }}
+                            >
+                                {t('profileMenu.manageProfile')} →
+                            </Link>
+                        </div>
                         <div style={{ marginBottom: '40px' }}>
                             <h1 style={{
                                 fontSize: '32px',
@@ -299,156 +304,6 @@ export default function ProfileRoute() {
                                             {t('profile.accountSecureHint')}
                                         </p>
                                     </div>
-                                </div>
-                            </section>
-
-                            {/* Section Préférences */}
-                            <section style={{
-                                backgroundColor: darkTheme.background.tertiary,
-                                borderRadius: '8px',
-                                padding: '30px',
-                                border: `1px solid ${darkTheme.border.primary}`
-                            }}>
-                                <h2 style={{
-                                    fontSize: '20px',
-                                    fontWeight: '600',
-                                    marginBottom: '20px',
-                                    color: darkTheme.text.primary,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px'
-                                }}>
-                                    <span style={{
-                                        display: 'inline-block',
-                                        width: '24px',
-                                        height: '24px',
-                                        backgroundColor: darkTheme.accent.blue,
-                                        borderRadius: '4px',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        lineHeight: '24px',
-                                        fontSize: '14px'
-                                    }}>🌐</span>
-                                    {t('profile.language')}
-                                </h2>
-
-                                <div style={{
-                                    marginBottom: '16px'
-                                }}>
-                                    <label style={{
-                                        display: 'block',
-                                        fontSize: '14px',
-                                        fontWeight: '500',
-                                        color: darkTheme.text.secondary,
-                                        marginBottom: '12px'
-                                    }}>
-                                        {t('profile.languageDescription')}
-                                    </label>
-                                    <LanguageSelector compact={false} />
-                                </div>
-                            </section>
-
-                            {/* Section Actions */}
-                            <section style={{
-                                backgroundColor: darkTheme.background.tertiary,
-                                borderRadius: '8px',
-                                padding: '30px',
-                                border: `1px solid ${darkTheme.border.primary}`
-                            }}>
-                                <h2 style={{
-                                    fontSize: '20px',
-                                    fontWeight: '600',
-                                    marginBottom: '20px',
-                                    color: darkTheme.text.primary,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px'
-                                }}>
-                  <span style={{
-                      display: 'inline-block',
-                      width: '24px',
-                      height: '24px',
-                      backgroundColor: '#f44336',
-                      borderRadius: '4px',
-                      color: 'white',
-                      textAlign: 'center',
-                      lineHeight: '24px',
-                      fontSize: '14px'
-                  }}>⚠️</span>
-                                    {t('profile.actions')}
-                                </h2>
-
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                    gap: '16px'
-                                }}>
-                                    <button
-                                        onClick={handleLogout}
-                                        disabled={isLoggingOut}
-                                        style={{
-                                            backgroundColor: isLoggingOut ? '#888' : '#f44336',
-                                            color: 'white',
-                                            border: 'none',
-                                            padding: '12px 20px',
-                                            borderRadius: '6px',
-                                            cursor: isLoggingOut ? 'not-allowed' : 'pointer',
-                                            fontSize: '16px',
-                                            fontWeight: '500',
-                                            transition: 'background-color 0.2s',
-                                            textAlign: 'left',
-                                            opacity: isLoggingOut ? 0.7 : 1
-                                        }}
-                                        onMouseOver={(e) => !isLoggingOut && (e.currentTarget.style.backgroundColor = '#d32f2f')}
-                                        onMouseOut={(e) => !isLoggingOut && (e.currentTarget.style.backgroundColor = '#f44336')}
-                                    >
-                                        {isLoggingOut ? t('common.loading') : t('profile.logout')}
-                                    </button>
-
-                                    <button
-                                        onClick={() => {
-                                            if (window.confirm(t('profile.confirmClearLocalData'))) {
-                                                localStorage.removeItem('stormi_token');
-                                                localStorage.removeItem('stormi_user');
-                                                window.location.reload();
-                                            }
-                                        }}
-                                        style={{
-                                            backgroundColor: 'transparent',
-                                            color: darkTheme.text.secondary,
-                                            border: '1px solid #dee2e6',
-                                            padding: '12px 20px',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontSize: '16px',
-                                            fontWeight: '500',
-                                            transition: 'all 0.2s',
-                                            textAlign: 'left'
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#f8f9fa';
-                                            e.currentTarget.style.borderColor = '#dc3545';
-                                            e.currentTarget.style.color = '#dc3545';
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.borderColor = '#dee2e6';
-                                            e.currentTarget.style.color = '#666';
-                                        }}
-                                    >
-                                        {t('profile.clearLocalData')}
-                                    </button>
-                                </div>
-
-                                <div style={{
-                                    marginTop: '20px',
-                                    fontSize: '12px',
-                                    color: '#888',
-                                    lineHeight: '1.5'
-                                }}>
-                                    <p style={{ margin: 0 }}>
-                                        <strong>{t('profile.noteLabel')}</strong> {t('profile.logoutNote')}
-                                    </p>
                                 </div>
                             </section>
                         </div>

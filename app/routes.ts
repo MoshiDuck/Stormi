@@ -17,6 +17,8 @@ export default [
     layout("routes/_app.tsx", [
         route("home", "routes/home.tsx"),
         route("profile", "routes/profile.tsx"),
+        route("manage-profile", "routes/manage-profile.tsx"),
+        route("help", "routes/help.tsx"),
         route("upload", "routes/upload.tsx"),
         route("musics", "routes/musics.tsx"),
         route("films", "routes/films.tsx"),
