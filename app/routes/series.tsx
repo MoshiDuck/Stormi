@@ -3,11 +3,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
-import type { FileCategory } from '~/utils/file/fileClassifier';
-import { CategoryBar } from '~/components/ui/categoryBar';
 import { VideoSubCategoryBar } from '~/components/ui/VideoSubCategoryBar';
 import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
-import { getCategoryRoute } from '~/utils/routes';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useFloating, useHover, useInteractions, FloatingPortal } from '@floating-ui/react';
@@ -111,7 +108,6 @@ export default function SeriesRoute() {
     const { config } = useConfig();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const [selectedCategory, setSelectedCategory] = useState<FileCategory>('videos');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [organizedSeries, setOrganizedSeries] = useState<OrganizedSeries>({
@@ -123,11 +119,6 @@ export default function SeriesRoute() {
     });
     const [heroShow, setHeroShow] = useState<TVShow | null>(null);
     
-    const handleCategoryChange = useCallback((category: FileCategory) => {
-        setSelectedCategory(category);
-        navigate(getCategoryRoute(category));
-    }, [navigate]);
-
     const handleSubCategoryChange = useCallback((subCategory: 'films' | 'series') => {
         navigate(subCategory === 'films' ? '/films' : '/series');
     }, [navigate]);
@@ -1058,7 +1049,6 @@ export default function SeriesRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     <MediaPageSkeleton />
                 </div>
@@ -1070,7 +1060,6 @@ export default function SeriesRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     <div style={{ 
                         display: 'flex', 
@@ -1115,7 +1104,6 @@ export default function SeriesRoute() {
         <>
                 <div style={{ padding: '0 0 60px 0', overflow: 'visible' }}>
                     <div style={{ padding: '20px 60px' }}>
-                        <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                         <VideoSubCategoryBar selectedSubCategory="series" onSubCategoryChange={handleSubCategoryChange} />
                     </div>
                     

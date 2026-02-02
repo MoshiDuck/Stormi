@@ -3,11 +3,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
-import type { FileCategory } from '~/utils/file/fileClassifier';
-import { CategoryBar } from '~/components/ui/categoryBar';
 import { VideoSubCategoryBar } from '~/components/ui/VideoSubCategoryBar';
 import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
-import { getCategoryRoute } from '~/utils/routes';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useFloating, useHover, useInteractions, FloatingPortal } from '@floating-ui/react';
@@ -91,7 +88,6 @@ export default function FilmsRoute() {
     const { config } = useConfig();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [selectedCategory, setSelectedCategory] = useState<FileCategory>('videos');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [organizedMovies, setOrganizedMovies] = useState<OrganizedMovies>({
@@ -135,11 +131,6 @@ export default function FilmsRoute() {
         onSuccess: (message) => showToast(message, 'success'),
     });
     
-    const handleCategoryChange = useCallback((category: FileCategory) => {
-        setSelectedCategory(category);
-        navigate(getCategoryRoute(category));
-    }, [navigate]);
-
     const handleSubCategoryChange = useCallback((subCategory: 'films' | 'series') => {
         navigate(subCategory === 'films' ? '/films' : '/series');
     }, [navigate]);
@@ -813,7 +804,6 @@ export default function FilmsRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     <MediaPageSkeleton />
                 </div>
@@ -825,7 +815,6 @@ export default function FilmsRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     <div style={{ 
                         display: 'flex', 
@@ -871,7 +860,6 @@ export default function FilmsRoute() {
         <>
                 <div style={{ padding: '0 0 60px 0', overflow: 'visible' }}>
                     <div style={{ padding: '20px 60px' }}>
-                        <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                         <VideoSubCategoryBar selectedSubCategory="films" onSubCategoryChange={handleSubCategoryChange} />
                     </div>
                     

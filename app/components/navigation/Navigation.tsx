@@ -42,6 +42,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     <Link
                         to="/home"
                         prefetch="intent"
+                        aria-label={t('nav.home')}
                         style={{
                             color: darkTheme.text.primary,
                             textDecoration: 'none',
@@ -95,6 +96,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             to="/upload"
                             prefetch="intent"
                             aria-current={isActive('/upload') ? 'page' : undefined}
+                            aria-label={t('nav.add')}
                             style={{
                                 color: isActive('/upload') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
@@ -118,43 +120,107 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                                 }
                             }}
                         >
-                            {t('nav.upload')}
+                            {t('nav.add')}
                         </Link>
 
                         <Link
                             to="/films"
+                            aria-label={t('nav.watch')}
                             prefetch="intent"
-                            aria-current={isActive('/films') || isActive('/series') || isActive('/musics') || isActive('/images') || isActive('/documents') || isActive('/archives') || isActive('/executables') || isActive('/others') ? 'page' : undefined}
+                            aria-current={isActive('/films') || isActive('/series') ? 'page' : undefined}
                             style={{
-                                color: isActive('/films') || isActive('/series') || isActive('/musics') || isActive('/images') || isActive('/documents') || isActive('/archives') || isActive('/executables') || isActive('/others') ? darkTheme.accent.blue : darkTheme.text.secondary,
+                                color: isActive('/films') || isActive('/series') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
                                 padding: '10px 16px',
                                 borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/films') || isActive('/series') || isActive('/musics') || isActive('/images') || isActive('/documents') || isActive('/archives') || isActive('/executables') || isActive('/others') ? darkTheme.surface.info : 'transparent',
+                                backgroundColor: isActive('/films') || isActive('/series') ? darkTheme.surface.info : 'transparent',
                                 transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/films') || isActive('/series') || isActive('/musics') || isActive('/images') || isActive('/documents') || isActive('/archives') || isActive('/executables') || isActive('/others') ? '600' : '500',
+                                fontWeight: isActive('/films') || isActive('/series') ? '600' : '500',
                                 fontSize: '15px'
                             }}
                             onMouseEnter={(e) => {
-                                if (!isActive('/films') && !isActive('/series') && !isActive('/musics') && !isActive('/images') && !isActive('/documents') && !isActive('/archives') && !isActive('/executables') && !isActive('/others')) {
+                                if (!isActive('/films') && !isActive('/series')) {
                                     e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
                                     e.currentTarget.style.color = darkTheme.text.primary;
                                 }
                             }}
                             onMouseLeave={(e) => {
-                                if (!isActive('/films') && !isActive('/series') && !isActive('/musics') && !isActive('/images') && !isActive('/documents') && !isActive('/archives') && !isActive('/executables') && !isActive('/others')) {
+                                if (!isActive('/films') && !isActive('/series')) {
                                     e.currentTarget.style.backgroundColor = 'transparent';
                                     e.currentTarget.style.color = darkTheme.text.secondary;
                                 }
                             }}
                         >
-                            {t('nav.files')}
+                            {t('nav.watch')}
+                        </Link>
+
+                        <Link
+                            to="/musics"
+                            aria-label={t('nav.listen')}
+                            prefetch="intent"
+                            aria-current={isActive('/musics') ? 'page' : undefined}
+                            style={{
+                                color: isActive('/musics') ? darkTheme.accent.blue : darkTheme.text.secondary,
+                                textDecoration: 'none',
+                                padding: '10px 16px',
+                                borderRadius: darkTheme.radius.medium,
+                                backgroundColor: isActive('/musics') ? darkTheme.surface.info : 'transparent',
+                                transition: darkTheme.transition.normal,
+                                fontWeight: isActive('/musics') ? '600' : '500',
+                                fontSize: '15px'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive('/musics')) {
+                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                    e.currentTarget.style.color = darkTheme.text.primary;
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive('/musics')) {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = darkTheme.text.secondary;
+                                }
+                            }}
+                        >
+                            {t('nav.listen')}
+                        </Link>
+
+                        <Link
+                            to="/library"
+                            aria-label={t('nav.library')}
+                            prefetch="intent"
+                            aria-current={isActive('/library') ? 'page' : undefined}
+                            style={{
+                                color: isActive('/library') ? darkTheme.accent.blue : darkTheme.text.secondary,
+                                textDecoration: 'none',
+                                padding: '10px 16px',
+                                borderRadius: darkTheme.radius.medium,
+                                backgroundColor: isActive('/library') ? darkTheme.surface.info : 'transparent',
+                                transition: darkTheme.transition.normal,
+                                fontWeight: isActive('/library') ? '600' : '500',
+                                fontSize: '15px'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive('/library')) {
+                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
+                                    e.currentTarget.style.color = darkTheme.text.primary;
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive('/library')) {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                    e.currentTarget.style.color = darkTheme.text.secondary;
+                                }
+                            }}
+                        >
+                            {t('nav.library')}
                         </Link>
 
                         <Link
                             to="/lecteur-local"
                             prefetch="intent"
                             aria-current={isActive('/lecteur-local') ? 'page' : undefined}
+                            aria-label={t('nav.localPlayer')}
                             style={{
                                 color: isActive('/lecteur-local') ? darkTheme.accent.blue : darkTheme.text.secondary,
                                 textDecoration: 'none',
@@ -219,7 +285,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     {user.picture && (
                         <img
                             src={user.picture}
-                            alt="avatar"
+                            alt=""
                             style={{
                                 width: 36,
                                 height: 36,

@@ -8,7 +8,11 @@ export interface Translations {
     nav: {
         home: string;
         upload: string;
+        add: string;
         files: string;
+        watch: string;
+        listen: string;
+        library: string;
         localPlayer: string;
         profile: string;
         logout: string;
@@ -63,6 +67,19 @@ export interface Translations {
         monthlyBilling: string;
         for: string;
         rate: string;
+        emptyTitle: string;
+        emptyDescription: string;
+        uploadFirst: string;
+        continueWatching: string;
+        recentlyAdded: string;
+        showStats: string;
+        hideStats: string;
+        spaceVideos: string;
+        spaceMusics: string;
+        spaceLibrary: string;
+        spaceAdd: string;
+        seeAllVideos: string;
+        seeAllMusics: string;
     };
     // Upload
     upload: {
@@ -178,7 +195,11 @@ const translations: Record<Language, Translations> = {
         nav: {
             home: 'Accueil',
             upload: 'Upload',
+            add: 'Ajouter',
             files: 'Fichiers',
+            watch: 'Regarder',
+            listen: 'Écouter',
+            library: 'Bibliothèque',
             localPlayer: 'Lecteur local',
             profile: 'Profil',
             logout: 'Déconnexion'
@@ -228,7 +249,20 @@ const translations: Record<Language, Translations> = {
             amountToPay: 'Montant à payer',
             monthlyBilling: 'Facturation mensuelle',
             for: 'pour',
-            rate: 'Tarif: 0,030 $/GB-mois (arrondi à la hausse)'
+            rate: 'Tarif: 0,030 $/GB-mois (arrondi à la hausse)',
+            emptyTitle: 'Bienvenue ! Ajoutez vos premiers médias',
+            emptyDescription: 'Commencez par ajouter vos médias pour profiter de votre espace de stockage et streaming.',
+            uploadFirst: 'Ajouter des médias',
+            continueWatching: 'Continuer de regarder',
+            recentlyAdded: 'Récemment ajoutés',
+            showStats: 'Voir les stats',
+            hideStats: 'Masquer les stats',
+            spaceVideos: 'Vidéos',
+            spaceMusics: 'Musiques',
+            spaceLibrary: 'Bibliothèque',
+            spaceAdd: 'Ajouter',
+            seeAllVideos: 'Voir films & séries',
+            seeAllMusics: 'Écouter ma musique'
         },
         upload: {
             title: 'Gestionnaire d\'upload',
@@ -335,7 +369,11 @@ const translations: Record<Language, Translations> = {
         nav: {
             home: 'Home',
             upload: 'Upload',
+            add: 'Add',
             files: 'Files',
+            watch: 'Watch',
+            listen: 'Listen',
+            library: 'Library',
             localPlayer: 'Local player',
             profile: 'Profile',
             logout: 'Logout'
@@ -385,7 +423,20 @@ const translations: Record<Language, Translations> = {
             amountToPay: 'Amount to pay',
             monthlyBilling: 'Monthly billing',
             for: 'for',
-            rate: 'Rate: $0.030/GB-month (rounded up)'
+            rate: 'Rate: $0.030/GB-month (rounded up)',
+            emptyTitle: 'Welcome! Add your first media',
+            emptyDescription: 'Start by adding your media to enjoy your storage and streaming space.',
+            uploadFirst: 'Add media',
+            continueWatching: 'Continue watching',
+            recentlyAdded: 'Recently added',
+            showStats: 'Show stats',
+            hideStats: 'Hide stats',
+            spaceVideos: 'Videos',
+            spaceMusics: 'Music',
+            spaceLibrary: 'Library',
+            spaceAdd: 'Add',
+            seeAllVideos: 'Watch movies & series',
+            seeAllMusics: 'Listen to my music'
         },
         upload: {
             title: 'Upload Manager',
@@ -490,7 +541,11 @@ const translations: Record<Language, Translations> = {
         nav: {
             home: 'Inicio',
             upload: 'Subir',
+            add: 'Añadir',
             files: 'Archivos',
+            watch: 'Ver',
+            listen: 'Escuchar',
+            library: 'Biblioteca',
             localPlayer: 'Reproductor local',
             profile: 'Perfil',
             logout: 'Cerrar sesión'
@@ -540,7 +595,20 @@ const translations: Record<Language, Translations> = {
             amountToPay: 'Cantidad a pagar',
             monthlyBilling: 'Facturación mensual',
             for: 'para',
-            rate: 'Tarifa: $0.030/GB-mes (redondeado hacia arriba)'
+            rate: 'Tarifa: $0.030/GB-mes (redondeado hacia arriba)',
+            emptyTitle: '¡Bienvenido! Añade tus primeros medios',
+            emptyDescription: 'Empieza añadiendo tus medios para disfrutar de tu espacio de almacenamiento y streaming.',
+            uploadFirst: 'Añadir medios',
+            continueWatching: 'Continuar viendo',
+            recentlyAdded: 'Añadidos recientemente',
+            showStats: 'Ver estadísticas',
+            hideStats: 'Ocultar estadísticas',
+            spaceVideos: 'Videos',
+            spaceMusics: 'Música',
+            spaceLibrary: 'Biblioteca',
+            spaceAdd: 'Añadir',
+            seeAllVideos: 'Ver películas y series',
+            seeAllMusics: 'Escuchar mi música'
         },
         upload: {
             title: 'Gestor de carga',
@@ -647,7 +715,11 @@ const translations: Record<Language, Translations> = {
         nav: {
             home: 'Startseite',
             upload: 'Hochladen',
+            add: 'Hinzufügen',
             files: 'Dateien',
+            watch: 'Ansehen',
+            listen: 'Anhören',
+            library: 'Bibliothek',
             localPlayer: 'Lokaler Player',
             profile: 'Profil',
             logout: 'Abmelden'
@@ -697,7 +769,20 @@ const translations: Record<Language, Translations> = {
             amountToPay: 'Zu zahlender Betrag',
             monthlyBilling: 'Monatliche Abrechnung',
             for: 'für',
-            rate: 'Satz: $0.030/GB-Monat (aufgerundet)'
+            rate: 'Satz: $0.030/GB-Monat (aufgerundet)',
+            emptyTitle: 'Willkommen! Fügen Sie Ihre ersten Medien hinzu',
+            emptyDescription: 'Beginnen Sie mit dem Hinzufügen Ihrer Medien, um Ihren Speicher- und Streaming-Bereich zu nutzen.',
+            uploadFirst: 'Medien hinzufügen',
+            continueWatching: 'Weiterschauen',
+            recentlyAdded: 'Kürzlich hinzugefügt',
+            showStats: 'Statistiken anzeigen',
+            hideStats: 'Statistiken ausblenden',
+            spaceVideos: 'Videos',
+            spaceMusics: 'Musik',
+            spaceLibrary: 'Bibliothek',
+            spaceAdd: 'Hinzufügen',
+            seeAllVideos: 'Filme & Serien ansehen',
+            seeAllMusics: 'Meine Musik hören'
         },
         upload: {
             title: 'Upload-Manager',

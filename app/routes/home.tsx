@@ -1,13 +1,14 @@
 // INFO : app/routes/home.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard.
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useLoaderData, useRevalidator } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useFilesPreloader } from '~/hooks/useFilesPreloader';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { replacePlaceholders } from '~/utils/i18n';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
-import { useNavigate, useLoaderData, useRevalidator } from 'react-router';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
+import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
 
 /** Données préchargées par le loader (user depuis localStorage, stats API ou cache). */
 export async function clientLoader() {
@@ -47,6 +48,26 @@ export async function clientLoader() {
 
 type StatsPayload = { fileCount: number; totalSizeGB: number; billableGB: number };
 
+interface ContinueWatchingItem {
+    file_id: string;
+    category: string;
+    title: string | null;
+    filename: string | null;
+    thumbnail_r2_path: string | null;
+    thumbnail_url: string | null;
+    progress_percent: number;
+}
+
+interface RecentlyAddedItem {
+    file_id: string;
+    category: string;
+    title: string | null;
+    filename: string | null;
+    thumbnail_r2_path: string | null;
+    thumbnail_url: string | null;
+    uploaded_at: number;
+}
+
 export function meta() {
     return [
         { title: 'Accueil | Stormi' },
@@ -64,6 +85,11 @@ export default function HomeRoute() {
     const [loadingStats, setLoadingStats] = useState(!loaderData?.stats);
     const [statsError, setStatsError] = useState<string | null>(null);
     const [hasLoadedOnce, setHasLoadedOnce] = useState(!!loaderData?.stats);
+    const [continueWatching, setContinueWatching] = useState<ContinueWatchingItem[]>([]);
+    const [loadingContinueWatching, setLoadingContinueWatching] = useState(true);
+    const [recentlyAdded, setRecentlyAdded] = useState<RecentlyAddedItem[]>([]);
+    const [loadingRecentlyAdded, setLoadingRecentlyAdded] = useState(true);
+    const [statsExpanded, setStatsExpanded] = useState(false);
 
     // Synchroniser avec les données du loader (premier rendu ou après revalidation)
     useEffect(() => {
@@ -150,31 +176,433 @@ export default function HomeRoute() {
         return () => window.removeEventListener('stormi:stats-invalidated', handleStatsInvalidated);
     }, [user?.id, revalidator]);
 
+    // Continuer de regarder : fetch progressions + vidéos, fusionner
+    const loadContinueWatching = useCallback(async () => {
+        if (!user?.id) return;
+        setLoadingContinueWatching(true);
+        try {
+                const token = localStorage.getItem('stormi_token');
+                const headers = { Authorization: `Bearer ${token}` };
+                const [videosRes, progressRes] = await Promise.all([
+                    fetch(`/api/upload/user/${user.id}?category=videos`, { headers }),
+                    fetch(`/api/watch-progress/user/${user.id}`, { headers }),
+                ]);
+                if (!videosRes.ok || !progressRes.ok) {
+                    setContinueWatching([]);
+                    return;
+                }
+                const [videosData, progressData] = await Promise.all([
+                    videosRes.json() as Promise<{ files: Array<{ file_id: string; category: string; title: string | null; filename: string | null; thumbnail_r2_path: string | null; thumbnail_url: string | null }> }>,
+                    progressRes.json() as Promise<{ progressions: Array<{ file_id: string; progress_percent: number }> }>,
+                ]);
+                const files = videosData.files || [];
+                const progressions = progressData.progressions || [];
+                const fileMap = new Map(files.map((f) => [f.file_id, f]));
+                const items: ContinueWatchingItem[] = progressions
+                    .filter((p) => p.progress_percent > 5 && p.progress_percent < 95)
+                    .slice(0, 12)
+                    .map((p) => {
+                        const file = fileMap.get(p.file_id);
+                        if (!file) return null;
+                        return {
+                            ...file,
+                            progress_percent: p.progress_percent,
+                        };
+                    })
+                    .filter((x): x is ContinueWatchingItem => x !== null);
+                setContinueWatching(items);
+            } catch {
+                setContinueWatching([]);
+            } finally {
+                setLoadingContinueWatching(false);
+            }
+    }, [user?.id]);
+
+    useEffect(() => {
+        if (!user?.id) {
+            setLoadingContinueWatching(false);
+            return;
+        }
+        loadContinueWatching();
+    }, [user?.id, loadContinueWatching]);
+
+    // Rafraîchir "Continuer de regarder" après upload (stats invalidés)
+    useEffect(() => {
+        const handleStatsInvalidated = (event: Event) => {
+            const customEvent = event as CustomEvent<{ userId: string }>;
+            if (customEvent.detail?.userId === user?.id) {
+                loadContinueWatching();
+                loadRecentlyAdded();
+            }
+        };
+        window.addEventListener('stormi:stats-invalidated', handleStatsInvalidated);
+        return () => window.removeEventListener('stormi:stats-invalidated', handleStatsInvalidated);
+    }, [user?.id, loadContinueWatching]);
+
+    // Récemment ajoutés : vidéos + musiques triés par date
+    const loadRecentlyAdded = useCallback(async () => {
+        if (!user?.id) return;
+        setLoadingRecentlyAdded(true);
+        try {
+            const token = localStorage.getItem('stormi_token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const [videosRes, musicsRes] = await Promise.all([
+                fetch(`/api/upload/user/${user.id}?category=videos`, { headers }),
+                fetch(`/api/upload/user/${user.id}?category=musics`, { headers }),
+            ]);
+            if (!videosRes.ok || !musicsRes.ok) {
+                setRecentlyAdded([]);
+                return;
+            }
+            const [videosData, musicsData] = await Promise.all([
+                videosRes.json() as Promise<{ files: Array<{ file_id: string; category: string; title: string | null; filename: string | null; thumbnail_r2_path: string | null; thumbnail_url: string | null; uploaded_at: number }> }>,
+                musicsRes.json() as Promise<{ files: Array<{ file_id: string; category: string; title: string | null; filename: string | null; thumbnail_r2_path: string | null; thumbnail_url: string | null; uploaded_at: number }> }>,
+            ]);
+            const videos = (videosData.files || []).map((f) => ({ ...f, category: 'videos' as const }));
+            const musics = (musicsData.files || []).map((f) => ({ ...f, category: 'musics' as const }));
+            const merged = [...videos, ...musics]
+                .sort((a, b) => (b.uploaded_at ?? 0) - (a.uploaded_at ?? 0))
+                .slice(0, 12)
+                .map((f) => ({
+                    file_id: f.file_id,
+                    category: f.category,
+                    title: f.title,
+                    filename: f.filename,
+                    thumbnail_r2_path: f.thumbnail_r2_path,
+                    thumbnail_url: f.thumbnail_url,
+                    uploaded_at: f.uploaded_at ?? 0,
+                }));
+            setRecentlyAdded(merged);
+        } catch {
+            setRecentlyAdded([]);
+        } finally {
+            setLoadingRecentlyAdded(false);
+        }
+    }, [user?.id]);
+
+    useEffect(() => {
+        if (!user?.id) {
+            setLoadingRecentlyAdded(false);
+            return;
+        }
+        loadRecentlyAdded();
+    }, [user?.id, loadRecentlyAdded]);
+
+    const getThumbnailUrl = useCallback((item: ContinueWatchingItem | RecentlyAddedItem): string | null => {
+        if (item.thumbnail_r2_path) {
+            const match = item.thumbnail_r2_path.match(/thumbnail\.(\w+)$/);
+            if (match) return `/api/files/${item.category}/${item.file_id}/thumbnail.${match[1]}`;
+        }
+        return item.thumbnail_url || null;
+    }, []);
+
+    const cardBaseStyle: React.CSSProperties = {
+        backgroundColor: darkTheme.background.secondary,
+        borderRadius: darkTheme.radius.xlarge,
+        padding: '24px 22px',
+        marginBottom: 0,
+        border: `1px solid ${darkTheme.border.secondary}`,
+        boxShadow: darkTheme.shadow.small,
+        cursor: 'pointer',
+        transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease',
+        position: 'relative',
+        overflow: 'hidden',
+    };
+    const sectionTitleStyle: React.CSSProperties = {
+        fontSize: '17px',
+        fontWeight: '700',
+        color: darkTheme.text.primary,
+        marginBottom: '16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        letterSpacing: '-0.02em',
+    };
+
     return (
         <>
-                    <div style={{ marginBottom: '40px' }}>
+                    {/* En-tête accueil */}
+                    <div style={{ marginBottom: '24px' }}>
                         <h1 style={{
-                            fontSize: '32px',
+                            fontSize: 'clamp(26px, 4vw, 32px)',
                             fontWeight: 'bold',
                             marginBottom: '8px',
-                            color: darkTheme.text.primary
+                            color: darkTheme.text.primary,
+                            letterSpacing: '-0.02em',
                         }}>
                             {t('home.title')}
                         </h1>
                         <p style={{
                             color: darkTheme.text.secondary,
-                            fontSize: '16px'
+                            fontSize: '16px',
+                            lineHeight: 1.5,
                         }}>
                             {replacePlaceholders(t('home.welcome'), { name: user?.name || 'Utilisateur' })}
                         </p>
                     </div>
 
+                    {/* Vidéos, Musiques, Bibliothèque — cartes cliquables en colonnes */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                        gap: '24px',
-                        marginBottom: '40px'
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: '20px',
+                        marginBottom: '28px',
                     }}>
+                    <section
+                        aria-labelledby="home-space-videos"
+                        role="link"
+                        tabIndex={0}
+                        onClick={(e) => { if (!(e.target instanceof HTMLElement) || !e.target.closest('a')) navigate('/films'); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/films'); } }}
+                        style={cardBaseStyle}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                            e.currentTarget.style.borderColor = darkTheme.border.light;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                            e.currentTarget.style.borderColor = darkTheme.border.secondary;
+                        }}
+                    >
+                        <h2 id="home-space-videos" style={sectionTitleStyle}>
+                            <span style={{ fontSize: '20px' }}>🎬</span>
+                            {t('home.spaceVideos')}
+                        </h2>
+                        {!loadingContinueWatching && continueWatching.length > 0 && (
+                            <div style={{ marginBottom: '16px' }}>
+                                <NetflixCarousel title={t('home.continueWatching')} icon="▶">
+                                {continueWatching.map((item) => {
+                                    const thumb = getThumbnailUrl(item);
+                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                                    return (
+                                        <Link
+                                            key={item.file_id}
+                                            to={`/info/videos/${item.file_id}`}
+                                            prefetch="intent"
+                                            style={{
+                                                width: '185px',
+                                                flexShrink: 0,
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                            }}
+                                            aria-label={`${displayName}, ${Math.round(item.progress_percent)}% regardé`}
+                                        >
+                                            <div style={{
+                                                borderRadius: '8px',
+                                                overflow: 'hidden',
+                                                backgroundColor: darkTheme.background.tertiary,
+                                                boxShadow: darkTheme.shadow.small,
+                                                transition: 'transform 0.2s, box-shadow 0.2s',
+                                            }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                                    e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1)';
+                                                    e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                                                }}
+                                            >
+                                                <div style={{ position: 'relative', aspectRatio: '2/3', backgroundColor: darkTheme.background.tertiary }}>
+                                                    {thumb ? (
+                                                        <img
+                                                            src={thumb}
+                                                            alt=""
+                                                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                                        />
+                                                    ) : (
+                                                        <div style={{
+                                                            width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            color: darkTheme.text.tertiary, fontSize: '48px',
+                                                        }}>
+                                                            🎬
+                                                        </div>
+                                                    )}
+                                                    <div style={{
+                                                        position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px',
+                                                        backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '0 0 8px 8px',
+                                                    }}>
+                                                        <div style={{
+                                                            width: `${item.progress_percent}%`, height: '100%',
+                                                            backgroundColor: darkTheme.accent.red, transition: 'width 0.3s',
+                                                        }} />
+                                                    </div>
+                                                </div>
+                                                <div style={{ padding: '12px', fontSize: '14px', fontWeight: '600', color: darkTheme.text.primary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {displayName}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                                </NetflixCarousel>
+                            </div>
+                        )}
+                    </section>
+
+                    <section
+                        aria-labelledby="home-space-musics"
+                        role="link"
+                        tabIndex={0}
+                        onClick={(e) => { if (!(e.target instanceof HTMLElement) || !e.target.closest('a')) navigate('/musics'); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/musics'); } }}
+                        style={cardBaseStyle}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                            e.currentTarget.style.borderColor = darkTheme.border.light;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                            e.currentTarget.style.borderColor = darkTheme.border.secondary;
+                        }}
+                    >
+                        <h2 id="home-space-musics" style={sectionTitleStyle}>
+                            <span style={{ fontSize: '20px' }}>🎵</span>
+                            {t('home.spaceMusics')}
+                        </h2>
+                        {!loadingRecentlyAdded && recentlyAdded.length > 0 && (
+                            <div style={{ marginBottom: '16px' }}>
+                                <NetflixCarousel title={t('home.recentlyAdded')} icon="🆕">
+                                {recentlyAdded.map((item) => {
+                                    const thumb = getThumbnailUrl(item);
+                                    const displayName = item.title || item.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
+                                    const linkTo = item.category === 'videos'
+                                        ? `/info/videos/${item.file_id}`
+                                        : `/reader/musics/${item.file_id}`;
+                                    const icon = item.category === 'videos' ? '🎬' : '🎵';
+                                    return (
+                                        <Link
+                                            key={`${item.category}-${item.file_id}`}
+                                            to={linkTo}
+                                            prefetch="intent"
+                                            style={{
+                                                width: '185px',
+                                                flexShrink: 0,
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                            }}
+                                            aria-label={displayName}
+                                        >
+                                            <div
+                                                style={{
+                                                    borderRadius: '8px',
+                                                    overflow: 'hidden',
+                                                    backgroundColor: darkTheme.background.tertiary,
+                                                    boxShadow: darkTheme.shadow.small,
+                                                    transition: 'transform 0.2s, box-shadow 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                                    e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1)';
+                                                    e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                                                }}
+                                            >
+                                                <div style={{ position: 'relative', aspectRatio: '2/3', backgroundColor: darkTheme.background.tertiary }}>
+                                                    {thumb ? (
+                                                        <img
+                                                            src={thumb}
+                                                            alt=""
+                                                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                                        />
+                                                    ) : (
+                                                        <div style={{
+                                                            width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                            color: darkTheme.text.tertiary, fontSize: '48px',
+                                                        }}>
+                                                            {icon}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div style={{ padding: '12px', fontSize: '14px', fontWeight: '600', color: darkTheme.text.primary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {displayName}
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                                </NetflixCarousel>
+                            </div>
+                        )}
+                    </section>
+
+                    <section
+                        aria-labelledby="home-space-library"
+                        role="link"
+                        tabIndex={0}
+                        onClick={() => navigate('/library')}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/library'); } }}
+                        style={cardBaseStyle}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.medium;
+                            e.currentTarget.style.borderColor = darkTheme.border.light;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.small;
+                            e.currentTarget.style.borderColor = darkTheme.border.secondary;
+                        }}
+                    >
+                        <h2 id="home-space-library" style={sectionTitleStyle}>
+                            <span style={{ fontSize: '20px' }}>🖼️</span>
+                            {t('home.spaceLibrary')}
+                        </h2>
+                        <p style={{ color: darkTheme.text.secondary, fontSize: '14px', marginBottom: 0, lineHeight: 1.5 }}>
+                            Images, documents, archives
+                        </p>
+                    </section>
+                    </div>
+
+                    {/* Stats repliables */}
+                    <div style={{ marginBottom: '40px' }}>
+                        <button
+                            onClick={() => setStatsExpanded((prev) => !prev)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '12px 20px',
+                                backgroundColor: darkTheme.background.secondary,
+                                border: `1px solid ${darkTheme.border.primary}`,
+                                borderRadius: '8px',
+                                color: darkTheme.text.primary,
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                            }}
+                            aria-expanded={statsExpanded}
+                            aria-controls="home-stats-panel"
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = darkTheme.accent.blue;
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = darkTheme.border.primary;
+                            }}
+                        >
+                            <span>{statsExpanded ? '▼' : '▶'}</span>
+                            <span>{statsExpanded ? t('home.hideStats') : t('home.showStats')}</span>
+                            {!loadingStats && hasLoadedOnce && (
+                                <span style={{ color: darkTheme.text.tertiary, fontWeight: '400', marginLeft: '4px' }}>
+                                    ({stats.fileCount} fichiers · {stats.totalSizeGB.toFixed(1)} Go)
+                                </span>
+                            )}
+                        </button>
+
+                        {statsExpanded && (
+                            <div id="home-stats-panel" role="region" aria-label={t('home.stats')} style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                                gap: '24px',
+                                marginTop: '16px'
+                            }}>
                         {/* Carte Statistiques */}
                         <div style={{
                             backgroundColor: darkTheme.background.secondary,
@@ -371,6 +799,8 @@ export default function HomeRoute() {
                                     </div>
                             </div>
                         </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* État vide - Aucun fichier uploadé */}
@@ -392,7 +822,7 @@ export default function HomeRoute() {
                                 color: darkTheme.text.primary,
                                 marginBottom: '12px'
                             }}>
-                                {t('home.emptyTitle') || 'Bienvenue sur Stormi !'}
+                                {t('home.emptyTitle')}
                             </h2>
                             <p style={{
                                 fontSize: '16px',
@@ -402,7 +832,7 @@ export default function HomeRoute() {
                                 margin: '0 auto 32px',
                                 lineHeight: '1.6'
                             }}>
-                                {t('home.emptyDescription') || 'Commencez par uploader vos fichiers pour profiter de votre espace personnel de stockage et de streaming.'}
+                                {t('home.emptyDescription')}
                             </p>
                             <button
                                 onClick={() => navigate('/upload')}
@@ -431,7 +861,7 @@ export default function HomeRoute() {
                                 }}
                             >
                                 <span>📤</span>
-                                <span>{t('home.uploadFirst') || 'Uploader mes premiers fichiers'}</span>
+                                <span>{t('home.uploadFirst')}</span>
                             </button>
                             
                             <div style={{

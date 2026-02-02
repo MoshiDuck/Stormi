@@ -1,0 +1,96 @@
+// INFO : app/components/ui/LibraryTabBar.tsx
+// Barre d'onglets pour la page Bibliothèque (Images, Documents, Archives, Exécutables, Autres)
+
+import React from 'react';
+import { useSearchParams } from 'react-router';
+import { darkTheme } from '~/utils/ui/theme';
+import { useLanguage } from '~/contexts/LanguageContext';
+import type { FileCategory } from '~/utils/file/fileClassifier';
+
+export type LibraryTab = 'images' | 'documents' | 'archives' | 'executables' | 'others';
+
+const LIBRARY_TABS: Array<{ key: LibraryTab; category: FileCategory; icon: string }> = [
+    { key: 'images', category: 'images', icon: '🖼️' },
+    { key: 'documents', category: 'documents', icon: '📄' },
+    { key: 'archives', category: 'archives', icon: '📦' },
+    { key: 'executables', category: 'executables', icon: '⚙️' },
+    { key: 'others', category: 'others', icon: '📎' },
+];
+
+interface LibraryTabBarProps {
+    selectedTab: LibraryTab;
+    onTabChange?: (tab: LibraryTab) => void;
+}
+
+export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) {
+    const { t } = useLanguage();
+    const [, setSearchParams] = useSearchParams();
+
+    const handleTabClick = (tab: LibraryTab) => {
+        onTabChange?.(tab);
+        setSearchParams({ tab });
+    };
+
+    return (
+        <div
+            style={{
+                display: 'flex',
+                gap: '8px',
+                marginBottom: '24px',
+                padding: '4px',
+                backgroundColor: darkTheme.background.tertiary,
+                borderRadius: '12px',
+                width: 'fit-content',
+                flexWrap: 'wrap',
+            }}
+            role="tablist"
+            aria-label={t('nav.library')}
+        >
+            {LIBRARY_TABS.map(({ key, category, icon }) => {
+                const isSelected = selectedTab === key;
+                return (
+                    <button
+                        key={key}
+                        role="tab"
+                        aria-selected={isSelected}
+                        aria-controls={`library-${key}-panel`}
+                        id={`library-tab-${key}`}
+                        onClick={() => handleTabClick(key)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '10px 20px',
+                            backgroundColor: isSelected ? darkTheme.accent.blue : 'transparent',
+                            color: isSelected ? '#fff' : darkTheme.text.secondary,
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: isSelected ? '600' : '500',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.backgroundColor = darkTheme.background.secondary;
+                                e.currentTarget.style.color = darkTheme.text.primary;
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (!isSelected) {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.color = darkTheme.text.secondary;
+                            }
+                        }}
+                    >
+                        <span>{icon}</span>
+                        <span>{t(`categories.${category}`)}</span>
+                    </button>
+                );
+            })}
+        </div>
+    );
+}
+
+export { LIBRARY_TABS };

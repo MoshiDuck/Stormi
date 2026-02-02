@@ -1,12 +1,9 @@
 // INFO : app/routes/musics.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard.
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
 import { darkTheme } from '~/utils/ui/theme';
-import type { FileCategory } from '~/utils/file/fileClassifier';
-import { CategoryBar } from '~/components/ui/categoryBar';
-import { getCategoryRoute, getCategoryFromPathname } from '~/utils/routes';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
@@ -67,9 +64,7 @@ export default function MusicsRoute() {
     const { t } = useLanguage();
     const { config } = useConfig();
     const navigate = useNavigate();
-    const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [selectedCategory, setSelectedCategory] = useState<FileCategory>('musics');
     
     // États de navigation (synchronisés avec l'URL pour deep linking / partage)
     const [viewMode, setViewMode] = useState<ViewMode>('artists');
@@ -106,13 +101,6 @@ export default function MusicsRoute() {
         return cleaned.trim();
     }, []);
     
-    useEffect(() => {
-        const category = getCategoryFromPathname(location.pathname);
-        if (category) {
-            setSelectedCategory(category);
-        }
-    }, [location.pathname]);
-
     // Restaurer view / artist / album depuis l'URL au premier chargement des données
     useEffect(() => {
         if (artists.length === 0 || hasRestoredFromUrl.current) return;
@@ -143,10 +131,6 @@ export default function MusicsRoute() {
         }
     }, [artists, searchParams]);
     
-    const handleCategoryChange = (category: FileCategory) => {
-        setSelectedCategory(category);
-        navigate(getCategoryRoute(category));
-    };
 
     const cacheInvalidationTrigger = useCacheInvalidationTrigger(user?.id ?? null, 'musics');
 
@@ -516,7 +500,6 @@ export default function MusicsRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <PageSkeleton lines={6} minHeight="60vh" variant="cards" />
                 </div>
             </>
@@ -527,7 +510,6 @@ export default function MusicsRoute() {
         return (
             <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <div style={{ 
                         display: 'flex', 
                         flexDirection: 'column',
@@ -577,8 +559,6 @@ export default function MusicsRoute() {
     return (
         <>
                 <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
-                    <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
-                    
                     {/* Header avec navigation */}
                     {viewMode !== 'artists' && (
                         <div style={{
