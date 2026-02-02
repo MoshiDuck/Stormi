@@ -1,256 +1,232 @@
-// INFO : app/components/Navigation.tsx — menu profil au survol (Manage profile, Account, Help center)
+// INFO : app/components/Navigation.tsx — barre de navigation moderne avec icônes
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 import type { User } from '~/types/auth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { ProfileDropdown } from '~/components/navigation/ProfileDropdown';
+import { StormiLogo } from '~/components/navigation/StormiLogo';
+import {
+    Home,
+    Upload,
+    Film,
+    Music,
+    Library,
+    MonitorPlay,
+    type LucideIcon,
+} from 'lucide-react';
 
 interface NavigationProps {
     user: User;
     onLogout: () => void;
 }
 
+interface NavItemConfig {
+    to: string;
+    labelKey: string;
+    ariaKey: string;
+    icon: LucideIcon;
+    activePaths?: string[];
+}
+
+const navItems: NavItemConfig[] = [
+    { to: '/home', labelKey: 'nav.home', ariaKey: 'nav.homeAriaLabel', icon: Home },
+    { to: '/upload', labelKey: 'nav.add', ariaKey: 'nav.addAriaLabel', icon: Upload },
+    {
+        to: '/films',
+        labelKey: 'nav.watch',
+        ariaKey: 'nav.watchAriaLabel',
+        icon: Film,
+        activePaths: ['/films', '/series'],
+    },
+    { to: '/musics', labelKey: 'nav.listen', ariaKey: 'nav.listenAriaLabel', icon: Music },
+    { to: '/library', labelKey: 'nav.library', ariaKey: 'nav.libraryAriaLabel', icon: Library },
+    {
+        to: '/lecteur-local',
+        labelKey: 'nav.localPlayer',
+        ariaKey: 'nav.localPlayerAriaLabel',
+        icon: MonitorPlay,
+    },
+];
+
+function NavLink({
+    to,
+    label,
+    ariaLabel,
+    isActive,
+    icon: Icon,
+}: {
+    to: string;
+    label: string;
+    ariaLabel: string;
+    isActive: boolean;
+    icon: LucideIcon;
+}) {
+    return (
+        <Link
+            to={to}
+            prefetch="intent"
+            aria-current={isActive ? 'page' : undefined}
+            aria-label={ariaLabel}
+            className="nav-link"
+            style={{
+                color: isActive ? darkTheme.accent.blue : darkTheme.text.secondary,
+                backgroundColor: isActive ? 'rgba(66, 133, 244, 0.12)' : 'transparent',
+                fontWeight: isActive ? 600 : 500,
+            }}
+        >
+            <Icon
+                size={18}
+                strokeWidth={2.2}
+                aria-hidden
+                style={{ flexShrink: 0 }}
+            />
+            <span>{label}</span>
+            {isActive && <span className="nav-link-indicator" aria-hidden />}
+        </Link>
+    );
+}
+
 export function Navigation({ user, onLogout }: NavigationProps) {
     const location = useLocation();
     const { t } = useLanguage();
 
-    const isActive = (path: string) => location.pathname === path;
+    const isItemActive = (item: NavItemConfig) => {
+        if (item.activePaths) {
+            return item.activePaths.some((p) => location.pathname === p);
+        }
+        return location.pathname === item.to;
+    };
 
     return (
         <>
-            {/* PrefetchPageLinks désactivé : causait des centaines de requêtes __manifest
-                et ERR_INSUFFICIENT_RESOURCES / ERR_HTTP2_PROTOCOL_ERROR sur certaines configs.
-                prefetch="intent" sur les Links reste actif (prefetch au survol uniquement). */}
-        <nav style={{
-            backgroundColor: darkTheme.background.nav,
-            padding: '16px 0',
-            marginBottom: '30px',
-            boxShadow: darkTheme.shadow.small
-        }}>
-            <div style={{
-                maxWidth: 1200,
-                margin: '0 auto',
-                padding: '0 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-                    <Link
-                        to="/home"
-                        prefetch="intent"
-                        aria-label={t('nav.home')}
-                        style={{
-                            color: darkTheme.text.primary,
-                            textDecoration: 'none',
-                            fontSize: '22px',
-                            fontWeight: '700',
-                            letterSpacing: '-0.5px',
-                            transition: darkTheme.transition.normal
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.opacity = '0.8';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.opacity = '1';
-                        }}
-                    >
-                        Stormi
-                    </Link>
-
-                    <div style={{ display: 'flex', gap: '20px' }}>
-                    <Link
-                        to="/home"
-                        prefetch="intent"
-                        aria-current={isActive('/home') ? 'page' : undefined}
-                        aria-label={t('nav.homeAriaLabel')}
-                        style={{
-                                color: isActive('/home') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/home') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/home') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/home')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/home')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.home')}
-                        </Link>
-
+            <nav
+                className="nav-bar"
+                role="navigation"
+                aria-label={t('nav.home')}
+            >
+                <div className="nav-bar-inner">
+                    <div className="nav-bar-left">
                         <Link
-                            to="/upload"
+                            to="/home"
                             prefetch="intent"
-                            aria-current={isActive('/upload') ? 'page' : undefined}
-                            aria-label={t('nav.addAriaLabel')}
-                            style={{
-                                color: isActive('/upload') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/upload') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/upload') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/upload')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/upload')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
+                            aria-label={t('nav.home')}
+                            className="nav-logo-link"
                         >
-                            {t('nav.add')}
+                            <StormiLogo theme="dark" />
                         </Link>
 
-                        <Link
-                            to="/films"
-                            aria-label={t('nav.watchAriaLabel')}
-                            prefetch="intent"
-                            aria-current={isActive('/films') || isActive('/series') ? 'page' : undefined}
-                            style={{
-                                color: isActive('/films') || isActive('/series') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/films') || isActive('/series') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/films') || isActive('/series') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/films') && !isActive('/series')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/films') && !isActive('/series')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.watch')}
-                        </Link>
-
-                        <Link
-                            to="/musics"
-                            aria-label={t('nav.listenAriaLabel')}
-                            prefetch="intent"
-                            aria-current={isActive('/musics') ? 'page' : undefined}
-                            style={{
-                                color: isActive('/musics') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/musics') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/musics') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/musics')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/musics')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.listen')}
-                        </Link>
-
-                        <Link
-                            to="/library"
-                            aria-label={t('nav.libraryAriaLabel')}
-                            prefetch="intent"
-                            aria-current={isActive('/library') ? 'page' : undefined}
-                            style={{
-                                color: isActive('/library') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/library') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/library') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/library')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/library')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.library')}
-                        </Link>
-
-                        <Link
-                            to="/lecteur-local"
-                            prefetch="intent"
-                            aria-current={isActive('/lecteur-local') ? 'page' : undefined}
-                            aria-label={t('nav.localPlayerAriaLabel')}
-                            style={{
-                                color: isActive('/lecteur-local') ? darkTheme.accent.blue : darkTheme.text.secondary,
-                                textDecoration: 'none',
-                                padding: '10px 16px',
-                                borderRadius: darkTheme.radius.medium,
-                                backgroundColor: isActive('/lecteur-local') ? darkTheme.surface.info : 'transparent',
-                                transition: darkTheme.transition.normal,
-                                fontWeight: isActive('/lecteur-local') ? '600' : '500',
-                                fontSize: '15px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActive('/lecteur-local')) {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                                    e.currentTarget.style.color = darkTheme.text.primary;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive('/lecteur-local')) {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
-                                }
-                            }}
-                        >
-                            {t('nav.localPlayer')}
-                        </Link>
+                        <div className="nav-links">
+                            {navItems.map((item) => (
+                                <NavLink
+                                    key={item.to}
+                                    to={item.to}
+                                    label={t(item.labelKey)}
+                                    ariaLabel={t(item.ariaKey)}
+                                    isActive={isItemActive(item)}
+                                    icon={item.icon}
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                <ProfileDropdown user={user} onLogout={onLogout} />
-            </div>
-        </nav>
+                    <ProfileDropdown user={user} onLogout={onLogout} />
+                </div>
+            </nav>
+
+            <style>{`
+                .nav-bar {
+                    position: sticky;
+                    top: 0;
+                    z-index: 100;
+                    background: ${darkTheme.background.nav};
+                    background: linear-gradient(
+                        180deg,
+                        ${darkTheme.background.nav} 0%,
+                        rgba(21, 21, 21, 0.97) 100%
+                    );
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border-bottom: 1px solid ${darkTheme.border.primary};
+                    padding: 12px 0;
+                    margin-bottom: 24px;
+                    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04);
+                }
+
+                .nav-bar-inner {
+                    max-width: 1280px;
+                    margin: 0 auto;
+                    padding: 0 12px 0 16px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 24px;
+                }
+
+                .nav-bar-left {
+                    display: flex;
+                    align-items: center;
+                    gap: 40px;
+                    min-width: 0;
+                }
+
+                .nav-logo-link {
+                    display: inline-flex;
+                    text-decoration: none;
+                    color: inherit;
+                }
+                .nav-logo-link:focus-visible {
+                    outline: none;
+                }
+
+                .nav-links {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    overflow-x: auto;
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                    padding: 2px 0;
+                }
+
+                .nav-links::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .nav-link {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 14px;
+                    border-radius: ${darkTheme.radius.medium};
+                    text-decoration: none;
+                    font-size: 0.9375rem;
+                    transition: ${darkTheme.transition.normal};
+                    white-space: nowrap;
+                    position: relative;
+                }
+
+                .nav-link:hover {
+                    background-color: ${darkTheme.background.tertiary} !important;
+                    color: ${darkTheme.text.primary} !important;
+                }
+
+                .nav-link:focus-visible {
+                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline-offset: 2px;
+                }
+
+                .nav-link-indicator {
+                    position: absolute;
+                    bottom: 6px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 4px;
+                    height: 4px;
+                    border-radius: 50%;
+                    background: ${darkTheme.accent.blue};
+                }
+            `}</style>
         </>
     );
 }

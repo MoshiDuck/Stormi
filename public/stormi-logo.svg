@@ -1,0 +1,13 @@
+<svg viewBox="0 0 140 28" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="STORMI">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <text x="0" y="20" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="0.12em">
+    <tspan fill="#ffffff">STOR</tspan>
+    <tspan fill="url(#gold)">MI</tspan>
+  </text>
+</svg>

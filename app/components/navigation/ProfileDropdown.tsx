@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import type { User } from '~/types/auth';
 import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
+import { UserCircle, User, HelpCircle, LogOut } from 'lucide-react';
 
 const CLOSE_DELAY_MS = 220;
 
@@ -43,10 +44,12 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
         };
     }, []);
 
+    const menuItemClass = 'profile-dropdown-item';
+
     return (
         <div
             ref={containerRef}
-            style={{ position: 'relative', display: 'inline-block' }}
+            className="profile-dropdown-root"
             onMouseEnter={() => {
                 clearCloseTimeout();
                 setOpen(true);
@@ -58,44 +61,16 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                 aria-haspopup="true"
                 aria-expanded={open}
                 aria-label={t('profileMenu.account')}
-                style={{
-                    padding: 0,
-                    border: 'none',
-                    background: 'none',
-                    cursor: 'pointer',
-                    borderRadius: '50%',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
+                className="profile-dropdown-trigger"
             >
                 {user.picture ? (
                     <img
                         src={user.picture}
                         alt=""
-                        style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: '50%',
-                            border: `2px solid ${darkTheme.accent.blue}`,
-                            objectFit: 'cover',
-                        }}
+                        className="profile-dropdown-avatar-img"
                     />
                 ) : (
-                    <span
-                        style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: '50%',
-                            backgroundColor: darkTheme.background.tertiary,
-                            color: darkTheme.text.primary,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 16,
-                            fontWeight: 600,
-                        }}
-                    >
+                    <span className="profile-dropdown-avatar-fallback">
                         {user.name?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                 )}
@@ -103,141 +78,175 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
 
             {open && (
                 <>
-                    {/* Passerelle invisible : garde le survol entre l'avatar et le menu */}
-                    <div
-                        aria-hidden
-                        style={{
-                            position: 'absolute',
-                            top: '100%',
-                            right: 0,
-                            width: 220,
-                            height: 12,
-                            marginTop: 0,
-                        }}
-                    />
-                    <div
-                        role="menu"
-                        style={{
-                            position: 'absolute',
-                            top: '100%',
-                            right: 0,
-                            marginTop: 2,
-                            minWidth: 200,
-                            backgroundColor: darkTheme.background.secondary,
-                            borderRadius: darkTheme.radius.medium,
-                            boxShadow: darkTheme.shadow.medium,
-                            border: `1px solid ${darkTheme.border.primary}`,
-                            padding: '8px 0',
-                            zIndex: 1000,
-                        }}
-                    >
-                    <Link
-                        to="/manage-profile"
-                        prefetch="intent"
-                        role="menuitem"
-                        style={{
-                            display: 'block',
-                            padding: '10px 16px',
-                            color: darkTheme.text.primary,
-                            textDecoration: 'none',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            transition: darkTheme.transition.fast,
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                    >
-                        {t('profileMenu.manageProfile')}
-                    </Link>
-                    <Link
-                        to="/profile"
-                        prefetch="intent"
-                        role="menuitem"
-                        style={{
-                            display: 'block',
-                            padding: '10px 16px',
-                            color: darkTheme.text.primary,
-                            textDecoration: 'none',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            transition: darkTheme.transition.fast,
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                    >
-                        {t('profileMenu.account')}
-                    </Link>
-                    <Link
-                        to="/help"
-                        prefetch="intent"
-                        role="menuitem"
-                        style={{
-                            display: 'block',
-                            padding: '10px 16px',
-                            color: darkTheme.text.primary,
-                            textDecoration: 'none',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            transition: darkTheme.transition.fast,
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                    >
-                        {t('profileMenu.helpCenter')}
-                    </Link>
-                    <div
-                        role="separator"
-                        style={{
-                            height: 1,
-                            margin: '8px 0',
-                            backgroundColor: darkTheme.border.primary,
-                        }}
-                    />
-                    <button
-                        type="button"
-                        role="menuitem"
-                        onClick={() => {
-                            setOpen(false);
-                            onLogout();
-                        }}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '10px 16px',
-                            color: darkTheme.accent.red,
-                            textDecoration: 'none',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            border: 'none',
-                            background: 'none',
-                            cursor: 'pointer',
-                            textAlign: 'left',
-                            transition: darkTheme.transition.fast,
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = darkTheme.background.tertiary;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                    >
-                        {t('nav.logout')}
-                    </button>
+                    <div aria-hidden className="profile-dropdown-bridge" />
+                    <div role="menu" className="profile-dropdown-menu">
+                        <Link
+                            to="/manage-profile"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <UserCircle size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.manageProfile')}
+                        </Link>
+                        <Link
+                            to="/profile"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <User size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.account')}
+                        </Link>
+                        <Link
+                            to="/help"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <HelpCircle size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.helpCenter')}
+                        </Link>
+                        <div role="separator" className="profile-dropdown-separator" />
+                        <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                                setOpen(false);
+                                onLogout();
+                            }}
+                            className={`${menuItemClass} profile-dropdown-logout`}
+                        >
+                            <LogOut size={18} strokeWidth={2} aria-hidden />
+                            {t('nav.logout')}
+                        </button>
                     </div>
                 </>
             )}
+
+            <style>{`
+                .profile-dropdown-root {
+                    position: relative;
+                    display: inline-block;
+                }
+
+                .profile-dropdown-trigger {
+                    padding: 0;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    border-radius: 50%;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: ${darkTheme.transition.normal};
+                }
+
+                .profile-dropdown-trigger:hover {
+                    transform: scale(1.05);
+                }
+
+                .profile-dropdown-trigger:focus-visible {
+                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline-offset: 3px;
+                }
+
+                .profile-dropdown-avatar-img,
+                .profile-dropdown-avatar-fallback {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 2px solid ${darkTheme.border.secondary};
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    transition: ${darkTheme.transition.normal};
+                }
+
+                .profile-dropdown-trigger:hover .profile-dropdown-avatar-img,
+                .profile-dropdown-trigger:hover .profile-dropdown-avatar-fallback {
+                    border-color: ${darkTheme.accent.blue};
+                    box-shadow: 0 0 0 1px ${darkTheme.accent.blue};
+                }
+
+                .profile-dropdown-avatar-fallback {
+                    background: ${darkTheme.background.tertiary};
+                    color: ${darkTheme.text.primary};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1rem;
+                    font-weight: 600;
+                }
+
+                .profile-dropdown-bridge {
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    width: 240px;
+                    height: 14px;
+                }
+
+                .profile-dropdown-menu {
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    margin-top: 8px;
+                    min-width: 220px;
+                    background: ${darkTheme.background.secondary};
+                    border-radius: ${darkTheme.radius.large};
+                    box-shadow: ${darkTheme.shadow.large};
+                    border: 1px solid ${darkTheme.border.primary};
+                    padding: 6px 0;
+                    z-index: 1000;
+                    animation: profileDropdownFade 0.2s ease;
+                }
+
+                @keyframes profileDropdownFade {
+                    from { opacity: 0; transform: translateY(-4px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .profile-dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    width: 100%;
+                    padding: 10px 16px;
+                    color: ${darkTheme.text.primary};
+                    text-decoration: none;
+                    font-size: 0.9375rem;
+                    font-weight: 500;
+                    transition: ${darkTheme.transition.fast};
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    text-align: left;
+                    box-sizing: border-box;
+                }
+
+                .profile-dropdown-item:hover {
+                    background: ${darkTheme.background.tertiary};
+                }
+
+                .profile-dropdown-item:focus-visible {
+                    outline: none;
+                    background: ${darkTheme.background.tertiary};
+                }
+
+                .profile-dropdown-logout {
+                    color: ${darkTheme.accent.red};
+                }
+
+                .profile-dropdown-logout:hover {
+                    background: rgba(234, 67, 53, 0.12);
+                }
+
+                .profile-dropdown-separator {
+                    height: 1px;
+                    margin: 6px 12px;
+                    background: ${darkTheme.border.primary};
+                }
+            `}</style>
         </div>
     );
 }
