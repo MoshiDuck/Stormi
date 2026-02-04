@@ -86,6 +86,12 @@ export interface Translations {
         pageTitleLanguageSettings: string;
         pageTitleHelp: string;
         pageTitleCommunity: string;
+        pageTitleCommunityFriends: string;
+        pageTitleCommunityInvitations: string;
+        pageTitleCommunityConversations: string;
+        pageTitleCommunityActivity: string;
+        pageTitleCommunityShares: string;
+        pageTitleCommunityFamily: string;
         pageDescriptionHome: string;
         pageDescriptionCommunity: string;
         pageDescriptionProfile: string;
@@ -368,6 +374,7 @@ export interface Translations {
         sectionFamilyTitle: string;
         sectionFamilySubtitle: string;
         sectionFamilyDescription: string;
+        backToCommunity: string;
     };
     // Help center page
     help: {
@@ -600,6 +607,12 @@ const translations: Record<Language, Translations> = {
             pageTitleLanguageSettings: 'Langue | Stormi',
             pageTitleHelp: 'Centre d\'aide | Stormi',
             pageTitleCommunity: 'Communauté | Stormi',
+            pageTitleCommunityFriends: 'Amis | Communauté | Stormi',
+            pageTitleCommunityInvitations: 'Invitations | Communauté | Stormi',
+            pageTitleCommunityConversations: 'Conversations | Communauté | Stormi',
+            pageTitleCommunityActivity: 'Activité | Communauté | Stormi',
+            pageTitleCommunityShares: 'Partages | Communauté | Stormi',
+            pageTitleCommunityFamily: 'Famille | Communauté | Stormi',
             pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
             pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
             pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.',
@@ -631,6 +644,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Famille',
             sectionFamilySubtitle: 'Gestion du groupe familial',
             sectionFamilyDescription: 'Un espace pour votre foyer : membres et partages automatiques entre vous.',
+            backToCommunity: 'Retour à la communauté',
         },
         media: {
             play: 'Lecture',
@@ -1082,6 +1096,12 @@ const translations: Record<Language, Translations> = {
             pageTitleLanguageSettings: 'Language | Stormi',
             pageTitleHelp: 'Help center | Stormi',
             pageTitleCommunity: 'Community | Stormi',
+            pageTitleCommunityFriends: 'Friends | Community | Stormi',
+            pageTitleCommunityInvitations: 'Invitations | Community | Stormi',
+            pageTitleCommunityConversations: 'Conversations | Community | Stormi',
+            pageTitleCommunityActivity: 'Activity | Community | Stormi',
+            pageTitleCommunityShares: 'Shares | Community | Stormi',
+            pageTitleCommunityFamily: 'Family | Community | Stormi',
             pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
             pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
             pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.',
@@ -1113,6 +1133,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Family',
             sectionFamilySubtitle: 'Family group management',
             sectionFamilyDescription: 'A space for your household: members and automatic sharing between you.',
+            backToCommunity: 'Back to community',
         },
         media: {
             play: 'Play',
@@ -1562,6 +1583,12 @@ const translations: Record<Language, Translations> = {
             pageTitleLanguageSettings: 'Idioma | Stormi',
             pageTitleHelp: 'Centro de ayuda | Stormi',
             pageTitleCommunity: 'Comunidad | Stormi',
+            pageTitleCommunityFriends: 'Amigos | Comunidad | Stormi',
+            pageTitleCommunityInvitations: 'Invitaciones | Comunidad | Stormi',
+            pageTitleCommunityConversations: 'Conversaciones | Comunidad | Stormi',
+            pageTitleCommunityActivity: 'Actividad | Comunidad | Stormi',
+            pageTitleCommunityShares: 'Compartidos | Comunidad | Stormi',
+            pageTitleCommunityFamily: 'Familia | Comunidad | Stormi',
             pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
             pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
             pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.',
@@ -1593,6 +1620,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Familia',
             sectionFamilySubtitle: 'Gestión del grupo familiar',
             sectionFamilyDescription: 'Un espacio para tu hogar: miembros y compartidos automáticos entre vosotros.',
+            backToCommunity: 'Volver a la comunidad',
         },
         media: {
             play: 'Reproducir',
@@ -2044,6 +2072,12 @@ const translations: Record<Language, Translations> = {
             pageTitleLanguageSettings: 'Sprache | Stormi',
             pageTitleHelp: 'Hilfezentrum | Stormi',
             pageTitleCommunity: 'Community | Stormi',
+            pageTitleCommunityFriends: 'Freunde | Community | Stormi',
+            pageTitleCommunityInvitations: 'Einladungen | Community | Stormi',
+            pageTitleCommunityConversations: 'Unterhaltungen | Community | Stormi',
+            pageTitleCommunityActivity: 'Aktivität | Community | Stormi',
+            pageTitleCommunityShares: 'Freigaben | Community | Stormi',
+            pageTitleCommunityFamily: 'Familie | Community | Stormi',
             pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
             pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
             pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.',
@@ -2075,6 +2109,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Familie',
             sectionFamilySubtitle: 'Verwaltung der Familiengruppe',
             sectionFamilyDescription: 'Ein Bereich für Ihren Haushalt: Mitglieder und automatische Freigaben untereinander.',
+            backToCommunity: 'Zurück zur Community',
         },
         media: {
             play: 'Abspielen',

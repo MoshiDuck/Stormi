@@ -1,5 +1,6 @@
 // INFO : Page Communauté — espace d'échange et de partage (layout _app fournit Navigation + AuthGuard)
 import React from 'react';
+import { Link } from 'react-router';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
@@ -21,6 +22,8 @@ const SECTION_ICONS = [
     '📁', // Partages
     '👨‍👩‍👧', // Famille
 ] as const;
+
+const SECTION_PATHS = ['/community/friends', '/community/invitations', '/community/conversations', '/community/activity', '/community/shares', '/community/family'] as const;
 
 const SECTION_KEYS = [
     { title: 'community.sectionFriendsTitle', subtitle: 'community.sectionFriendsSubtitle', description: 'community.sectionFriendsDescription' },
@@ -88,61 +91,73 @@ export default function CommunityRoute() {
                 }}
             >
                 {SECTION_KEYS.map((section, index) => (
-                    <article
+                    <Link
                         key={section.title}
+                        to={SECTION_PATHS[index]}
+                        prefetch="intent"
                         style={{
-                            backgroundColor: theme.background.secondary,
-                            borderRadius: 12,
-                            padding: 24,
-                            border: `1px solid ${theme.border.primary}`,
-                            boxShadow: theme.shadow?.small ?? '0 1px 3px rgba(0,0,0,0.06)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 10,
-                            minHeight: 0,
+                            textDecoration: 'none',
+                            color: 'inherit',
                         }}
                     >
-                        <div
+                        <article
+                            className="community-card"
                             style={{
-                                fontSize: 28,
-                                lineHeight: 1,
-                                marginBottom: 2,
-                            }}
-                            aria-hidden
-                        >
-                            {SECTION_ICONS[index]}
-                        </div>
-                        <h2
-                            style={{
-                                fontSize: 18,
-                                fontWeight: 700,
-                                color: theme.text.primary,
-                                margin: 0,
+                                backgroundColor: theme.background.secondary,
+                                borderRadius: 12,
+                                padding: 24,
+                                border: `1px solid ${theme.border.primary}`,
+                                boxShadow: theme.shadow?.small ?? '0 1px 3px rgba(0,0,0,0.06)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 10,
+                                minHeight: 0,
+                                transition: theme.transition?.normal ?? '0.2s ease',
+                                cursor: 'pointer',
                             }}
                         >
-                            {t(section.title)}
-                        </h2>
-                        <p
-                            style={{
-                                fontSize: 13,
-                                color: theme.text.secondary,
-                                margin: 0,
-                                lineHeight: 1.35,
-                            }}
-                        >
-                            {t(section.subtitle)}
-                        </p>
-                        <p
-                            style={{
-                                fontSize: 14,
-                                color: theme.text.tertiary ?? theme.text.secondary,
-                                margin: 0,
-                                lineHeight: 1.5,
-                            }}
-                        >
-                            {t(section.description)}
-                        </p>
-                    </article>
+                            <div
+                                style={{
+                                    fontSize: 28,
+                                    lineHeight: 1,
+                                    marginBottom: 2,
+                                }}
+                                aria-hidden
+                            >
+                                {SECTION_ICONS[index]}
+                            </div>
+                            <h2
+                                style={{
+                                    fontSize: 18,
+                                    fontWeight: 700,
+                                    color: theme.text.primary,
+                                    margin: 0,
+                                }}
+                            >
+                                {t(section.title)}
+                            </h2>
+                            <p
+                                style={{
+                                    fontSize: 13,
+                                    color: theme.text.secondary,
+                                    margin: 0,
+                                    lineHeight: 1.35,
+                                }}
+                            >
+                                {t(section.subtitle)}
+                            </p>
+                            <p
+                                style={{
+                                    fontSize: 14,
+                                    color: theme.text.tertiary ?? theme.text.secondary,
+                                    margin: 0,
+                                    lineHeight: 1.5,
+                                }}
+                            >
+                                {t(section.description)}
+                            </p>
+                        </article>
+                    </Link>
                 ))}
             </div>
 
@@ -177,6 +192,16 @@ export default function CommunityRoute() {
                     {t('community.comingSoon')}
                 </p>
             </section>
+            <style>{`
+                a:hover .community-card {
+                    border-color: ${theme.accent.blue}40 !important;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                }
+                a:focus-visible .community-card {
+                    outline: 2px solid ${theme.accent.blue};
+                    outline-offset: 2px;
+                }
+            `}</style>
         </div>
     );
 }
