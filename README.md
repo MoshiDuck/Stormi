@@ -61,26 +61,29 @@ Streaming HLS · Enrichissement TMDb/Spotify · Cache multi‑niveaux · Accessi
 
 ## Roadmap
 
-Fonctionnalités prévues, classées par priorité.
+Fonctionnalités à venir, classées par priorité. *(Déjà en place : grilles images/documents, i18n FR/EN/ES/DE, responsive mobile/tablette/desktop.)*
 
 ### Haute priorité
-- Sous-titres (.srt, .vtt)
-- Reprise d’upload
-- Recherche globale
-- Grilles images / documents
+- Sous-titres (.srt, .vtt) dans le lecteur vidéo
+- Reprise d'upload (reprise réelle après coupure)
+- Recherche globale (fichiers, films, séries, musique)
+- Téléchargement depuis la bibliothèque (cartes et listes)
 
 ### Moyenne priorité
-- Catégorie Livres
-- Streaming YouTube
-- Partage temporaire
-- Import depuis URL
-- i18n (internationalisation)
+- Catégorie Livres (e-books, PDF dédiés)
+- Streaming YouTube / import depuis URL
+- Partage temporaire (liens à durée limitée)
+- Favoris et listes (« À regarder », « À écouter »)
+- Statistiques de visionnage et d'écoute
+- Thèmes (clair / sombre, couleurs)
 
 ### Basse priorité
-- Mode hors ligne
+- Mode hors ligne (PWA, cache avancé)
+- Sync position de lecture multi-appareils
+- Playlists côté musique
 - Import Drive / Dropbox
-- Option stockage local
-- Adaptation à tous les écrans (mobile, tablette)
+- Export ou sauvegarde de la bibliothèque (métadonnées)
+- Fil d'activité ou notifications (nouveaux médias, enrichissements)
 
 ---
 
