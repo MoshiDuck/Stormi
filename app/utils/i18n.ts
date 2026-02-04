@@ -350,6 +350,24 @@ export interface Translations {
         subtitle: string;
         comingSoon: string;
         description: string;
+        sectionFriendsTitle: string;
+        sectionFriendsSubtitle: string;
+        sectionFriendsDescription: string;
+        sectionInvitationsTitle: string;
+        sectionInvitationsSubtitle: string;
+        sectionInvitationsDescription: string;
+        sectionConversationsTitle: string;
+        sectionConversationsSubtitle: string;
+        sectionConversationsDescription: string;
+        sectionActivityTitle: string;
+        sectionActivitySubtitle: string;
+        sectionActivityDescription: string;
+        sectionSharesTitle: string;
+        sectionSharesSubtitle: string;
+        sectionSharesDescription: string;
+        sectionFamilyTitle: string;
+        sectionFamilySubtitle: string;
+        sectionFamilyDescription: string;
     };
     // Help center page
     help: {
@@ -594,7 +612,25 @@ const translations: Record<Language, Translations> = {
             title: 'Communauté',
             subtitle: 'Espace d\'échange et de partage entre utilisateurs Stormi.',
             comingSoon: 'Bientôt disponible',
-            description: 'Les fonctionnalités communautaires (discussions, partage de listes, recommandations) arrivent prochainement.'
+            description: 'Les fonctionnalités communautaires (discussions, partage de listes, recommandations) arrivent prochainement.',
+            sectionFriendsTitle: 'Amis',
+            sectionFriendsSubtitle: 'Gestion complète des relations',
+            sectionFriendsDescription: 'Restez proches de vos proches et gérez qui peut voir quoi.',
+            sectionInvitationsTitle: 'Invitations',
+            sectionInvitationsSubtitle: 'Demandes en attente',
+            sectionInvitationsDescription: 'Acceptez ou refusez les demandes, et suivez celles que vous avez envoyées.',
+            sectionConversationsTitle: 'Conversations',
+            sectionConversationsSubtitle: 'Messagerie entre utilisateurs',
+            sectionConversationsDescription: 'Échangez en privé et retrouvez l’historique de vos discussions.',
+            sectionActivityTitle: 'Activité',
+            sectionActivitySubtitle: 'Tout ce qui se passe dans ton réseau',
+            sectionActivityDescription: 'Voyez les derniers partages et ce que font vos amis, en un coup d’œil.',
+            sectionSharesTitle: 'Partages',
+            sectionSharesSubtitle: 'Vue dédiée aux contenus échangés',
+            sectionSharesDescription: 'Tout ce qu’on vous a partagé, et tout ce que vous avez partagé, au même endroit.',
+            sectionFamilyTitle: 'Famille',
+            sectionFamilySubtitle: 'Gestion du groupe familial',
+            sectionFamilyDescription: 'Un espace pour votre foyer : membres et partages automatiques entre vous.',
         },
         media: {
             play: 'Lecture',
@@ -938,12 +974,6 @@ const translations: Record<Language, Translations> = {
             apply: 'Appliquer',
             customThemeDeleted: 'Thème supprimé'
         },
-        community: {
-            title: 'Communauté',
-            subtitle: 'Espace d\'échange et de partage entre utilisateurs Stormi.',
-            comingSoon: 'Bientôt disponible',
-            description: 'Les fonctionnalités communautaires (discussions, partage de listes, recommandations) arrivent prochainement.'
-        },
         help: {
             title: 'Centre d\'aide',
             subtitle: 'Questions fréquentes et support.',
@@ -1064,7 +1094,25 @@ const translations: Record<Language, Translations> = {
             title: 'Community',
             subtitle: 'Share and connect with other Stormi users.',
             comingSoon: 'Coming soon',
-            description: 'Community features (discussions, list sharing, recommendations) are coming soon.'
+            description: 'Community features (discussions, list sharing, recommendations) are coming soon.',
+            sectionFriendsTitle: 'Friends',
+            sectionFriendsSubtitle: 'Full relationship management',
+            sectionFriendsDescription: 'Stay close to the people that matter and control who can see what.',
+            sectionInvitationsTitle: 'Invitations',
+            sectionInvitationsSubtitle: 'Pending requests',
+            sectionInvitationsDescription: 'Accept or decline requests, and keep track of the ones you sent.',
+            sectionConversationsTitle: 'Conversations',
+            sectionConversationsSubtitle: 'Messaging between users',
+            sectionConversationsDescription: 'Chat in private and browse your conversation history.',
+            sectionActivityTitle: 'Activity',
+            sectionActivitySubtitle: 'Everything happening in your network',
+            sectionActivityDescription: 'See the latest shares and what your friends are up to, at a glance.',
+            sectionSharesTitle: 'Shares',
+            sectionSharesSubtitle: 'Dedicated view of exchanged content',
+            sectionSharesDescription: 'Everything shared with you, and everything you shared, in one place.',
+            sectionFamilyTitle: 'Family',
+            sectionFamilySubtitle: 'Family group management',
+            sectionFamilyDescription: 'A space for your household: members and automatic sharing between you.',
         },
         media: {
             play: 'Play',
@@ -1526,7 +1574,25 @@ const translations: Record<Language, Translations> = {
             title: 'Comunidad',
             subtitle: 'Comparte y conecta con otros usuarios de Stormi.',
             comingSoon: 'Próximamente',
-            description: 'Las funciones comunitarias (debates, compartir listas, recomendaciones) llegarán pronto.'
+            description: 'Las funciones comunitarias (debates, compartir listas, recomendaciones) llegarán pronto.',
+            sectionFriendsTitle: 'Amigos',
+            sectionFriendsSubtitle: 'Gestión completa de relaciones',
+            sectionFriendsDescription: 'Mantente cerca de los tuyos y decide quién puede ver qué.',
+            sectionInvitationsTitle: 'Invitaciones',
+            sectionInvitationsSubtitle: 'Solicitudes pendientes',
+            sectionInvitationsDescription: 'Acepta o rechaza solicitudes y sigue las que has enviado.',
+            sectionConversationsTitle: 'Conversaciones',
+            sectionConversationsSubtitle: 'Mensajería entre usuarios',
+            sectionConversationsDescription: 'Chatea en privado y consulta el historial de tus conversaciones.',
+            sectionActivityTitle: 'Actividad',
+            sectionActivitySubtitle: 'Todo lo que pasa en tu red',
+            sectionActivityDescription: 'Los últimos compartidos y lo que hacen tus amigos, de un vistazo.',
+            sectionSharesTitle: 'Compartidos',
+            sectionSharesSubtitle: 'Vista dedicada a contenidos intercambiados',
+            sectionSharesDescription: 'Todo lo que te han compartido y lo que tú compartes, en un solo sitio.',
+            sectionFamilyTitle: 'Familia',
+            sectionFamilySubtitle: 'Gestión del grupo familiar',
+            sectionFamilyDescription: 'Un espacio para tu hogar: miembros y compartidos automáticos entre vosotros.',
         },
         media: {
             play: 'Reproducir',
@@ -1990,7 +2056,25 @@ const translations: Record<Language, Translations> = {
             title: 'Community',
             subtitle: 'Teilen und verbinden Sie sich mit anderen Stormi-Nutzern.',
             comingSoon: 'Demnächst',
-            description: 'Community-Funktionen (Diskussionen, Listen teilen, Empfehlungen) kommen bald.'
+            description: 'Community-Funktionen (Diskussionen, Listen teilen, Empfehlungen) kommen bald.',
+            sectionFriendsTitle: 'Freunde',
+            sectionFriendsSubtitle: 'Vollständige Beziehungsverwaltung',
+            sectionFriendsDescription: 'Bleiben Sie Ihren Liebsten nah und entscheiden Sie, wer was sehen darf.',
+            sectionInvitationsTitle: 'Einladungen',
+            sectionInvitationsSubtitle: 'Ausstehende Anfragen',
+            sectionInvitationsDescription: 'Anfragen annehmen oder ablehnen und die von Ihnen gesendeten im Blick behalten.',
+            sectionConversationsTitle: 'Unterhaltungen',
+            sectionConversationsSubtitle: 'Nachrichten zwischen Nutzern',
+            sectionConversationsDescription: 'Privat chatten und Ihren Gesprächsverlauf durchsehen.',
+            sectionActivityTitle: 'Aktivität',
+            sectionActivitySubtitle: 'Alles, was in Ihrem Netzwerk passiert',
+            sectionActivityDescription: 'Neueste Freigaben und was Ihre Freunde tun – auf einen Blick.',
+            sectionSharesTitle: 'Freigaben',
+            sectionSharesSubtitle: 'Eigene Ansicht ausgetauschter Inhalte',
+            sectionSharesDescription: 'Alles, was mit Ihnen geteilt wurde, und alles, was Sie geteilt haben, an einem Ort.',
+            sectionFamilyTitle: 'Familie',
+            sectionFamilySubtitle: 'Verwaltung der Familiengruppe',
+            sectionFamilyDescription: 'Ein Bereich für Ihren Haushalt: Mitglieder und automatische Freigaben untereinander.',
         },
         media: {
             play: 'Abspielen',
