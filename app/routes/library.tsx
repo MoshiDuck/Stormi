@@ -19,6 +19,64 @@ import { useRefetchOnCacheInvalidation } from '~/utils/cache/cacheInvalidation';
 import { SectionedMasonryGrid } from '~/components/ui/VirtualizedMasonryGrid';
 import { groupByMonthAsSections } from '~/utils/file/fileGridUtils';
 import type { FileWithDate } from '~/utils/file/fileGridUtils';
+/** Ratio A4 pour l'aperçu document */
+const DOC_PREVIEW_ASPECT = 1 / 1.414;
+
+/** Aperçu PDF chargé côté client uniquement (évite pdf.worker dans le bundle SSR) */
+function PdfPreviewClient(props: {
+    url: string;
+    token: string | null;
+    width: number;
+    height: number;
+}) {
+    const [Component, setComponent] = useState<React.ComponentType<{
+        url: string;
+        token: string | null;
+        width: number;
+        height?: number;
+        aspectRatio?: number;
+    }> | null>(null);
+
+    useEffect(() => {
+        import('~/components/ui/PdfFirstPagePreview').then((m) => setComponent(() => m.PdfFirstPagePreview));
+    }, []);
+
+    if (!Component) {
+        return (
+            <div
+                style={{
+                    width: props.width,
+                    height: props.height,
+                    backgroundColor: darkTheme.background.tertiary,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: darkTheme.text.tertiary,
+                }}
+            >
+                …
+            </div>
+        );
+    }
+    return (
+        <Component
+            url={props.url}
+            token={props.token}
+            width={props.width}
+            height={props.height}
+            aspectRatio={DOC_PREVIEW_ASPECT}
+        />
+    );
+}
+
+const getDocumentIcon = (mimeType: string): string => {
+    if (mimeType?.includes('pdf')) return '📕';
+    if (mimeType?.includes('word') || mimeType?.includes('document')) return '📝';
+    if (mimeType?.includes('excel') || mimeType?.includes('spreadsheet')) return '📊';
+    if (mimeType?.includes('powerpoint') || mimeType?.includes('presentation')) return '📊';
+    if (mimeType?.includes('text')) return '📄';
+    return '📎';
+};
 
 interface FileItem extends FileWithDate {
     file_id: string;
@@ -190,6 +248,137 @@ export default function LibraryRoute() {
         [handleCardClick, getFileUrl, t]
     );
 
+    const renderDocumentCard = useCallback(
+        ({ data, width }: { data: FileItem; width: number }) => {
+            const doc = data;
+            const isPdf = doc.mime_type?.includes('pdf');
+            const previewHeight = width / DOC_PREVIEW_ASPECT;
+            return (
+                <DraggableItem
+                    key={doc.file_id}
+                    item={{
+                        file_id: doc.file_id,
+                        category: doc.category,
+                        filename: doc.filename,
+                        size: doc.size,
+                        mime_type: doc.mime_type,
+                    }}
+                >
+                    <div
+                        onClick={() => handleCardClick(doc)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleCardClick(doc);
+                            }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${t('actions.open')} ${doc.filename || t('actions.thisDocument')}`}
+                        style={{
+                            position: 'relative',
+                            width,
+                            minHeight: 80,
+                            backgroundColor: darkTheme.background.secondary,
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            border: `2px solid ${darkTheme.border.primary}`,
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = darkTheme.accent.blue;
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                            e.currentTarget.style.boxShadow = darkTheme.shadow.large;
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = darkTheme.border.primary;
+                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    >
+                        {isPdf ? (
+                            <div style={{ width: '100%', pointerEvents: 'none' }}>
+                                <PdfPreviewClient
+                                    url={getFileUrl(doc)}
+                                    token={typeof window !== 'undefined' ? localStorage.getItem('stormi_token') : null}
+                                    width={width}
+                                    height={previewHeight}
+                                />
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    width: '100%',
+                                    height: previewHeight,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: `linear-gradient(135deg, ${darkTheme.background.tertiary} 0%, ${darkTheme.background.secondary} 100%)`,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <span style={{ fontSize: 'clamp(48px, 30%, 96px)', opacity: 0.9 }}>
+                                    {getDocumentIcon(doc.mime_type ?? '')}
+                                </span>
+                            </div>
+                        )}
+                        <div
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                                padding: '12px',
+                                color: '#fff',
+                                fontSize: '12px',
+                                opacity: 0,
+                                transition: 'opacity 0.2s',
+                                pointerEvents: 'none',
+                            }}
+                            className="library-doc-card-overlay"
+                        >
+                            <div
+                                style={{
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    marginBottom: '4px',
+                                }}
+                            >
+                                {doc.filename || t('common.unnamed')}
+                            </div>
+                            <div>{formatFileSize(doc.size)}</div>
+                        </div>
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                width: '28px',
+                                height: '28px',
+                                borderRadius: '6px',
+                                backgroundColor: 'rgba(0,0,0,0.6)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                opacity: 0,
+                                transition: 'opacity 0.2s',
+                                fontSize: '14px',
+                                pointerEvents: 'none',
+                            }}
+                            className="library-drag-indicator"
+                        >
+                            ⋮⋮
+                        </div>
+                    </div>
+                </DraggableItem>
+            );
+        },
+        [handleCardClick, getFileUrl, t]
+    );
+
     const renderGenericCard = (file: FileItem, icon: string) => (
         <DraggableItem
             key={file.file_id}
@@ -311,6 +500,19 @@ export default function LibraryRoute() {
                     gutter={16}
                     itemHeightEstimate={320}
                 />
+            ) : selectedTab === 'documents' ? (
+                <>
+                    <SectionedMasonryGrid<FileItem>
+                        sections={masonrySections}
+                        renderCard={renderDocumentCard}
+                        gutter={16}
+                        itemHeightEstimate={320}
+                    />
+                    <style>{`
+                        div:hover > .library-drag-indicator,
+                        div:hover > .library-doc-card-overlay { opacity: 1 !important; }
+                    `}</style>
+                </>
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
                     {files.map((file) => renderGenericCard(file, LIBRARY_ICONS[selectedTab]))}

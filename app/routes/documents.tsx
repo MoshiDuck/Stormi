@@ -244,7 +244,7 @@ export default function DocumentsRoute() {
                                 transition: 'opacity 0.2s',
                                 pointerEvents: 'none',
                             }}
-                            className="doc-card-overlay"
+                            className="card-overlay"
                         >
                             <div
                                 style={{
@@ -289,7 +289,7 @@ export default function DocumentsRoute() {
     if (loading && documents.length === 0) {
         return (
             <>
-                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
+                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1600, margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                         <LoadingSpinner size="large" message={t('common.loading')} />
@@ -310,14 +310,15 @@ export default function DocumentsRoute() {
 
     return (
         <>
-            <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
+            <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1600, margin: '0 auto', minWidth: 0 }}>
                 <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                 <h2
                     style={{
-                        fontSize: '24px',
-                        fontWeight: '600',
+                        fontSize: breakpoint === 'phone' ? 18 : 24,
+                        fontWeight: 600,
                         color: darkTheme.text.primary,
-                        marginBottom: '24px',
+                        marginBottom: breakpoint === 'phone' ? 16 : 24,
+                        wordBreak: 'break-word',
                     }}
                 >
                     Mes documents ({documents.length})
@@ -329,11 +330,11 @@ export default function DocumentsRoute() {
                             sections={masonrySections}
                             renderCard={renderDocumentCard}
                             gutter={16}
-                            itemHeightEstimate={400}
+                            itemHeightEstimate={320}
                         />
                         <style>{`
                             div:hover > .drag-indicator,
-                            div:hover > .doc-card-overlay { opacity: 1 !important; }
+                            div:hover > .card-overlay { opacity: 1 !important; }
                         `}</style>
                     </>
                 ) : !loading ? (

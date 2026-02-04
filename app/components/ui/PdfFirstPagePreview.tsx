@@ -6,7 +6,7 @@ import { darkTheme } from '~/utils/ui/theme';
 import { useLanguage } from '~/contexts/LanguageContext';
 
 // Worker PDF.js pour Vite (résolution au build)
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
 export interface PdfFirstPagePreviewProps {
     /** URL du PDF (doit être accessible avec le token si fourni) */
