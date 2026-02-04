@@ -2,7 +2,7 @@
 // Hook pour gérer les actions sur les fichiers via drag & drop
 
 import { useCallback, useEffect } from 'react';
-import { useDragDrop } from '~/contexts/DragDropContext';
+import { useFileDragDrop } from '~/components/drag-drop/FileDragDropSystem';
 import { handleCacheInvalidation } from '~/utils/cache/cacheInvalidation';
 import type { DraggableFileItem, DropZoneAction, DropResult } from '~/types/dragdrop';
 
@@ -19,7 +19,7 @@ export function useFileActions({
     onError,
     onSuccess,
 }: UseFileActionsOptions) {
-    const { setDropActionHandler } = useDragDrop();
+    const { setDropActionHandler } = useFileDragDrop();
 
     // Suppression d'un fichier via l'API
     const deleteFile = useCallback(
@@ -106,9 +106,10 @@ export function useFileActions({
         [deleteFile, onError]
     );
 
-    // Enregistrer le handler au montage
+    // Enregistrer le handler au montage, le retirer au démontage
     useEffect(() => {
         setDropActionHandler(handleDropAction);
+        return () => setDropActionHandler(null);
     }, [setDropActionHandler, handleDropAction]);
 
     return {

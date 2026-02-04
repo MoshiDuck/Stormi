@@ -117,6 +117,8 @@ export default function ImagesRoute() {
                         filename: image.filename,
                         size: image.size,
                         mime_type: image.mime_type,
+                        previewUrl: getFileUrl(image),
+                        dragLabel: image.filename || undefined,
                     }}
                 >
                     <div

@@ -9,6 +9,9 @@ import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { translations } from '~/utils/i18n';
+import { DraggableItem } from '~/components/ui/DraggableItem';
+import { useFileActions } from '~/hooks/useFileActions';
+import { useToast } from '~/components/ui/Toast';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { PageSkeleton } from '~/components/ui/PageSkeleton';
 import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
@@ -138,6 +141,46 @@ export default function MusicsRoute() {
     
 
     const cacheInvalidationTrigger = useCacheInvalidationTrigger(user?.id ?? null, 'musics');
+    const { showToast, ToastContainer } = useToast();
+
+    const getFirstFileFromArtist = useCallback((artist: Artist): FileItem | null => {
+        if (artist.albums.length === 0) return null;
+        const firstAlbum = artist.albums[0];
+        if (firstAlbum.tracks.length === 0) return null;
+        return firstAlbum.tracks[0].file;
+    }, []);
+
+    const getFirstFileFromAlbum = useCallback((album: Album): FileItem | null => {
+        if (album.tracks.length === 0) return null;
+        return album.tracks[0].file;
+    }, []);
+
+    const handleFileDeleted = useCallback((fileId: string) => {
+        setArtists(prev => prev
+            .map(artist => ({
+                ...artist,
+                albums: artist.albums
+                    .map(album => ({
+                        ...album,
+                        tracks: album.tracks.filter(t => t.file.file_id !== fileId),
+                    }))
+                    .filter(album => album.tracks.length > 0),
+                trackCount: 0,
+            }))
+            .map(artist => ({
+                ...artist,
+                trackCount: artist.albums.reduce((acc, a) => acc + a.tracks.length, 0),
+            }))
+            .filter(artist => artist.trackCount > 0)
+        );
+    }, []);
+
+    useFileActions({
+        userId: user?.id ?? null,
+        onFileDeleted: handleFileDeleted,
+        onError: (err) => showToast(err, 'error'),
+        onSuccess: (msg) => showToast(msg, 'success'),
+    });
 
     // Charger et organiser les fichiers
     useEffect(() => {
@@ -691,7 +734,9 @@ export default function MusicsRoute() {
                                 gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
                                 gap: '24px'
                             }}>
-                                {artists.map((artist) => (
+                                {artists.map((artist) => {
+                                    const firstFile = getFirstFileFromArtist(artist);
+                                    const card = (
                                     <div
                                         key={artist.artistName}
                                         onClick={() => handleArtistClick(artist)}
@@ -771,7 +816,23 @@ export default function MusicsRoute() {
                                                 : t('musics.artist')}
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                    return firstFile ? (
+                                        <DraggableItem
+                                            key={artist.artistName}
+                                            item={{
+                                                file_id: firstFile.file_id,
+                                                category: firstFile.category,
+                                                filename: firstFile.filename,
+                                                size: firstFile.size,
+                                                mime_type: firstFile.mime_type,
+                                                previewUrl: artist.artistThumbnail || firstFile.thumbnail_url || undefined,
+                                            }}
+                                        >
+                                            {card}
+                                        </DraggableItem>
+                                    ) : card;
+                                })}
                             </div>
 
                             {/* État vide */}
@@ -861,7 +922,9 @@ export default function MusicsRoute() {
                                 gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
                                 gap: '24px'
                             }}>
-                                {selectedArtist.albums.map((album) => (
+                                {selectedArtist.albums.map((album) => {
+                                    const firstFile = getFirstFileFromAlbum(album);
+                                    const card = (
                                     <div
                                         key={album.albumName}
                                         onClick={() => handleAlbumClick(album)}
@@ -930,7 +993,23 @@ export default function MusicsRoute() {
                                             {album.year || ''} • {album.tracks.length} {album.tracks.length > 1 ? t('musics.trackCountPlural') : t('musics.trackCount')}
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                    return firstFile ? (
+                                        <DraggableItem
+                                            key={album.albumName}
+                                            item={{
+                                                file_id: firstFile.file_id,
+                                                category: firstFile.category,
+                                                filename: firstFile.filename,
+                                                size: firstFile.size,
+                                                mime_type: firstFile.mime_type,
+                                                previewUrl: album.albumThumbnail || firstFile.thumbnail_url || undefined,
+                                            }}
+                                        >
+                                            {card}
+                                        </DraggableItem>
+                                    ) : card;
+                                })}
                             </div>
                         </>
                     )}
@@ -973,7 +1052,7 @@ export default function MusicsRoute() {
                                     }
                                 };
                                 
-                                return (
+                                const row = (
                                     <div
                                         key={track.file.file_id}
                                         onClick={handleTrackClick}
@@ -1045,14 +1124,30 @@ export default function MusicsRoute() {
                                                 <span style={{ color: '#b3b3b3', fontSize: '14px' }}>
                                                     {track.file.duration ? formatDuration(track.file.duration) : '--:--'}
                                                 </span>
-                                            )}
+                                                )}
                                         </div>
                                     </div>
+                                );
+                                return (
+                                    <DraggableItem
+                                        key={track.file.file_id}
+                                        item={{
+                                            file_id: track.file.file_id,
+                                            category: track.file.category,
+                                            filename: track.file.filename,
+                                            size: track.file.size,
+                                            mime_type: track.file.mime_type,
+                                            previewUrl: track.file.thumbnail_url || undefined,
+                                        }}
+                                    >
+                                        {row}
+                                    </DraggableItem>
                                 );
                             })}
                         </div>
                     )}
                 </div>
+                <ToastContainer />
         </>
     );
 }

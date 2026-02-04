@@ -10,6 +10,10 @@ export interface DraggableFileItem {
     filename: string | null;
     size?: number;
     mime_type?: string;
+    /** Libellé affiché dans le menu de glissement (ex. titre du film/série) */
+    dragLabel?: string | null;
+    /** URL de l’image affichée pendant le drag (miniature / poster) */
+    previewUrl?: string | null;
 }
 
 /**

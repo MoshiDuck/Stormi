@@ -870,6 +870,18 @@ export default function FilmsRoute() {
                     
                     {/* Hero Banner moderne */}
                     {heroMovie && (
+                        <DraggableItem
+                            dragId={`hero-${heroMovie.file_id}`}
+                            item={{
+                                file_id: heroMovie.file_id,
+                                category: heroMovie.category,
+                                filename: heroMovie.filename,
+                                size: heroMovie.size,
+                                mime_type: heroMovie.mime_type,
+                                dragLabel: heroMovie.title || heroMovie.filename,
+                                previewUrl: heroMovie.backdrop_url || heroMovie.thumbnail_url || undefined,
+                            }}
+                        >
                         <div style={{
                             position: 'relative',
                             height: isPhone ? '50vh' : '80vh',
@@ -1085,20 +1097,24 @@ export default function FilmsRoute() {
                                 }
                             `}</style>
                         </div>
+                        </DraggableItem>
                     )}
                     
                     {/* Continuer de regarder */}
                     {organizedMovies.continueWatching.length > 0 && (
                         <NetflixCarousel title={t('home.continueWatching')}>
-                            {organizedMovies.continueWatching.map((file) => (
+                            {organizedMovies.continueWatching.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
+                                    dragId={`continueWatching-${file.file_id}-${index}`}
                                     item={{
                                         file_id: file.file_id,
                                         category: file.category,
                                         filename: file.filename,
                                         size: file.size,
                                         mime_type: file.mime_type,
+                                        dragLabel: file.title || file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
                                     <div style={{ position: 'relative' }}>
@@ -1135,12 +1151,15 @@ export default function FilmsRoute() {
                             {organizedMovies.top10.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
+                                    dragId={`top10-${file.file_id}-${index}`}
                                     item={{
                                         file_id: file.file_id,
                                         category: file.category,
                                         filename: file.filename,
                                         size: file.size,
                                         mime_type: file.mime_type,
+                                        dragLabel: file.title || file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
                                     <div style={{ position: 'relative' }}>
@@ -1208,15 +1227,18 @@ export default function FilmsRoute() {
                     {/* Fichiers non identifiés */}
                     {organizedMovies.unidentified.length > 0 && (
                         <NetflixCarousel title={t('videos.unidentifiedFiles')} icon="📁">
-                            {organizedMovies.unidentified.map((file) => (
+                            {organizedMovies.unidentified.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
+                                    dragId={`unidentified-${file.file_id}-${index}`}
                                     item={{
                                         file_id: file.file_id,
                                         category: file.category,
                                         filename: file.filename,
                                         size: file.size,
                                         mime_type: file.mime_type,
+                                        dragLabel: file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
                                     <UnidentifiedCard file={file} />
@@ -1228,15 +1250,18 @@ export default function FilmsRoute() {
                     {/* Ajoutés récemment */}
                     {organizedMovies.recentlyAdded.length > 0 && (
                         <NetflixCarousel title={t('videos.recentlyAdded')} icon="🆕">
-                            {organizedMovies.recentlyAdded.map((file) => (
+                            {organizedMovies.recentlyAdded.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
+                                    dragId={`recentlyAdded-${file.file_id}-${index}`}
                                     item={{
                                         file_id: file.file_id,
                                         category: file.category,
                                         filename: file.filename,
                                         size: file.size,
                                         mime_type: file.mime_type,
+                                        dragLabel: file.title || file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
                                     <MovieCard
@@ -1252,15 +1277,18 @@ export default function FilmsRoute() {
                     {organizedMovies.byGenre.map((genreGroup) => (
                         <div key={genreGroup.genre} id={`genre-${encodeURIComponent(genreGroup.genre)}`}>
                         <NetflixCarousel title={genreGroup.genre}>
-                            {genreGroup.movies.map((file) => (
+                            {genreGroup.movies.map((file, index) => (
                                 <DraggableItem
                                     key={`${genreGroup.genre}-${file.file_id}`}
+                                    dragId={`${genreGroup.genre}-${file.file_id}-${index}`}
                                     item={{
                                         file_id: file.file_id,
                                         category: file.category,
                                         filename: file.filename,
                                         size: file.size,
                                         mime_type: file.mime_type,
+                                        dragLabel: file.title || file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
                                     <MovieCard

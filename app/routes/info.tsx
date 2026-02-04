@@ -1,7 +1,7 @@
 // INFO : app/routes/info.tsx
 // Page d'info/détail style Netflix pour films et séries — responsive (téléphone, tablette, desktop)
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
@@ -11,6 +11,9 @@ import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { StarRating } from '~/components/ui/StarRating';
+import { DraggableItem } from '~/components/ui/DraggableItem';
+import { useFileActions } from '~/hooks/useFileActions';
+import { useToast } from '~/components/ui/Toast';
 import { handleCacheInvalidation } from '~/utils/cache/cacheInvalidation';
 
 interface FileItem {
@@ -99,6 +102,26 @@ export default function InfoRoute() {
     const [selectedSeason, setSelectedSeason] = useState<number>(1);
     const [userRating, setUserRating] = useState<number | null>(null);
     const [averageRating, setAverageRating] = useState<number | null>(null);
+
+    const { showToast, ToastContainer } = useToast();
+
+    const handleFileDeleted = useCallback((deletedFileId: string) => {
+        setRelatedFiles(prev => prev.filter(f => f.file_id !== deletedFileId));
+        setSeasons(prev => prev
+            .map(s => ({ ...s, episodes: s.episodes.filter(e => e.file.file_id !== deletedFileId) }))
+            .filter(s => s.episodes.length > 0));
+        if (file?.file_id === deletedFileId) {
+            setFile(null);
+            navigate(category === 'videos' ? '/series' : '/films', { replace: true });
+        }
+    }, [file?.file_id, category, navigate]);
+
+    useFileActions({
+        userId: user?.id ?? null,
+        onFileDeleted: handleFileDeleted,
+        onError: (err) => showToast(err, 'error'),
+        onSuccess: (msg) => showToast(msg, 'success'),
+    });
 
     useEffect(() => {
         const fetchFileInfo = async () => {
@@ -402,6 +425,17 @@ export default function InfoRoute() {
                 overflowX: 'hidden',
             }}>
                 {/* Hero Section avec backdrop */}
+                <DraggableItem
+                    dragId={`info-hero-${file.file_id}`}
+                    item={{
+                        file_id: file.file_id,
+                        category: file.category,
+                        filename: file.filename,
+                        size: file.size,
+                        mime_type: file.mime_type,
+                        previewUrl: thumbnailUrl || undefined,
+                    }}
+                >
                 <div style={{
                     position: 'relative',
                     width: '100%',
@@ -631,6 +665,7 @@ export default function InfoRoute() {
                         </div>
                     </div>
                 </div>
+                </DraggableItem>
 
                 {/* Saisons et épisodes pour les séries */}
                 {isTVShow && seasons.length > 0 && (
@@ -670,7 +705,7 @@ export default function InfoRoute() {
                         {/* Liste des épisodes */}
                         {seasons.find(s => s.seasonNumber === selectedSeason) && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: isPhone ? 8 : 12, minWidth: 0 }}>
-                                {seasons.find(s => s.seasonNumber === selectedSeason)!.episodes.map((episode) => {
+                                {seasons.find(s => s.seasonNumber === selectedSeason)!.episodes.map((episode, episodeIndex) => {
                                     const episodeThumbnail = getThumbnailUrl(episode.file);
                                     const episodeProgress = watchProgress?.file_id === episode.file.file_id ? watchProgress : null;
 
@@ -687,7 +722,7 @@ export default function InfoRoute() {
                                     const epGap = isPhone ? 12 : 16;
                                     const epPadding = isPhone ? 12 : 16;
 
-                                    return (
+                                    const episodeRow = (
                                         <div
                                             key={episode.file.file_id}
                                             onClick={handleEpisodeClick}
@@ -886,6 +921,22 @@ export default function InfoRoute() {
                                             </button>
                                         </div>
                                     );
+                                    return (
+                                        <DraggableItem
+                                            key={episode.file.file_id}
+                                            dragId={`episode-${selectedSeason}-${episode.file.file_id}-${episodeIndex}`}
+                                            item={{
+                                                file_id: episode.file.file_id,
+                                                category: episode.file.category,
+                                                filename: episode.file.filename,
+                                                size: episode.file.size,
+                                                mime_type: episode.file.mime_type,
+                                                previewUrl: episodeThumbnail || undefined,
+                                            }}
+                                        >
+                                            {episodeRow}
+                                        </DraggableItem>
+                                    );
                                 })}
                             </div>
                         )}
@@ -914,13 +965,24 @@ export default function InfoRoute() {
                             gap: isPhone ? 10 : 16,
                             minWidth: 0,
                         }}>
-                            {relatedFiles.map((relatedFile) => {
+                            {relatedFiles.map((relatedFile, index) => {
                                 const relatedThumbnail = getThumbnailUrl(relatedFile);
                                 const relatedName = relatedFile.title || relatedFile.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
                                 
                                 return (
-                                    <div
+                                    <DraggableItem
                                         key={relatedFile.file_id}
+                                        dragId={`related-${relatedFile.file_id}-${index}`}
+                                        item={{
+                                            file_id: relatedFile.file_id,
+                                            category: relatedFile.category,
+                                            filename: relatedFile.filename,
+                                            size: relatedFile.size,
+                                            mime_type: relatedFile.mime_type,
+                                            previewUrl: relatedThumbnail || undefined,
+                                        }}
+                                    >
+                                    <div
                                         onClick={() => navigate(`/info/${relatedFile.category}/${relatedFile.file_id}`)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter' || e.key === ' ') {
@@ -979,12 +1041,14 @@ export default function InfoRoute() {
                                             {relatedName}
                                         </div>
                                     </div>
+                                    </DraggableItem>
                                 );
                             })}
                         </div>
                     </div>
                 )}
             </div>
+            <ToastContainer />
         </>
     );
 }

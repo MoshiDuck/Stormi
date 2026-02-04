@@ -10,6 +10,9 @@ import { NetflixCarousel } from '~/components/ui/NetflixCarousel';
 import { formatDuration } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useFloating, useHover, useInteractions, FloatingPortal } from '@floating-ui/react';
+import { DraggableItem } from '~/components/ui/DraggableItem';
+import { useFileActions } from '~/hooks/useFileActions';
+import { useToast } from '~/components/ui/Toast';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { MediaPageSkeleton } from '~/components/ui/MediaPageSkeleton';
 import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
@@ -126,6 +129,55 @@ export default function SeriesRoute() {
     const handleSubCategoryChange = useCallback((subCategory: 'films' | 'series') => {
         navigate(subCategory === 'films' ? '/films' : '/series');
     }, [navigate]);
+
+    const { showToast, ToastContainer } = useToast();
+
+    const getFirstFileFromShow = useCallback((show: TVShow): FileItem | null => {
+        if (show.seasons.length === 0) return null;
+        const firstSeason = show.seasons[0];
+        if (firstSeason.episodes.length === 0) return null;
+        return firstSeason.episodes[0].file;
+    }, []);
+
+    const removeFileFromShow = useCallback((show: TVShow, fileId: string): TVShow | null => {
+        const newSeasons = show.seasons
+            .map(season => ({
+                ...season,
+                episodes: season.episodes.filter(ep => ep.file.file_id !== fileId),
+            }))
+            .filter(season => season.episodes.length > 0);
+        if (newSeasons.length === 0) return null;
+        return { ...show, seasons: newSeasons, totalEpisodes: newSeasons.reduce((acc, s) => acc + s.episodes.length, 0) };
+    }, []);
+
+    const handleFileDeleted = useCallback((fileId: string) => {
+        setOrganizedSeries(prev => ({
+            unidentified: prev.unidentified.filter(f => f.file_id !== fileId),
+            byGenre: prev.byGenre
+                .map(g => ({ genre: g.genre, shows: g.shows.map(show => removeFileFromShow(show, fileId)).filter((s): s is TVShow => s !== null) }))
+                .filter(g => g.shows.length > 0),
+            continueWatching: prev.continueWatching
+                .filter(item => item.lastEpisode.file_id !== fileId)
+                .map(item => {
+                    const updated = removeFileFromShow(item.show, fileId);
+                    if (!updated) return null;
+                    return { ...item, show: updated };
+                })
+                .filter((x): x is NonNullable<typeof x> => x !== null),
+            top10: prev.top10.map(show => removeFileFromShow(show, fileId)).filter((s): s is TVShow => s !== null),
+            recentlyAdded: prev.recentlyAdded.map(show => removeFileFromShow(show, fileId)).filter((s): s is TVShow => s !== null),
+        }));
+        if (heroShow && getFirstFileFromShow(heroShow)?.file_id === fileId) {
+            setHeroShow(null);
+        }
+    }, [getFirstFileFromShow, removeFileFromShow, heroShow]);
+
+    useFileActions({
+        userId: user?.id ?? null,
+        onFileDeleted: handleFileDeleted,
+        onError: (err) => showToast(err, 'error'),
+        onSuccess: (msg) => showToast(msg, 'success'),
+    });
 
     const cacheInvalidationTrigger = useCacheInvalidationTrigger(user?.id ?? null, 'videos');
 
@@ -1112,7 +1164,9 @@ export default function SeriesRoute() {
                     </div>
                     
                     {/* Hero Banner moderne */}
-                    {heroShow && (
+                    {heroShow && (() => {
+                        const heroFile = getFirstFileFromShow(heroShow);
+                        const heroContent = (
                         <div style={{
                             position: 'relative',
                             height: '80vh',
@@ -1330,44 +1384,88 @@ export default function SeriesRoute() {
                                 }
                             `}</style>
                         </div>
-                    )}
+                        );
+                        return heroFile ? (
+                            <DraggableItem
+                                key="hero"
+                                dragId={`hero-${heroFile.file_id}`}
+                                item={{
+                                    file_id: heroFile.file_id,
+                                    category: heroFile.category,
+                                    filename: heroFile.filename,
+                                    size: heroFile.size,
+                                    mime_type: heroFile.mime_type,
+                                    dragLabel: heroShow.showName,
+                                    previewUrl: getThumbnailUrl(heroFile) || heroShow.showThumbnail || undefined,
+                                }}
+                            >
+                                {heroContent}
+                            </DraggableItem>
+                        ) : heroContent;
+                    })()}
                     
                     {/* Continuer de regarder */}
                     {organizedSeries.continueWatching.length > 0 && (
                         <NetflixCarousel title={t('home.continueWatching')}>
-                            {organizedSeries.continueWatching.map((item) => (
-                                <div key={item.show.showId} style={{ position: 'relative' }}>
-                                    <SeriesCard
-                                        show={item.show}
-                                        genre={item.show.genres?.[0] ?? 'Série'}
-                                        onClick={() => handleShowClick(item.show)}
-                                    />
-                                    {/* Barre de progression */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        bottom: '0',
-                                        left: '0',
-                                        right: '0',
-                                        height: '4px',
-                                        backgroundColor: 'rgba(255,255,255,0.3)',
-                                        borderRadius: '0 0 6px 6px'
-                                    }}>
-                                        <div style={{
-                                            width: `${item.progress_percent}%`,
-                                            height: '100%',
-                                            backgroundColor: netflixTheme.accent.red,
-                                            transition: 'width 0.3s ease'
-                                        }} />
+                            {organizedSeries.continueWatching.map((item) => {
+                                const firstFile = getFirstFileFromShow(item.show);
+                                return firstFile ? (
+                                    <DraggableItem
+                                        key={item.show.showId}
+                                        dragId={`continueWatching-${item.show.showId}`}
+                                        item={{
+                                            file_id: firstFile.file_id,
+                                            category: firstFile.category,
+                                            filename: firstFile.filename,
+                                            size: firstFile.size,
+                                            mime_type: firstFile.mime_type,
+                                            dragLabel: item.show.showName,
+                                            previewUrl: getThumbnailUrl(firstFile) || item.show.showThumbnail || undefined,
+                                        }}
+                                    >
+                                        <div style={{ position: 'relative' }}>
+                                            <SeriesCard
+                                                show={item.show}
+                                                genre={item.show.genres?.[0] ?? 'Série'}
+                                                onClick={() => handleShowClick(item.show)}
+                                            />
+                                            <div style={{
+                                                position: 'absolute',
+                                                bottom: '0',
+                                                left: '0',
+                                                right: '0',
+                                                height: '4px',
+                                                backgroundColor: 'rgba(255,255,255,0.3)',
+                                                borderRadius: '0 0 6px 6px'
+                                            }}>
+                                                <div style={{
+                                                    width: `${item.progress_percent}%`,
+                                                    height: '100%',
+                                                    backgroundColor: netflixTheme.accent.red,
+                                                    transition: 'width 0.3s ease'
+                                                }} />
+                                            </div>
+                                        </div>
+                                    </DraggableItem>
+                                ) : (
+                                    <div key={item.show.showId} style={{ position: 'relative' }}>
+                                        <SeriesCard
+                                            show={item.show}
+                                            genre={item.show.genres?.[0] ?? 'Série'}
+                                            onClick={() => handleShowClick(item.show)}
+                                        />
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </NetflixCarousel>
                     )}
                     
                     {/* Top 10 */}
                     {organizedSeries.top10.length > 0 && (
                         <NetflixCarousel title={t('videos.top10')}>
-                            {organizedSeries.top10.map((show, index) => (
+                            {organizedSeries.top10.map((show, index) => {
+                                const firstFile = getFirstFileFromShow(show);
+                                const card = (
                                 <div key={show.showId} style={{ position: 'relative' }}>
                                     <SeriesCard
                                         show={show}
@@ -1426,29 +1524,81 @@ export default function SeriesRoute() {
                                         </div>
                                     )}
                                 </div>
-                            ))}
+                                );
+                                return firstFile ? (
+                                    <DraggableItem
+                                        key={show.showId}
+                                        dragId={`top10-${show.showId}-${index}`}
+                                        item={{
+                                            file_id: firstFile.file_id,
+                                            category: firstFile.category,
+                                            filename: firstFile.filename,
+                                            size: firstFile.size,
+                                            mime_type: firstFile.mime_type,
+                                            dragLabel: show.showName,
+                                            previewUrl: getThumbnailUrl(firstFile) || show.showThumbnail || undefined,
+                                        }}
+                                    >
+                                        {card}
+                                    </DraggableItem>
+                                ) : card;
+                            })}
                         </NetflixCarousel>
                     )}
                     
                     {/* Ajoutés récemment */}
                     {organizedSeries.recentlyAdded.length > 0 && (
                         <NetflixCarousel title={t('videos.recentlyAdded')}>
-                            {organizedSeries.recentlyAdded.map((show) => (
-                                <SeriesCard
-                                    key={show.showId}
-                                    show={show}
-                                    genre={show.genres?.[0] ?? 'Série'}
-                                    onClick={() => handleShowClick(show)}
-                                />
-                            ))}
+                            {organizedSeries.recentlyAdded.map((show) => {
+                                const firstFile = getFirstFileFromShow(show);
+                                const card = (
+                                    <SeriesCard
+                                        key={show.showId}
+                                        show={show}
+                                        genre={show.genres?.[0] ?? 'Série'}
+                                        onClick={() => handleShowClick(show)}
+                                    />
+                                );
+                                return firstFile ? (
+                                    <DraggableItem
+                                        key={show.showId}
+                                        dragId={`recentlyAdded-${show.showId}`}
+                                        item={{
+                                            file_id: firstFile.file_id,
+                                            category: firstFile.category,
+                                            filename: firstFile.filename,
+                                            size: firstFile.size,
+                                            mime_type: firstFile.mime_type,
+                                            dragLabel: show.showName,
+                                            previewUrl: getThumbnailUrl(firstFile) || show.showThumbnail || undefined,
+                                        }}
+                                    >
+                                        {card}
+                                    </DraggableItem>
+                                ) : card;
+                            })}
                         </NetflixCarousel>
                     )}
                     
                     {/* Fichiers non identifiés */}
                     {organizedSeries.unidentified.length > 0 && (
                         <NetflixCarousel title={t('videos.unidentifiedFiles')} icon="📁">
-                            {organizedSeries.unidentified.map((file) => (
-                                <UnidentifiedCard key={file.file_id} file={file} />
+                            {organizedSeries.unidentified.map((file, index) => (
+                                <DraggableItem
+                                    key={file.file_id}
+                                    dragId={`unidentified-${file.file_id}-${index}`}
+                                    item={{
+                                        file_id: file.file_id,
+                                        category: file.category,
+                                        filename: file.filename,
+                                        size: file.size,
+                                        mime_type: file.mime_type,
+                                        dragLabel: file.filename,
+                                        previewUrl: getThumbnailUrl(file) || undefined,
+                                    }}
+                                >
+                                    <UnidentifiedCard file={file} />
+                                </DraggableItem>
                             ))}
                         </NetflixCarousel>
                     )}
@@ -1457,14 +1607,34 @@ export default function SeriesRoute() {
                     {organizedSeries.byGenre.map((genreGroup) => (
                         <div key={genreGroup.genre} id={`genre-${encodeURIComponent(genreGroup.genre)}`}>
                         <NetflixCarousel title={genreGroup.genre}>
-                            {genreGroup.shows.map((show) => (
-                                <SeriesCard
-                                    key={`${genreGroup.genre}-${show.showId}`}
-                                    show={show}
-                                    genre={genreGroup.genre}
-                                    onClick={() => handleShowClick(show)}
-                                />
-                            ))}
+                            {genreGroup.shows.map((show) => {
+                                const firstFile = getFirstFileFromShow(show);
+                                const card = (
+                                    <SeriesCard
+                                        key={`${genreGroup.genre}-${show.showId}`}
+                                        show={show}
+                                        genre={genreGroup.genre}
+                                        onClick={() => handleShowClick(show)}
+                                    />
+                                );
+                                return firstFile ? (
+                                    <DraggableItem
+                                        key={`${genreGroup.genre}-${show.showId}`}
+                                        dragId={`${genreGroup.genre}-${show.showId}`}
+                                        item={{
+                                            file_id: firstFile.file_id,
+                                            category: firstFile.category,
+                                            filename: firstFile.filename,
+                                            size: firstFile.size,
+                                            mime_type: firstFile.mime_type,
+                                            dragLabel: show.showName,
+                                            previewUrl: getThumbnailUrl(firstFile) || show.showThumbnail || undefined,
+                                        }}
+                                    >
+                                        {card}
+                                    </DraggableItem>
+                                ) : card;
+                            })}
                         </NetflixCarousel>
                         </div>
                     ))}
@@ -1511,6 +1681,7 @@ export default function SeriesRoute() {
                         </div>
                     )}
                 </div>
+                <ToastContainer />
         </>
     );
 }

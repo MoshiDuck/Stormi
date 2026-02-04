@@ -205,6 +205,8 @@ export default function LibraryRoute() {
                     filename: data.filename,
                     size: data.size,
                     mime_type: data.mime_type,
+                    previewUrl: data.category === 'images' ? getFileUrl(data) : undefined,
+                    dragLabel: data.filename || undefined,
                 }}
             >
                 <div

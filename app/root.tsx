@@ -5,9 +5,8 @@ import type { LinksFunction } from 'react-router';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { PlayerProvider } from './contexts/PlayerContext';
-import { DragDropProvider } from './contexts/DragDropContext';
+import { FileDragDropProvider } from './components/drag-drop/FileDragDropSystem';
 import { MiniPlayer } from './components/ui/MiniPlayer';
-import { DropZoneOverlay } from './components/ui/DropZoneOverlay';
 import { invalidateAllFileCache } from './hooks/useFiles';
 import { useFilesPreloader } from './hooks/useFilesPreloader';
 import { detectLanguage, translations } from './utils/i18n';
@@ -168,11 +167,10 @@ export default function App() {
             <LanguageProvider>
                 <AuthProvider>
                     <PlayerProvider>
-                        <DragDropProvider>
+                        <FileDragDropProvider>
                             <Outlet />
                             <MiniPlayer />
-                            <DropZoneOverlay />
-                        </DragDropProvider>
+                        </FileDragDropProvider>
                     </PlayerProvider>
                 </AuthProvider>
             </LanguageProvider>
