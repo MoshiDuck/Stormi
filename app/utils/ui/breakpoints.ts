@@ -57,7 +57,10 @@ export const CONTENT_MAX_WIDTH = {
 export const BOTTOM_NAV_HEIGHT = 64;
 
 /** Hauteur approximative de la barre de navigation du haut (pour padding-top du main quand la barre est fixed) */
-export const NAV_TOP_HEIGHT = 60;
+export const NAV_TOP_HEIGHT = 64;
 
-/** Marge de sécurité sous la barre du haut pour éviter que le contenu soit masqué (scroll, zoom, etc.) */
-export const NAV_TOP_SAFETY = 12;
+/** Marge de sécurité sous la barre du haut : espace visible entre la barre et le contenu (toutes les pages) */
+export const NAV_TOP_SAFETY = 24;
+
+/** Offset total du contenu sous la barre du haut (NAV_TOP_HEIGHT + NAV_TOP_SAFETY). Utiliser pour paddingTop du main. */
+export const MAIN_TOP_OFFSET = NAV_TOP_HEIGHT + NAV_TOP_SAFETY;

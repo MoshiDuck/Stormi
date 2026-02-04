@@ -81,11 +81,13 @@ export interface Translations {
         pageTitleProfile: string;
         pageTitleManageProfile: string;
         pageTitleThemeSettings: string;
+        pageTitleLanguageSettings: string;
         pageTitleHelp: string;
         pageDescriptionHome: string;
         pageDescriptionProfile: string;
         pageDescriptionLibrary: string;
         pageDescriptionManageProfile: string;
+        pageDescriptionLanguageSettings: string;
         pageDescriptionHelp: string;
     };
     // Actions médias (Lecture, Plus d'infos, etc.)
@@ -466,9 +468,12 @@ export interface Translations {
     pdf: {
         previewUnavailable: string;
     };
-    // Language selector
+    // Language selector & language settings page
     language: {
         selectLanguage: string;
+        title: string;
+        subtitle: string;
+        backToManageProfile: string;
     };
     // Errors
     errors: {
@@ -561,11 +566,13 @@ const translations: Record<Language, Translations> = {
             pageTitleProfile: 'Profil | Stormi',
             pageTitleManageProfile: 'Gérer le profil | Stormi',
             pageTitleThemeSettings: 'Apparence | Stormi',
+            pageTitleLanguageSettings: 'Langue | Stormi',
             pageTitleHelp: 'Centre d\'aide | Stormi',
             pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
             pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
             pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.',
             pageDescriptionManageProfile: 'Langue, déconnexion et données locales.',
+            pageDescriptionLanguageSettings: 'Choisissez la langue de l\'application.',
             pageDescriptionHelp: 'Questions fréquentes et support Stormi.'
         },
         media: {
@@ -691,7 +698,10 @@ const translations: Record<Language, Translations> = {
             previewUnavailable: 'Aperçu indisponible'
         },
         language: {
-            selectLanguage: 'Sélectionner la langue'
+            selectLanguage: 'Sélectionner la langue',
+            title: 'Langue',
+            subtitle: 'Choisissez la langue de l\'application. Votre choix est enregistré pour ce compte.',
+            backToManageProfile: 'Retour à Gérer le profil'
         },
         login: {
             title: 'Stormi',
@@ -1010,11 +1020,13 @@ const translations: Record<Language, Translations> = {
             pageTitleProfile: 'Profile | Stormi',
             pageTitleManageProfile: 'Manage profile | Stormi',
             pageTitleThemeSettings: 'Appearance | Stormi',
+            pageTitleLanguageSettings: 'Language | Stormi',
             pageTitleHelp: 'Help center | Stormi',
             pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
             pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
             pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.',
             pageDescriptionManageProfile: 'Language, logout and local data.',
+            pageDescriptionLanguageSettings: 'Choose the application language.',
             pageDescriptionHelp: 'FAQ and Stormi support.'
         },
         media: {
@@ -1140,7 +1152,10 @@ const translations: Record<Language, Translations> = {
             previewUnavailable: 'Preview unavailable'
         },
         language: {
-            selectLanguage: 'Select language'
+            selectLanguage: 'Select language',
+            title: 'Language',
+            subtitle: 'Choose the application language. Your choice is saved for this account.',
+            backToManageProfile: 'Back to Manage profile'
         },
         login: {
             title: 'Stormi',
@@ -1457,11 +1472,13 @@ const translations: Record<Language, Translations> = {
             pageTitleProfile: 'Perfil | Stormi',
             pageTitleManageProfile: 'Gestionar perfil | Stormi',
             pageTitleThemeSettings: 'Apariencia | Stormi',
+            pageTitleLanguageSettings: 'Idioma | Stormi',
             pageTitleHelp: 'Centro de ayuda | Stormi',
             pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
             pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
             pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.',
             pageDescriptionManageProfile: 'Idioma, cerrar sesión y datos locales.',
+            pageDescriptionLanguageSettings: 'Elige el idioma de la aplicación.',
             pageDescriptionHelp: 'Preguntas frecuentes y soporte Stormi.'
         },
         media: {
@@ -1587,7 +1604,10 @@ const translations: Record<Language, Translations> = {
             previewUnavailable: 'Vista previa no disponible'
         },
         language: {
-            selectLanguage: 'Seleccionar idioma'
+            selectLanguage: 'Seleccionar idioma',
+            title: 'Idioma',
+            subtitle: 'Elige el idioma de la aplicación. Tu elección se guarda para esta cuenta.',
+            backToManageProfile: 'Volver a Gestionar perfil'
         },
         login: {
             title: 'Stormi',
@@ -1906,11 +1926,13 @@ const translations: Record<Language, Translations> = {
             pageTitleProfile: 'Profil | Stormi',
             pageTitleManageProfile: 'Profil verwalten | Stormi',
             pageTitleThemeSettings: 'Darstellung | Stormi',
+            pageTitleLanguageSettings: 'Sprache | Stormi',
             pageTitleHelp: 'Hilfezentrum | Stormi',
             pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
             pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
             pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.',
             pageDescriptionManageProfile: 'Sprache, Abmeldung und lokale Daten.',
+            pageDescriptionLanguageSettings: 'Wählen Sie die Anwendungssprache.',
             pageDescriptionHelp: 'FAQ und Stormi-Support.'
         },
         media: {
@@ -2036,7 +2058,10 @@ const translations: Record<Language, Translations> = {
             previewUnavailable: 'Vorschau nicht verfügbar'
         },
         language: {
-            selectLanguage: 'Sprache auswählen'
+            selectLanguage: 'Sprache auswählen',
+            title: 'Sprache',
+            subtitle: 'Wählen Sie die Anwendungssprache. Ihre Wahl wird für dieses Konto gespeichert.',
+            backToManageProfile: 'Zurück zu Profil verwalten'
         },
         login: {
             title: 'Stormi',

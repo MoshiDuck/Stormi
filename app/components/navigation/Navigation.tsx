@@ -165,7 +165,9 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     right: 0;
                     width: 100%;
                     z-index: 100;
+                    min-height: 64px;
                     padding: calc(12px + env(safe-area-inset-top, 0px)) 0 12px;
+                    box-sizing: border-box;
                     background: ${theme.background.nav};
                     background: linear-gradient(
                         180deg,

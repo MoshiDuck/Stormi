@@ -1,12 +1,13 @@
-// INFO : Gérer le profil — langue, apparence (thème), déconnexion, données locales (layout _app fournit Navigation + AuthGuard)
+// INFO : Gérer le profil — grille : Apparence, Langue, Données personnelles, Déconnexion (layout _app fournit Navigation + AuthGuard)
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { LanguageSelector } from '~/components/ui/LanguageSelector';
+import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { ConfirmDialog } from '~/components/ui/ConfirmDialog';
 import { translations } from '~/utils/i18n';
+import { BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
 
 export function meta() {
     return [
@@ -15,10 +16,28 @@ export function meta() {
     ];
 }
 
+const CARD_STYLE = (theme: ReturnType<typeof useTheme>['theme']) => ({
+    backgroundColor: theme.background.tertiary,
+    borderRadius: '12px',
+    padding: '24px',
+    border: `1px solid ${theme.border.primary}`,
+    textDecoration: 'none',
+    color: 'inherit',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'flex-start',
+    gap: '12px',
+    transition: theme.transition.normal,
+    cursor: 'pointer',
+    minHeight: '140px',
+});
+
 export default function ManageProfileRoute() {
     const { user, logout } = useAuth();
     const { theme } = useTheme();
     const { t } = useLanguage();
+    const breakpoint = useBreakpoint();
+    const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -37,6 +56,23 @@ export default function ManageProfileRoute() {
         return null;
     }
 
+    const iconBox = (emoji: string, color: string) => (
+        <span
+            style={{
+                display: 'inline-flex',
+                width: '40px',
+                height: '40px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: color,
+                borderRadius: '10px',
+                fontSize: '20px',
+            }}
+        >
+            {emoji}
+        </span>
+    );
+
     return (
         <>
             <div
@@ -45,6 +81,9 @@ export default function ManageProfileRoute() {
                     borderRadius: '12px',
                     padding: '40px',
                     boxShadow: theme.shadow.medium,
+                    marginBottom: showBottomNav
+                        ? `calc(${BOTTOM_NAV_HEIGHT}px + 24px + env(safe-area-inset-bottom, 0px))`
+                        : 0,
                 }}
             >
                 <div style={{ marginBottom: '24px' }}>
@@ -64,7 +103,7 @@ export default function ManageProfileRoute() {
                     </Link>
                 </div>
 
-                <div style={{ marginBottom: '40px' }}>
+                <div style={{ marginBottom: '32px' }}>
                     <h1
                         style={{
                             fontSize: '32px',
@@ -75,252 +114,116 @@ export default function ManageProfileRoute() {
                     >
                         {t('manageProfile.title')}
                     </h1>
-                    <p
-                        style={{
-                            color: theme.text.secondary,
-                            fontSize: '16px',
-                        }}
-                    >
-                        {t('manageProfile.subtitle')}
-                    </p>
+                    <p style={{ color: theme.text.secondary, fontSize: '16px' }}>{t('manageProfile.subtitle')}</p>
                 </div>
 
-                <div style={{ display: 'grid', gap: '30px' }}>
-                    {/* Apparence (thème) */}
-                    <section
-                        style={{
-                            backgroundColor: theme.background.tertiary,
-                            borderRadius: '8px',
-                            padding: '30px',
-                            border: `1px solid ${theme.border.primary}`,
+                <div
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                        gap: '20px',
+                    }}
+                >
+                    {/* Apparence */}
+                    <Link
+                        to="/theme-settings"
+                        prefetch="intent"
+                        style={CARD_STYLE(theme)}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = theme.accent.blue;
+                            e.currentTarget.style.boxShadow = theme.shadow.medium;
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = theme.border.primary;
+                            e.currentTarget.style.boxShadow = 'none';
                         }}
                     >
-                        <h2
-                            style={{
-                                fontSize: '20px',
-                                fontWeight: 600,
-                                marginBottom: '20px',
-                                color: theme.text.primary,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                            }}
-                        >
-                            <span
-                                style={{
-                                    display: 'inline-block',
-                                    width: '24px',
-                                    height: '24px',
-                                    backgroundColor: theme.accent.blue,
-                                    borderRadius: '4px',
-                                    color: theme.text.primary,
-                                    textAlign: 'center',
-                                    lineHeight: '24px',
-                                    fontSize: '14px',
-                                }}
-                            >
-                                🎨
-                            </span>
-                            {t('theme.title')}
-                        </h2>
-                        <p
-                            style={{
-                                fontSize: '14px',
-                                color: theme.text.secondary,
-                                marginBottom: '16px',
-                            }}
-                        >
-                            {t('theme.subtitle')}
-                        </p>
-                        <Link
-                            to="/theme-settings"
-                            prefetch="intent"
-                            style={{
-                                display: 'inline-block',
-                                padding: '12px 20px',
-                                backgroundColor: theme.accent.blue,
-                                color: theme.text.primary,
-                                border: 'none',
-                                borderRadius: theme.radius.medium,
-                                fontSize: '16px',
-                                fontWeight: 500,
-                                textDecoration: 'none',
-                                transition: theme.transition.normal,
-                            }}
-                        >
+                        {iconBox('🎨', theme.accent.blue)}
+                        <span style={{ fontSize: '18px', fontWeight: 600, color: theme.text.primary }}>
                             {t('theme.appearance')}
-                        </Link>
-                    </section>
+                        </span>
+                        <span style={{ fontSize: '14px', color: theme.text.secondary, lineHeight: 1.4 }}>
+                            {t('theme.subtitle')}
+                        </span>
+                    </Link>
 
                     {/* Langue */}
-                    <section
-                        style={{
-                            backgroundColor: theme.background.tertiary,
-                            borderRadius: '8px',
-                            padding: '30px',
-                            border: `1px solid ${theme.border.primary}`,
+                    <Link
+                        to="/language-settings"
+                        prefetch="intent"
+                        style={CARD_STYLE(theme)}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = theme.accent.blue;
+                            e.currentTarget.style.boxShadow = theme.shadow.medium;
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = theme.border.primary;
+                            e.currentTarget.style.boxShadow = 'none';
                         }}
                     >
-                        <h2
-                            style={{
-                                fontSize: '20px',
-                                fontWeight: 600,
-                                marginBottom: '20px',
-                                color: theme.text.primary,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                            }}
-                        >
-                            <span
-                                style={{
-                                    display: 'inline-block',
-                                    width: '24px',
-                                    height: '24px',
-                                    backgroundColor: theme.accent.blue,
-                                    borderRadius: '4px',
-                                    color: theme.text.primary,
-                                    textAlign: 'center',
-                                    lineHeight: '24px',
-                                    fontSize: '14px',
-                                }}
-                            >
-                                🌐
-                            </span>
+                        {iconBox('🌐', theme.accent.blue)}
+                        <span style={{ fontSize: '18px', fontWeight: 600, color: theme.text.primary }}>
                             {t('profile.language')}
-                        </h2>
-                        <label
-                            style={{
-                                display: 'block',
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                color: theme.text.secondary,
-                                marginBottom: '12px',
-                            }}
-                        >
+                        </span>
+                        <span style={{ fontSize: '14px', color: theme.text.secondary, lineHeight: 1.4 }}>
                             {t('profile.languageDescription')}
-                        </label>
-                        <LanguageSelector compact={false} />
-                    </section>
+                        </span>
+                    </Link>
 
-                    {/* Actions */}
-                    <section
-                        style={{
-                            backgroundColor: theme.background.tertiary,
-                            borderRadius: '8px',
-                            padding: '30px',
-                            border: `1px solid ${theme.border.primary}`,
+                    {/* Données personnelles */}
+                    <Link
+                        to="/profile"
+                        prefetch="intent"
+                        style={CARD_STYLE(theme)}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = theme.accent.blue;
+                            e.currentTarget.style.boxShadow = theme.shadow.medium;
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = theme.border.primary;
+                            e.currentTarget.style.boxShadow = 'none';
                         }}
                     >
-                        <h2
-                            style={{
-                                fontSize: '20px',
-                                fontWeight: 600,
-                                marginBottom: '20px',
-                                color: theme.text.primary,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                            }}
-                        >
-                            <span
-                                style={{
-                                    display: 'inline-block',
-                                    width: '24px',
-                                    height: '24px',
-                                    backgroundColor: theme.accent.red,
-                                    borderRadius: '4px',
-                                    color: theme.text.primary,
-                                    textAlign: 'center',
-                                    lineHeight: '24px',
-                                    fontSize: '14px',
-                                }}
-                            >
-                                ⚠️
-                            </span>
-                            {t('profile.actions')}
-                        </h2>
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '16px',
-                            }}
-                        >
-                            <button
-                                type="button"
-                                onClick={() => setShowLogoutConfirm(true)}
-                                disabled={isLoggingOut}
-                                style={{
-                                    backgroundColor: isLoggingOut ? theme.text.disabled : theme.accent.red,
-                                    color: theme.text.primary,
-                                    border: 'none',
-                                    padding: '12px 20px',
-                                    borderRadius: '6px',
-                                    cursor: isLoggingOut ? 'not-allowed' : 'pointer',
-                                    fontSize: '16px',
-                                    fontWeight: 500,
-                                    transition: 'background-color 0.2s',
-                                    textAlign: 'left',
-                                    opacity: isLoggingOut ? 0.7 : 1,
-                                }}
-                                onMouseOver={(e) =>
-                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = theme.accent.redHover)
-                                }
-                                onMouseOut={(e) =>
-                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = theme.accent.red)
-                                }
-                            >
-                                {isLoggingOut ? t('common.loading') : t('profile.logout')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (window.confirm(t('profile.confirmClearLocalData'))) {
-                                        localStorage.removeItem('stormi_token');
-                                        localStorage.removeItem('stormi_user');
-                                        window.location.reload();
-                                    }
-                                }}
-                                style={{
-                                    backgroundColor: 'transparent',
-                                    color: theme.text.secondary,
-                                    border: `1px solid ${theme.border.primary}`,
-                                    padding: '12px 20px',
-                                    borderRadius: '6px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px',
-                                    fontWeight: 500,
-                                    transition: 'all 0.2s',
-                                    textAlign: 'left',
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.backgroundColor = theme.background.secondary;
-                                    e.currentTarget.style.borderColor = theme.accent.red;
-                                    e.currentTarget.style.color = theme.accent.red;
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.borderColor = theme.border.primary;
-                                    e.currentTarget.style.color = theme.text.secondary;
-                                }}
-                            >
-                                {t('profile.clearLocalData')}
-                            </button>
-                        </div>
-                        <div
-                            style={{
-                                marginTop: '20px',
-                                fontSize: '12px',
-                                color: theme.text.tertiary,
-                                lineHeight: 1.5,
-                            }}
-                        >
-                            <p style={{ margin: 0 }}>
-                                <strong>{t('profile.noteLabel')}</strong> {t('profile.logoutNote')}
-                            </p>
-                        </div>
-                    </section>
+                        {iconBox('👤', theme.accent.purple ?? theme.accent.blue)}
+                        <span style={{ fontSize: '18px', fontWeight: 600, color: theme.text.primary }}>
+                            {t('profile.personalInfo')}
+                        </span>
+                        <span style={{ fontSize: '14px', color: theme.text.secondary, lineHeight: 1.4 }}>
+                            {t('profile.connectedAccount')}
+                        </span>
+                    </Link>
+
+                    {/* Déconnecter */}
+                    <button
+                        type="button"
+                        onClick={() => setShowLogoutConfirm(true)}
+                        disabled={isLoggingOut}
+                        style={{
+                            ...CARD_STYLE(theme),
+                            textAlign: 'left',
+                            font: 'inherit',
+                            backgroundColor: theme.background.tertiary,
+                            borderColor: theme.border.primary,
+                        }}
+                        onMouseOver={(e) => {
+                            if (!isLoggingOut) {
+                                e.currentTarget.style.borderColor = theme.accent.red;
+                                e.currentTarget.style.boxShadow = theme.shadow.medium;
+                            }
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = theme.border.primary;
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    >
+                        {iconBox('🚪', theme.accent.red)}
+                        <span style={{ fontSize: '18px', fontWeight: 600, color: theme.text.primary }}>
+                            {t('profile.logout')}
+                        </span>
+                        <span style={{ fontSize: '14px', color: theme.text.secondary, lineHeight: 1.4 }}>
+                            {t('dialogs.logoutMessage')}
+                        </span>
+                    </button>
                 </div>
             </div>
 
