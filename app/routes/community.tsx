@@ -15,23 +15,23 @@ export function meta() {
 }
 
 const SECTION_ICONS = [
+    '👨‍👩‍👧', // Famille
     '👥', // Amis
     '✉️', // Invitations
+    '📁', // Partages
     '💬', // Conversations
     '🔄', // Activité
-    '📁', // Partages
-    '👨‍👩‍👧', // Famille
 ] as const;
 
-const SECTION_PATHS = ['/community/friends', '/community/invitations', '/community/conversations', '/community/activity', '/community/shares', '/community/family'] as const;
+const SECTION_PATHS = ['/community/family', '/community/friends', '/community/invitations', '/community/shares', '/community/conversations', '/community/activity'] as const;
 
 const SECTION_KEYS = [
+    { title: 'community.sectionFamilyTitle', subtitle: 'community.sectionFamilySubtitle', description: 'community.sectionFamilyDescription' },
     { title: 'community.sectionFriendsTitle', subtitle: 'community.sectionFriendsSubtitle', description: 'community.sectionFriendsDescription' },
     { title: 'community.sectionInvitationsTitle', subtitle: 'community.sectionInvitationsSubtitle', description: 'community.sectionInvitationsDescription' },
+    { title: 'community.sectionSharesTitle', subtitle: 'community.sectionSharesSubtitle', description: 'community.sectionSharesDescription' },
     { title: 'community.sectionConversationsTitle', subtitle: 'community.sectionConversationsSubtitle', description: 'community.sectionConversationsDescription' },
     { title: 'community.sectionActivityTitle', subtitle: 'community.sectionActivitySubtitle', description: 'community.sectionActivityDescription' },
-    { title: 'community.sectionSharesTitle', subtitle: 'community.sectionSharesSubtitle', description: 'community.sectionSharesDescription' },
-    { title: 'community.sectionFamilyTitle', subtitle: 'community.sectionFamilySubtitle', description: 'community.sectionFamilyDescription' },
 ] as const;
 
 export default function CommunityRoute() {
