@@ -13,11 +13,13 @@ export interface Translations {
         watch: string;
         listen: string;
         library: string;
+        community: string;
         localPlayer: string;
         profile: string;
         logout: string;
         /** Labels accessibles pour lecteurs d'écran (WCAG 2.4.4) */
         homeAriaLabel: string;
+        communityAriaLabel: string;
         addAriaLabel: string;
         watchAriaLabel: string;
         listenAriaLabel: string;
@@ -83,7 +85,9 @@ export interface Translations {
         pageTitleThemeSettings: string;
         pageTitleLanguageSettings: string;
         pageTitleHelp: string;
+        pageTitleCommunity: string;
         pageDescriptionHome: string;
+        pageDescriptionCommunity: string;
         pageDescriptionProfile: string;
         pageDescriptionLibrary: string;
         pageDescriptionManageProfile: string;
@@ -340,6 +344,13 @@ export interface Translations {
         apply: string;
         customThemeDeleted: string;
     };
+    // Community page
+    community: {
+        title: string;
+        subtitle: string;
+        comingSoon: string;
+        description: string;
+    };
     // Help center page
     help: {
         title: string;
@@ -503,6 +514,7 @@ const translations: Record<Language, Translations> = {
             watch: 'Regarder',
             listen: 'Écouter',
             library: 'Bibliothèque',
+            community: 'Communauté',
             localPlayer: 'Lecteur local',
             profile: 'Profil',
             logout: 'Déconnexion',
@@ -511,6 +523,7 @@ const translations: Record<Language, Translations> = {
             watchAriaLabel: 'Films et séries',
             listenAriaLabel: 'Musiques',
             libraryAriaLabel: 'Images, documents et archives',
+            communityAriaLabel: 'Espace communauté Stormi',
             localPlayerAriaLabel: 'Lire des fichiers locaux sans upload',
             profileAriaLabel: 'Mon compte et paramètres',
             menuOpenAriaLabel: 'Ouvrir le menu de navigation',
@@ -568,12 +581,20 @@ const translations: Record<Language, Translations> = {
             pageTitleThemeSettings: 'Apparence | Stormi',
             pageTitleLanguageSettings: 'Langue | Stormi',
             pageTitleHelp: 'Centre d\'aide | Stormi',
+            pageTitleCommunity: 'Communauté | Stormi',
             pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
             pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
             pageDescriptionLibrary: 'Vos images, documents, archives et fichiers. Gérez votre bibliothèque de fichiers.',
             pageDescriptionManageProfile: 'Langue, déconnexion et données locales.',
             pageDescriptionLanguageSettings: 'Choisissez la langue de l\'application.',
-            pageDescriptionHelp: 'Questions fréquentes et support Stormi.'
+            pageDescriptionHelp: 'Questions fréquentes et support Stormi.',
+            pageDescriptionCommunity: 'Espace communauté Stormi : partage et échanges entre utilisateurs.'
+        },
+        community: {
+            title: 'Communauté',
+            subtitle: 'Espace d\'échange et de partage entre utilisateurs Stormi.',
+            comingSoon: 'Bientôt disponible',
+            description: 'Les fonctionnalités communautaires (discussions, partage de listes, recommandations) arrivent prochainement.'
         },
         media: {
             play: 'Lecture',
@@ -917,6 +938,12 @@ const translations: Record<Language, Translations> = {
             apply: 'Appliquer',
             customThemeDeleted: 'Thème supprimé'
         },
+        community: {
+            title: 'Communauté',
+            subtitle: 'Espace d\'échange et de partage entre utilisateurs Stormi.',
+            comingSoon: 'Bientôt disponible',
+            description: 'Les fonctionnalités communautaires (discussions, partage de listes, recommandations) arrivent prochainement.'
+        },
         help: {
             title: 'Centre d\'aide',
             subtitle: 'Questions fréquentes et support.',
@@ -957,6 +984,7 @@ const translations: Record<Language, Translations> = {
             watch: 'Watch',
             listen: 'Listen',
             library: 'Library',
+            community: 'Community',
             localPlayer: 'Local player',
             profile: 'Profile',
             logout: 'Logout',
@@ -965,6 +993,7 @@ const translations: Record<Language, Translations> = {
             watchAriaLabel: 'Movies and TV shows',
             listenAriaLabel: 'Music',
             libraryAriaLabel: 'Images, documents and archives',
+            communityAriaLabel: 'Stormi community space',
             localPlayerAriaLabel: 'Play local files without uploading',
             profileAriaLabel: 'My account and settings',
             menuOpenAriaLabel: 'Open navigation menu',
@@ -1022,12 +1051,20 @@ const translations: Record<Language, Translations> = {
             pageTitleThemeSettings: 'Appearance | Stormi',
             pageTitleLanguageSettings: 'Language | Stormi',
             pageTitleHelp: 'Help center | Stormi',
+            pageTitleCommunity: 'Community | Stormi',
             pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
             pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
             pageDescriptionLibrary: 'Your images, documents, archives and files. Manage your file library.',
             pageDescriptionManageProfile: 'Language, logout and local data.',
             pageDescriptionLanguageSettings: 'Choose the application language.',
-            pageDescriptionHelp: 'FAQ and Stormi support.'
+            pageDescriptionHelp: 'FAQ and Stormi support.',
+            pageDescriptionCommunity: 'Stormi community space: share and connect with other users.'
+        },
+        community: {
+            title: 'Community',
+            subtitle: 'Share and connect with other Stormi users.',
+            comingSoon: 'Coming soon',
+            description: 'Community features (discussions, list sharing, recommendations) are coming soon.'
         },
         media: {
             play: 'Play',
@@ -1409,6 +1446,7 @@ const translations: Record<Language, Translations> = {
             watch: 'Ver',
             listen: 'Escuchar',
             library: 'Biblioteca',
+            community: 'Comunidad',
             localPlayer: 'Reproductor local',
             profile: 'Perfil',
             logout: 'Cerrar sesión',
@@ -1417,6 +1455,7 @@ const translations: Record<Language, Translations> = {
             watchAriaLabel: 'Películas y series',
             listenAriaLabel: 'Música',
             libraryAriaLabel: 'Imágenes, documentos y archivos',
+            communityAriaLabel: 'Espacio comunidad Stormi',
             localPlayerAriaLabel: 'Reproducir archivos locales sin subir',
             profileAriaLabel: 'Mi cuenta y ajustes',
             menuOpenAriaLabel: 'Abrir menú de navegación',
@@ -1474,12 +1513,20 @@ const translations: Record<Language, Translations> = {
             pageTitleThemeSettings: 'Apariencia | Stormi',
             pageTitleLanguageSettings: 'Idioma | Stormi',
             pageTitleHelp: 'Centro de ayuda | Stormi',
+            pageTitleCommunity: 'Comunidad | Stormi',
             pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
             pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
             pageDescriptionLibrary: 'Tus imágenes, documentos, archivos y archivos. Gestiona tu biblioteca de archivos.',
             pageDescriptionManageProfile: 'Idioma, cerrar sesión y datos locales.',
             pageDescriptionLanguageSettings: 'Elige el idioma de la aplicación.',
-            pageDescriptionHelp: 'Preguntas frecuentes y soporte Stormi.'
+            pageDescriptionHelp: 'Preguntas frecuentes y soporte Stormi.',
+            pageDescriptionCommunity: 'Espacio comunidad Stormi: comparte y conecta con otros usuarios.'
+        },
+        community: {
+            title: 'Comunidad',
+            subtitle: 'Comparte y conecta con otros usuarios de Stormi.',
+            comingSoon: 'Próximamente',
+            description: 'Las funciones comunitarias (debates, compartir listas, recomendaciones) llegarán pronto.'
         },
         media: {
             play: 'Reproducir',
@@ -1863,6 +1910,7 @@ const translations: Record<Language, Translations> = {
             watch: 'Ansehen',
             listen: 'Anhören',
             library: 'Bibliothek',
+            community: 'Community',
             localPlayer: 'Lokaler Player',
             profile: 'Profil',
             logout: 'Abmelden',
@@ -1871,6 +1919,7 @@ const translations: Record<Language, Translations> = {
             watchAriaLabel: 'Filme und Serien',
             listenAriaLabel: 'Musik',
             libraryAriaLabel: 'Bilder, Dokumente und Archive',
+            communityAriaLabel: 'Stormi Community-Bereich',
             localPlayerAriaLabel: 'Lokale Dateien ohne Upload abspielen',
             profileAriaLabel: 'Mein Konto und Einstellungen',
             menuOpenAriaLabel: 'Navigationsmenü öffnen',
@@ -1928,12 +1977,20 @@ const translations: Record<Language, Translations> = {
             pageTitleThemeSettings: 'Darstellung | Stormi',
             pageTitleLanguageSettings: 'Sprache | Stormi',
             pageTitleHelp: 'Hilfezentrum | Stormi',
+            pageTitleCommunity: 'Community | Stormi',
             pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
             pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
             pageDescriptionLibrary: 'Ihre Bilder, Dokumente, Archive und Dateien. Verwalten Sie Ihre Dateibibliothek.',
             pageDescriptionManageProfile: 'Sprache, Abmeldung und lokale Daten.',
             pageDescriptionLanguageSettings: 'Wählen Sie die Anwendungssprache.',
-            pageDescriptionHelp: 'FAQ und Stormi-Support.'
+            pageDescriptionHelp: 'FAQ und Stormi-Support.',
+            pageDescriptionCommunity: 'Stormi Community-Bereich: teilen und mit anderen Nutzern verbinden.'
+        },
+        community: {
+            title: 'Community',
+            subtitle: 'Teilen und verbinden Sie sich mit anderen Stormi-Nutzern.',
+            comingSoon: 'Demnächst',
+            description: 'Community-Funktionen (Diskussionen, Listen teilen, Empfehlungen) kommen bald.'
         },
         media: {
             play: 'Abspielen',

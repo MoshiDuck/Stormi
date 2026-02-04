@@ -14,6 +14,7 @@ import {
     Film,
     Music,
     Library,
+    Users,
     MonitorPlay,
     type LucideIcon,
 } from 'lucide-react';
@@ -43,6 +44,7 @@ const navItems: NavItemConfig[] = [
     },
     { to: '/musics', labelKey: 'nav.listen', ariaKey: 'nav.listenAriaLabel', icon: Music },
     { to: '/library', labelKey: 'nav.library', ariaKey: 'nav.libraryAriaLabel', icon: Library },
+    { to: '/community', labelKey: 'nav.community', ariaKey: 'nav.communityAriaLabel', icon: Users },
     {
         to: '/lecteur-local',
         labelKey: 'nav.localPlayer',

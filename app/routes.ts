@@ -21,6 +21,7 @@ export default [
         route("theme-settings", "routes/theme-settings.tsx"),
         route("language-settings", "routes/language-settings.tsx"),
         route("help", "routes/help.tsx"),
+        route("community", "routes/community.tsx"),
         route("upload", "routes/upload.tsx"),
         route("musics", "routes/musics.tsx"),
         route("films", "routes/films.tsx"),
