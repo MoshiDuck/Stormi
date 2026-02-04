@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 import type { User } from '~/types/auth';
-import { darkTheme } from '~/utils/ui/theme';
+import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useBreakpoint, useIsTenFoot } from '~/hooks/useBreakpoint';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
@@ -62,6 +62,7 @@ function NavLink({
     icon: Icon,
     tenFoot,
     onClick,
+    theme,
 }: {
     to: string;
     label: string;
@@ -70,6 +71,7 @@ function NavLink({
     icon: LucideIcon;
     tenFoot?: boolean;
     onClick?: () => void;
+    theme: ReturnType<typeof useTheme>['theme'];
 }) {
     const size = tenFoot ? iconSize.tenFoot : iconSize.default;
     const padding = tenFoot ? linkPadding.tenFoot : linkPadding.default;
@@ -83,8 +85,8 @@ function NavLink({
             aria-label={ariaLabel}
             className="nav-link"
             style={{
-                color: isActive ? darkTheme.accent.blue : darkTheme.text.secondary,
-                backgroundColor: isActive ? 'rgba(66, 133, 244, 0.12)' : 'transparent',
+                color: isActive ? theme.accent.blue : theme.text.secondary,
+                backgroundColor: isActive ? `${theme.accent.blue}20` : 'transparent',
                 fontWeight: isActive ? 600 : 500,
                 padding,
                 minHeight,
@@ -101,6 +103,7 @@ function NavLink({
 
 export function Navigation({ user, onLogout }: NavigationProps) {
     const location = useLocation();
+    const { theme, themeId } = useTheme();
     const { t } = useLanguage();
     const breakpoint = useBreakpoint();
     const isTenFoot = useIsTenFoot();
@@ -112,6 +115,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
     };
 
     const tenFoot = isTenFoot;
+    const logoTheme = themeId === 'light' ? 'light' : 'dark';
 
     return (
         <>
@@ -128,7 +132,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                             aria-label={t('nav.home')}
                             className="nav-logo-link"
                         >
-                            <StormiLogo theme="dark" />
+                            <StormiLogo theme={logoTheme} />
                         </Link>
 
                         {!isMobileOrTablet && (
@@ -142,6 +146,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                                         isActive={isItemActive(item)}
                                         icon={item.icon}
                                         tenFoot={tenFoot}
+                                        theme={theme}
                                     />
                                 ))}
                             </div>
@@ -161,17 +166,17 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     width: 100%;
                     z-index: 100;
                     padding: calc(12px + env(safe-area-inset-top, 0px)) 0 12px;
-                    background: ${darkTheme.background.nav};
+                    background: ${theme.background.nav};
                     background: linear-gradient(
                         180deg,
-                        ${darkTheme.background.nav} 0%,
-                        rgba(21, 21, 21, 0.97) 100%
+                        ${theme.background.nav} 0%,
+                        ${theme.background.nav}ee 100%
                     );
                     backdrop-filter: blur(12px);
                     -webkit-backdrop-filter: blur(12px);
-                    border-bottom: 1px solid ${darkTheme.border.primary};
+                    border-bottom: 1px solid ${theme.border.primary};
                     margin-bottom: 0;
-                    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04);
+                    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.06);
                 }
 
                 .nav-bar-inner {
@@ -203,7 +208,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     color: inherit;
                 }
                 .nav-logo-link:focus-visible {
-                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline: 2px solid ${theme.accent.blue};
                     outline-offset: 2px;
                 }
 
@@ -225,21 +230,21 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     display: inline-flex;
                     align-items: center;
                     gap: 8px;
-                    border-radius: ${darkTheme.radius.medium};
+                    border-radius: ${theme.radius.medium};
                     text-decoration: none;
                     font-size: 0.9375rem;
-                    transition: ${darkTheme.transition.normal};
+                    transition: ${theme.transition.normal};
                     white-space: nowrap;
                     position: relative;
                 }
 
                 .nav-link:hover {
-                    background-color: ${darkTheme.background.tertiary} !important;
-                    color: ${darkTheme.text.primary} !important;
+                    background-color: ${theme.background.tertiary} !important;
+                    color: ${theme.text.primary} !important;
                 }
 
                 .nav-link:focus-visible {
-                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline: 2px solid ${theme.accent.blue};
                     outline-offset: 2px;
                 }
 
@@ -251,7 +256,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                     width: 4px;
                     height: 4px;
                     border-radius: 50%;
-                    background: ${darkTheme.accent.blue};
+                    background: ${theme.accent.blue};
                 }
             `}</style>
         </>

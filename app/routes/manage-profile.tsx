@@ -1,8 +1,8 @@
-// INFO : Gérer le profil — langue, déconnexion, données locales (layout _app fournit Navigation + AuthGuard)
+// INFO : Gérer le profil — langue, apparence (thème), déconnexion, données locales (layout _app fournit Navigation + AuthGuard)
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
-import { darkTheme } from '~/utils/ui/theme';
+import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { LanguageSelector } from '~/components/ui/LanguageSelector';
 import { ConfirmDialog } from '~/components/ui/ConfirmDialog';
@@ -17,6 +17,7 @@ export function meta() {
 
 export default function ManageProfileRoute() {
     const { user, logout } = useAuth();
+    const { theme } = useTheme();
     const { t } = useLanguage();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -40,10 +41,10 @@ export default function ManageProfileRoute() {
         <>
             <div
                 style={{
-                    backgroundColor: darkTheme.background.secondary,
+                    backgroundColor: theme.background.secondary,
                     borderRadius: '12px',
                     padding: '40px',
-                    boxShadow: darkTheme.shadow.medium,
+                    boxShadow: theme.shadow.medium,
                 }}
             >
                 <div style={{ marginBottom: '24px' }}>
@@ -51,7 +52,7 @@ export default function ManageProfileRoute() {
                         to="/profile"
                         prefetch="intent"
                         style={{
-                            color: darkTheme.accent.blue,
+                            color: theme.accent.blue,
                             textDecoration: 'none',
                             fontSize: '14px',
                             fontWeight: 500,
@@ -69,14 +70,14 @@ export default function ManageProfileRoute() {
                             fontSize: '32px',
                             fontWeight: 'bold',
                             marginBottom: '8px',
-                            color: darkTheme.text.primary,
+                            color: theme.text.primary,
                         }}
                     >
                         {t('manageProfile.title')}
                     </h1>
                     <p
                         style={{
-                            color: darkTheme.text.secondary,
+                            color: theme.text.secondary,
                             fontSize: '16px',
                         }}
                     >
@@ -85,13 +86,13 @@ export default function ManageProfileRoute() {
                 </div>
 
                 <div style={{ display: 'grid', gap: '30px' }}>
-                    {/* Langue */}
+                    {/* Apparence (thème) */}
                     <section
                         style={{
-                            backgroundColor: darkTheme.background.tertiary,
+                            backgroundColor: theme.background.tertiary,
                             borderRadius: '8px',
                             padding: '30px',
-                            border: `1px solid ${darkTheme.border.primary}`,
+                            border: `1px solid ${theme.border.primary}`,
                         }}
                     >
                         <h2
@@ -99,7 +100,7 @@ export default function ManageProfileRoute() {
                                 fontSize: '20px',
                                 fontWeight: 600,
                                 marginBottom: '20px',
-                                color: darkTheme.text.primary,
+                                color: theme.text.primary,
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '10px',
@@ -110,9 +111,75 @@ export default function ManageProfileRoute() {
                                     display: 'inline-block',
                                     width: '24px',
                                     height: '24px',
-                                    backgroundColor: darkTheme.accent.blue,
+                                    backgroundColor: theme.accent.blue,
                                     borderRadius: '4px',
-                                    color: 'white',
+                                    color: theme.text.primary,
+                                    textAlign: 'center',
+                                    lineHeight: '24px',
+                                    fontSize: '14px',
+                                }}
+                            >
+                                🎨
+                            </span>
+                            {t('theme.title')}
+                        </h2>
+                        <p
+                            style={{
+                                fontSize: '14px',
+                                color: theme.text.secondary,
+                                marginBottom: '16px',
+                            }}
+                        >
+                            {t('theme.subtitle')}
+                        </p>
+                        <Link
+                            to="/theme-settings"
+                            prefetch="intent"
+                            style={{
+                                display: 'inline-block',
+                                padding: '12px 20px',
+                                backgroundColor: theme.accent.blue,
+                                color: theme.text.primary,
+                                border: 'none',
+                                borderRadius: theme.radius.medium,
+                                fontSize: '16px',
+                                fontWeight: 500,
+                                textDecoration: 'none',
+                                transition: theme.transition.normal,
+                            }}
+                        >
+                            {t('theme.appearance')}
+                        </Link>
+                    </section>
+
+                    {/* Langue */}
+                    <section
+                        style={{
+                            backgroundColor: theme.background.tertiary,
+                            borderRadius: '8px',
+                            padding: '30px',
+                            border: `1px solid ${theme.border.primary}`,
+                        }}
+                    >
+                        <h2
+                            style={{
+                                fontSize: '20px',
+                                fontWeight: 600,
+                                marginBottom: '20px',
+                                color: theme.text.primary,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                            }}
+                        >
+                            <span
+                                style={{
+                                    display: 'inline-block',
+                                    width: '24px',
+                                    height: '24px',
+                                    backgroundColor: theme.accent.blue,
+                                    borderRadius: '4px',
+                                    color: theme.text.primary,
                                     textAlign: 'center',
                                     lineHeight: '24px',
                                     fontSize: '14px',
@@ -127,7 +194,7 @@ export default function ManageProfileRoute() {
                                 display: 'block',
                                 fontSize: '14px',
                                 fontWeight: 500,
-                                color: darkTheme.text.secondary,
+                                color: theme.text.secondary,
                                 marginBottom: '12px',
                             }}
                         >
@@ -139,10 +206,10 @@ export default function ManageProfileRoute() {
                     {/* Actions */}
                     <section
                         style={{
-                            backgroundColor: darkTheme.background.tertiary,
+                            backgroundColor: theme.background.tertiary,
                             borderRadius: '8px',
                             padding: '30px',
-                            border: `1px solid ${darkTheme.border.primary}`,
+                            border: `1px solid ${theme.border.primary}`,
                         }}
                     >
                         <h2
@@ -150,7 +217,7 @@ export default function ManageProfileRoute() {
                                 fontSize: '20px',
                                 fontWeight: 600,
                                 marginBottom: '20px',
-                                color: darkTheme.text.primary,
+                                color: theme.text.primary,
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '10px',
@@ -161,9 +228,9 @@ export default function ManageProfileRoute() {
                                     display: 'inline-block',
                                     width: '24px',
                                     height: '24px',
-                                    backgroundColor: darkTheme.accent.red,
+                                    backgroundColor: theme.accent.red,
                                     borderRadius: '4px',
-                                    color: 'white',
+                                    color: theme.text.primary,
                                     textAlign: 'center',
                                     lineHeight: '24px',
                                     fontSize: '14px',
@@ -185,8 +252,8 @@ export default function ManageProfileRoute() {
                                 onClick={() => setShowLogoutConfirm(true)}
                                 disabled={isLoggingOut}
                                 style={{
-                                    backgroundColor: isLoggingOut ? '#888' : darkTheme.accent.red,
-                                    color: 'white',
+                                    backgroundColor: isLoggingOut ? theme.text.disabled : theme.accent.red,
+                                    color: theme.text.primary,
                                     border: 'none',
                                     padding: '12px 20px',
                                     borderRadius: '6px',
@@ -198,10 +265,10 @@ export default function ManageProfileRoute() {
                                     opacity: isLoggingOut ? 0.7 : 1,
                                 }}
                                 onMouseOver={(e) =>
-                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = '#d32f2f')
+                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = theme.accent.redHover)
                                 }
                                 onMouseOut={(e) =>
-                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = darkTheme.accent.red)
+                                    !isLoggingOut && (e.currentTarget.style.backgroundColor = theme.accent.red)
                                 }
                             >
                                 {isLoggingOut ? t('common.loading') : t('profile.logout')}
@@ -217,8 +284,8 @@ export default function ManageProfileRoute() {
                                 }}
                                 style={{
                                     backgroundColor: 'transparent',
-                                    color: darkTheme.text.secondary,
-                                    border: `1px solid ${darkTheme.border.primary}`,
+                                    color: theme.text.secondary,
+                                    border: `1px solid ${theme.border.primary}`,
                                     padding: '12px 20px',
                                     borderRadius: '6px',
                                     cursor: 'pointer',
@@ -228,14 +295,14 @@ export default function ManageProfileRoute() {
                                     textAlign: 'left',
                                 }}
                                 onMouseOver={(e) => {
-                                    e.currentTarget.style.backgroundColor = darkTheme.background.secondary;
-                                    e.currentTarget.style.borderColor = darkTheme.accent.red;
-                                    e.currentTarget.style.color = darkTheme.accent.red;
+                                    e.currentTarget.style.backgroundColor = theme.background.secondary;
+                                    e.currentTarget.style.borderColor = theme.accent.red;
+                                    e.currentTarget.style.color = theme.accent.red;
                                 }}
                                 onMouseOut={(e) => {
                                     e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.borderColor = darkTheme.border.primary;
-                                    e.currentTarget.style.color = darkTheme.text.secondary;
+                                    e.currentTarget.style.borderColor = theme.border.primary;
+                                    e.currentTarget.style.color = theme.text.secondary;
                                 }}
                             >
                                 {t('profile.clearLocalData')}
@@ -245,7 +312,7 @@ export default function ManageProfileRoute() {
                             style={{
                                 marginTop: '20px',
                                 fontSize: '12px',
-                                color: darkTheme.text.tertiary,
+                                color: theme.text.tertiary,
                                 lineHeight: 1.5,
                             }}
                         >
@@ -263,7 +330,7 @@ export default function ManageProfileRoute() {
                 message={t('dialogs.logoutMessage')}
                 confirmText={t('nav.logout')}
                 cancelText={t('common.cancel')}
-                confirmColor={darkTheme.accent.red}
+                confirmColor={theme.accent.red}
                 onConfirm={handleLogout}
                 onCancel={() => setShowLogoutConfirm(false)}
             />

@@ -80,6 +80,7 @@ export interface Translations {
         pageTitleLibrary: string;
         pageTitleProfile: string;
         pageTitleManageProfile: string;
+        pageTitleThemeSettings: string;
         pageTitleHelp: string;
         pageDescriptionHome: string;
         pageDescriptionProfile: string;
@@ -316,6 +317,27 @@ export interface Translations {
         subtitle: string;
         backToAccount: string;
     };
+    // Theme settings page
+    theme: {
+        title: string;
+        subtitle: string;
+        appearance: string;
+        light: string;
+        dark: string;
+        grey: string;
+        saved: string;
+        backToManageProfile: string;
+        customThemes: string;
+        addCustom: string;
+        themeName: string;
+        themeNamePlaceholder: string;
+        color: string;
+        maxReached: string;
+        delete: string;
+        deleteConfirm: string;
+        apply: string;
+        customThemeDeleted: string;
+    };
     // Help center page
     help: {
         title: string;
@@ -538,6 +560,7 @@ const translations: Record<Language, Translations> = {
             pageTitleLibrary: 'Bibliothèque | Stormi',
             pageTitleProfile: 'Profil | Stormi',
             pageTitleManageProfile: 'Gérer le profil | Stormi',
+            pageTitleThemeSettings: 'Apparence | Stormi',
             pageTitleHelp: 'Centre d\'aide | Stormi',
             pageDescriptionHome: 'Votre espace personnel de stockage et streaming. Gérez vos fichiers, statistiques et accédez à vos médias.',
             pageDescriptionProfile: 'Gérez votre profil Stormi, langue et compte.',
@@ -864,6 +887,26 @@ const translations: Record<Language, Translations> = {
             subtitle: 'Langue, déconnexion et données locales.',
             backToAccount: 'Retour au compte'
         },
+        theme: {
+            title: 'Apparence',
+            subtitle: 'Choisissez le thème de l\'application. Votre choix est enregistré pour ce compte.',
+            appearance: 'Thème',
+            light: 'Clair',
+            dark: 'Sombre',
+            grey: 'Gris',
+            saved: 'Thème enregistré',
+            backToManageProfile: 'Retour à Gérer le profil',
+            customThemes: 'Thèmes personnalisés',
+            addCustom: 'Ajouter un thème',
+            themeName: 'Nom du thème',
+            themeNamePlaceholder: 'Ex. Mon bleu',
+            color: 'Couleur',
+            maxReached: 'Maximum 10 thèmes personnalisés. Supprimez-en un pour en ajouter.',
+            delete: 'Supprimer',
+            deleteConfirm: 'Supprimer le thème « {name} » ?',
+            apply: 'Appliquer',
+            customThemeDeleted: 'Thème supprimé'
+        },
         help: {
             title: 'Centre d\'aide',
             subtitle: 'Questions fréquentes et support.',
@@ -966,6 +1009,7 @@ const translations: Record<Language, Translations> = {
             pageTitleLibrary: 'Library | Stormi',
             pageTitleProfile: 'Profile | Stormi',
             pageTitleManageProfile: 'Manage profile | Stormi',
+            pageTitleThemeSettings: 'Appearance | Stormi',
             pageTitleHelp: 'Help center | Stormi',
             pageDescriptionHome: 'Your personal storage and streaming space. Manage your files, statistics and access your media.',
             pageDescriptionProfile: 'Manage your Stormi profile, language and account.',
@@ -1290,6 +1334,26 @@ const translations: Record<Language, Translations> = {
             subtitle: 'Language, logout and local data.',
             backToAccount: 'Back to account'
         },
+        theme: {
+            title: 'Appearance',
+            subtitle: 'Choose the application theme. Your choice is saved for this account.',
+            appearance: 'Theme',
+            light: 'Light',
+            dark: 'Dark',
+            grey: 'Grey',
+            saved: 'Theme saved',
+            backToManageProfile: 'Back to Manage profile',
+            customThemes: 'Custom themes',
+            addCustom: 'Add theme',
+            themeName: 'Theme name',
+            themeNamePlaceholder: 'e.g. My blue',
+            color: 'Color',
+            maxReached: 'Maximum 10 custom themes. Delete one to add another.',
+            delete: 'Delete',
+            deleteConfirm: 'Delete theme « {name} »?',
+            apply: 'Apply',
+            customThemeDeleted: 'Theme deleted'
+        },
         help: {
             title: 'Help center',
             subtitle: 'FAQ and support.',
@@ -1392,6 +1456,7 @@ const translations: Record<Language, Translations> = {
             pageTitleLibrary: 'Biblioteca | Stormi',
             pageTitleProfile: 'Perfil | Stormi',
             pageTitleManageProfile: 'Gestionar perfil | Stormi',
+            pageTitleThemeSettings: 'Apariencia | Stormi',
             pageTitleHelp: 'Centro de ayuda | Stormi',
             pageDescriptionHome: 'Tu espacio personal de almacenamiento y streaming. Gestiona tus archivos, estadísticas y accede a tus medios.',
             pageDescriptionProfile: 'Gestiona tu perfil Stormi, idioma y cuenta.',
@@ -1718,6 +1783,26 @@ const translations: Record<Language, Translations> = {
             subtitle: 'Idioma, cerrar sesión y datos locales.',
             backToAccount: 'Volver a la cuenta'
         },
+        theme: {
+            title: 'Apariencia',
+            subtitle: 'Elige el tema de la aplicación. Tu elección se guarda para esta cuenta.',
+            appearance: 'Tema',
+            light: 'Claro',
+            dark: 'Oscuro',
+            grey: 'Gris',
+            saved: 'Tema guardado',
+            backToManageProfile: 'Volver a Gestionar perfil',
+            customThemes: 'Temas personalizados',
+            addCustom: 'Añadir tema',
+            themeName: 'Nombre del tema',
+            themeNamePlaceholder: 'Ej. Mi azul',
+            color: 'Color',
+            maxReached: 'Máximo 10 temas personalizados. Elimina uno para añadir otro.',
+            delete: 'Eliminar',
+            deleteConfirm: '¿Eliminar el tema « {name} »?',
+            apply: 'Aplicar',
+            customThemeDeleted: 'Tema eliminado'
+        },
         help: {
             title: 'Centro de ayuda',
             subtitle: 'Preguntas frecuentes y soporte.',
@@ -1820,6 +1905,7 @@ const translations: Record<Language, Translations> = {
             pageTitleLibrary: 'Bibliothek | Stormi',
             pageTitleProfile: 'Profil | Stormi',
             pageTitleManageProfile: 'Profil verwalten | Stormi',
+            pageTitleThemeSettings: 'Darstellung | Stormi',
             pageTitleHelp: 'Hilfezentrum | Stormi',
             pageDescriptionHome: 'Ihr persönlicher Speicher- und Streaming-Bereich. Verwalten Sie Ihre Dateien, Statistiken und greifen Sie auf Ihre Medien zu.',
             pageDescriptionProfile: 'Verwalten Sie Ihr Stormi-Profil, Sprache und Konto.',
@@ -2145,6 +2231,26 @@ const translations: Record<Language, Translations> = {
             title: 'Profil verwalten',
             subtitle: 'Sprache, Abmeldung und lokale Daten.',
             backToAccount: 'Zurück zum Konto'
+        },
+        theme: {
+            title: 'Darstellung',
+            subtitle: 'Wählen Sie das Anwendungsthema. Ihre Wahl wird für dieses Konto gespeichert.',
+            appearance: 'Thema',
+            light: 'Hell',
+            dark: 'Dunkel',
+            grey: 'Grau',
+            saved: 'Thema gespeichert',
+            backToManageProfile: 'Zurück zu Profil verwalten',
+            customThemes: 'Benutzerdefinierte Themen',
+            addCustom: 'Thema hinzufügen',
+            themeName: 'Themenname',
+            themeNamePlaceholder: 'z. B. Mein Blau',
+            color: 'Farbe',
+            maxReached: 'Maximal 10 benutzerdefinierte Themen. Löschen Sie eines, um ein neues hinzuzufügen.',
+            delete: 'Löschen',
+            deleteConfirm: 'Thema « {name} » löschen?',
+            apply: 'Anwenden',
+            customThemeDeleted: 'Thema gelöscht'
         },
         help: {
             title: 'Hilfezentrum',

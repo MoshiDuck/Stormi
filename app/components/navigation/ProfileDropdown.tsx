@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
 import type { User as UserProfile } from '~/types/auth';
-import { darkTheme } from '~/utils/ui/theme';
+import { useTheme } from '~/contexts/ThemeContext';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { UserCircle, User, HelpCircle, LogOut } from 'lucide-react';
@@ -15,6 +15,7 @@ interface ProfileDropdownProps {
 }
 
 export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
+    const { theme } = useTheme();
     const { t } = useLanguage();
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -142,7 +143,7 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    transition: ${darkTheme.transition.normal};
+                    transition: ${theme.transition.normal};
                 }
 
                 .profile-dropdown-trigger:hover {
@@ -150,7 +151,7 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                 }
 
                 .profile-dropdown-trigger:focus-visible {
-                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline: 2px solid ${theme.accent.blue};
                     outline-offset: 3px;
                 }
 
@@ -160,20 +161,20 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                     height: 40px;
                     border-radius: 50%;
                     object-fit: cover;
-                    border: 2px solid ${darkTheme.border.secondary};
+                    border: 2px solid ${theme.border.secondary};
                     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                    transition: ${darkTheme.transition.normal};
+                    transition: ${theme.transition.normal};
                 }
 
                 .profile-dropdown-trigger:hover .profile-dropdown-avatar-img,
                 .profile-dropdown-trigger:hover .profile-dropdown-avatar-fallback {
-                    border-color: ${darkTheme.accent.blue};
-                    box-shadow: 0 0 0 1px ${darkTheme.accent.blue};
+                    border-color: ${theme.accent.blue};
+                    box-shadow: 0 0 0 1px ${theme.accent.blue};
                 }
 
                 .profile-dropdown-avatar-fallback {
-                    background: ${darkTheme.background.tertiary};
-                    color: ${darkTheme.text.primary};
+                    background: ${theme.background.tertiary};
+                    color: ${theme.text.primary};
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -195,10 +196,10 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                     right: 0;
                     margin-top: 8px;
                     min-width: 220px;
-                    background: ${darkTheme.background.secondary};
-                    border-radius: ${darkTheme.radius.large};
-                    box-shadow: ${darkTheme.shadow.large};
-                    border: 1px solid ${darkTheme.border.primary};
+                    background: ${theme.background.secondary};
+                    border-radius: ${theme.radius.large};
+                    box-shadow: ${theme.shadow.large};
+                    border: 1px solid ${theme.border.primary};
                     padding: 6px 0;
                     z-index: 1000;
                     animation: profileDropdownFade 0.2s ease;
@@ -217,11 +218,11 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                     min-height: ${TOUCH_TARGET_MIN}px;
                     padding: 10px 16px;
                     box-sizing: border-box;
-                    color: ${darkTheme.text.primary};
+                    color: ${theme.text.primary};
                     text-decoration: none;
                     font-size: 0.9375rem;
                     font-weight: 500;
-                    transition: ${darkTheme.transition.fast};
+                    transition: ${theme.transition.fast};
                     border: none;
                     background: none;
                     cursor: pointer;
@@ -230,16 +231,16 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                 }
 
                 .profile-dropdown-item:hover {
-                    background: ${darkTheme.background.tertiary};
+                    background: ${theme.background.tertiary};
                 }
 
                 .profile-dropdown-item:focus-visible {
                     outline: none;
-                    background: ${darkTheme.background.tertiary};
+                    background: ${theme.background.tertiary};
                 }
 
                 .profile-dropdown-logout {
-                    color: ${darkTheme.accent.red};
+                    color: ${theme.accent.red};
                 }
 
                 .profile-dropdown-logout:hover {
@@ -249,7 +250,7 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                 .profile-dropdown-separator {
                     height: 1px;
                     margin: 6px 12px;
-                    background: ${darkTheme.border.primary};
+                    background: ${theme.border.primary};
                 }
             `}</style>
         </div>

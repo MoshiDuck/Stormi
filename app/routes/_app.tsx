@@ -1,6 +1,7 @@
 /**
  * Layout principal authentifié : shell commun à toutes les pages app (home, upload, films, etc.).
  * - AuthGuard : protège toutes les routes enfants ; si non connecté → affiche SplashScreen puis redirection /login
+ * - ThemeProvider : thème par utilisateur (light, dark, grey), persistance localStorage
  * - Navigation : barre de navigation avec prefetch
  * - Indicateur de chargement global pendant les navigations
  * - Transition de page : le main disparaît pendant le chargement (opacity 0), puis la nouvelle page apparaît en fondu (évite de voir deux pages en même temps)
@@ -14,6 +15,7 @@ import { useLanguage } from '~/contexts/LanguageContext';
 import { replacePlaceholders } from '~/utils/i18n';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { AuthGuard } from '~/components/auth/AuthGuard';
+import { ThemeProvider, useTheme } from '~/contexts/ThemeContext';
 import { Navigation } from '~/components/navigation/Navigation';
 import { BottomNav } from '~/components/navigation/BottomNav';
 import { PageTransition } from '~/components/navigation/PageTransition';
@@ -21,8 +23,9 @@ import { AppLayoutLoadingBar } from '~/components/navigation/AppLayoutLoadingBar
 import { darkTheme } from '~/utils/ui/theme';
 import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT, NAV_TOP_HEIGHT, NAV_TOP_SAFETY } from '~/utils/ui/breakpoints';
 
-export default function AppLayout() {
+function AppLayoutContent() {
     const { user, logout } = useAuth();
+    const { theme } = useTheme();
     const navigation = useNavigation();
     const location = useLocation();
     const mainRef = useRef<HTMLElement>(null);
@@ -32,7 +35,6 @@ export default function AppLayout() {
     const maxWidth = CONTENT_MAX_WIDTH[breakpoint];
     const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
 
-    // Focus sur le contenu principal après chaque navigation (a11y : clavier / lecteur d'écran)
     useEffect(() => {
         if (navigation.state === 'idle' && mainRef.current) {
             mainRef.current.focus({ preventScroll: true });
@@ -40,40 +42,48 @@ export default function AppLayout() {
     }, [location.pathname, location.search, navigation.state]);
 
     return (
+        <div style={{ minHeight: '100vh', backgroundColor: theme.background.primary }}>
+            <AppLayoutLoadingBar visible={isNavigating} />
+            <Navigation user={user!} onLogout={logout} />
+            <main
+                ref={mainRef}
+                tabIndex={-1}
+                style={{
+                    maxWidth: maxWidth || undefined,
+                    width: '100%',
+                    margin: '0 auto',
+                    padding: `0 ${padding}px ${showBottomNav ? 16 : 40}px`,
+                    paddingTop: `calc(${NAV_TOP_HEIGHT + NAV_TOP_SAFETY}px + env(safe-area-inset-top, 0px))`,
+                    paddingBottom: showBottomNav
+                        ? `calc(${BOTTOM_NAV_HEIGHT}px + 16px + env(safe-area-inset-bottom, 0px))`
+                        : 40,
+                    fontFamily: 'system-ui, sans-serif',
+                    outline: 'none',
+                    opacity: isNavigating ? 0 : 1,
+                    transition: 'opacity 0.12s ease-out',
+                    pointerEvents: isNavigating ? 'none' : 'auto',
+                    boxSizing: 'border-box',
+                    minHeight: 0,
+                    overflowX: 'hidden',
+                }}
+                role="main"
+                id="main-content"
+            >
+                <PageTransition key={location.pathname}>
+                    <Outlet />
+                </PageTransition>
+            </main>
+            {showBottomNav && <BottomNav />}
+        </div>
+    );
+}
+
+export default function AppLayout() {
+    return (
         <AuthGuard>
-            <div style={{ minHeight: '100vh', backgroundColor: darkTheme.background.primary }}>
-                <AppLayoutLoadingBar visible={isNavigating} />
-                <Navigation user={user!} onLogout={logout} />
-                <main
-                    ref={mainRef}
-                    tabIndex={-1}
-                    style={{
-                        maxWidth: maxWidth || undefined,
-                        width: '100%',
-                        margin: '0 auto',
-                        padding: `0 ${padding}px ${showBottomNav ? 16 : 40}px`,
-                        paddingTop: `calc(${NAV_TOP_HEIGHT + NAV_TOP_SAFETY}px + env(safe-area-inset-top, 0px))`,
-                        paddingBottom: showBottomNav
-                            ? `calc(${BOTTOM_NAV_HEIGHT}px + 16px + env(safe-area-inset-bottom, 0px))`
-                            : 40,
-                        fontFamily: 'system-ui, sans-serif',
-                        outline: 'none',
-                        opacity: isNavigating ? 0 : 1,
-                        transition: 'opacity 0.12s ease-out',
-                        pointerEvents: isNavigating ? 'none' : 'auto',
-                        boxSizing: 'border-box',
-                        minHeight: 0,
-                        overflowX: 'hidden',
-                    }}
-                    role="main"
-                    id="main-content"
-                >
-                    <PageTransition key={location.pathname}>
-                        <Outlet />
-                    </PageTransition>
-                </main>
-                {showBottomNav && <BottomNav />}
-            </div>
+            <ThemeProvider>
+                <AppLayoutContent />
+            </ThemeProvider>
         </AuthGuard>
     );
 }

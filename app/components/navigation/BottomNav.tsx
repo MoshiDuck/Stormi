@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router';
-import { darkTheme } from '~/utils/ui/theme';
+import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { TOUCH_TARGET_MIN, BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
 import {
@@ -46,6 +46,7 @@ const navItems: NavItemConfig[] = [
 
 export function BottomNav() {
     const location = useLocation();
+    const { theme } = useTheme();
     const { t } = useLanguage();
 
     const isItemActive = (item: NavItemConfig) => {
@@ -65,8 +66,8 @@ export function BottomNav() {
                 right: 0,
                 height: BOTTOM_NAV_HEIGHT,
                 paddingBottom: 'env(safe-area-inset-bottom, 0)',
-                backgroundColor: darkTheme.background.nav,
-                borderTop: `1px solid ${darkTheme.border.primary}`,
+                backgroundColor: theme.background.nav,
+                borderTop: `1px solid ${theme.border.primary}`,
                 display: 'flex',
                 alignItems: 'stretch',
                 justifyContent: 'space-around',
@@ -97,7 +98,7 @@ export function BottomNav() {
                             gap: 2,
                             padding: '6px 4px 8px',
                             textDecoration: 'none',
-                            color: isActive ? darkTheme.accent.blue : darkTheme.text.tertiary,
+                            color: isActive ? theme.accent.blue : theme.text.tertiary,
                             fontWeight: isActive ? 600 : 500,
                             fontSize: 10,
                             lineHeight: 1.2,
@@ -147,7 +148,7 @@ export function BottomNav() {
                                     width: 24,
                                     height: 3,
                                     borderRadius: '3px 3px 0 0',
-                                    backgroundColor: darkTheme.accent.blue,
+                                    backgroundColor: theme.accent.blue,
                                 }}
                             />
                         )}
@@ -156,14 +157,14 @@ export function BottomNav() {
             })}
             <style>{`
                 .bottom-nav-item:hover {
-                    color: ${darkTheme.text.primary} !important;
+                    color: ${theme.text.primary} !important;
                 }
                 .bottom-nav-item:focus-visible {
-                    outline: 2px solid ${darkTheme.accent.blue};
+                    outline: 2px solid ${theme.accent.blue};
                     outline-offset: -2px;
                 }
                 .bottom-nav-item[aria-current="page"] {
-                    color: ${darkTheme.accent.blue};
+                    color: ${theme.accent.blue};
                 }
             `}</style>
         </nav>
