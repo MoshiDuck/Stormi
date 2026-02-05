@@ -14,6 +14,7 @@ export function meta() {
     ];
 }
 
+// Ordre : Famille, Amis, Invitations, Partage, Conversations, Activité
 const SECTION_ICONS = [
     '👨‍👩‍👧', // Famille
     '👥', // Amis

@@ -135,6 +135,29 @@ export interface Translations {
         googleAuthError: string;
         configErrorDetail: string;
     };
+    selectProfile: {
+        loading: string;
+        title: string;
+        subtitle: string;
+        addProfile: string;
+        whoIsWatching: string;
+        chooseProfile: string;
+        editProfiles: string;
+        mainProfileBadge: string;
+        activeBadge: string;
+        useProfile: string;
+        edit: string;
+        delete: string;
+        deleteConfirm: string;
+        createTitle: string;
+        createPlaceholder: string;
+        createSubmit: string;
+        errorLoad: string;
+        errorCreate: string;
+        errorUpdate: string;
+        errorDelete: string;
+        switchProfile: string;
+    };
     // Home
     home: {
         title: string;
@@ -374,6 +397,7 @@ export interface Translations {
         sectionFamilyTitle: string;
         sectionFamilySubtitle: string;
         sectionFamilyDescription: string;
+        familyProfilesTitle: string;
         backToCommunity: string;
     };
     // Help center page
@@ -644,6 +668,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Famille',
             sectionFamilySubtitle: 'Gestion du groupe familial',
             sectionFamilyDescription: 'Un espace pour votre foyer : membres et partages automatiques entre vous.',
+            familyProfilesTitle: 'Profils de la famille',
             backToCommunity: 'Retour à la communauté',
         },
         media: {
@@ -784,6 +809,29 @@ const translations: Record<Language, Translations> = {
             configUnavailable: 'Configuration non disponible. Veuillez réessayer plus tard.',
             googleAuthError: 'Erreur lors de l\'authentification Google',
             configErrorDetail: 'GOOGLE_CLIENT_ID non configuré côté Cloudflare. Veuillez configurer votre application.'
+        },
+        selectProfile: {
+            loading: 'Chargement des profils…',
+            title: 'Stormi',
+            subtitle: 'Choisissez votre espace ou créez-en un nouveau',
+            addProfile: 'Ajouter un profil',
+            whoIsWatching: 'Qui regarde ?',
+            chooseProfile: 'Choisir un profil',
+            editProfiles: 'Gérer les profils',
+            mainProfileBadge: 'Principal',
+            activeBadge: 'Actif',
+            useProfile: 'Choisir',
+            edit: 'Modifier',
+            delete: 'Supprimer',
+            deleteConfirm: 'Supprimer ce profil ? Cette action est irréversible.',
+            createTitle: 'Nouveau profil',
+            createPlaceholder: 'Nom du profil',
+            createSubmit: 'Créer',
+            errorLoad: 'Impossible de charger les profils',
+            errorCreate: 'Impossible de créer le profil',
+            errorUpdate: 'Impossible de modifier le profil',
+            errorDelete: 'Impossible de supprimer le profil',
+            switchProfile: 'Changer de profil',
         },
         home: {
             title: 'Tableau de bord',
@@ -1133,6 +1181,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Family',
             sectionFamilySubtitle: 'Family group management',
             sectionFamilyDescription: 'A space for your household: members and automatic sharing between you.',
+            familyProfilesTitle: 'Family profiles',
             backToCommunity: 'Back to community',
         },
         media: {
@@ -1273,6 +1322,29 @@ const translations: Record<Language, Translations> = {
             configUnavailable: 'Configuration unavailable. Please try again later.',
             googleAuthError: 'Error during Google authentication',
             configErrorDetail: 'GOOGLE_CLIENT_ID not configured on Cloudflare. Please configure your application.'
+        },
+        selectProfile: {
+            loading: 'Loading profiles…',
+            title: 'Stormi',
+            subtitle: 'Choose your space or create a new one',
+            addProfile: 'Add profile',
+            whoIsWatching: 'Who\'s watching?',
+            chooseProfile: 'Choose a profile',
+            editProfiles: 'Manage profiles',
+            mainProfileBadge: 'Main',
+            activeBadge: 'Active',
+            useProfile: 'Use',
+            edit: 'Edit',
+            delete: 'Delete',
+            deleteConfirm: 'Delete this profile? This action cannot be undone.',
+            createTitle: 'New profile',
+            createPlaceholder: 'Profile name',
+            createSubmit: 'Create',
+            errorLoad: 'Could not load profiles',
+            errorCreate: 'Could not create profile',
+            errorUpdate: 'Could not update profile',
+            errorDelete: 'Could not delete profile',
+            switchProfile: 'Switch profile',
         },
         home: {
             title: 'Dashboard',
@@ -1620,6 +1692,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Familia',
             sectionFamilySubtitle: 'Gestión del grupo familiar',
             sectionFamilyDescription: 'Un espacio para tu hogar: miembros y compartidos automáticos entre vosotros.',
+            familyProfilesTitle: 'Perfiles de la familia',
             backToCommunity: 'Volver a la comunidad',
         },
         media: {
@@ -1760,6 +1833,29 @@ const translations: Record<Language, Translations> = {
             configUnavailable: 'Configuración no disponible. Por favor, inténtalo de nuevo más tarde.',
             googleAuthError: 'Error durante la autenticación de Google',
             configErrorDetail: 'GOOGLE_CLIENT_ID no configurado en Cloudflare. Por favor, configura tu aplicación.'
+        },
+        selectProfile: {
+            loading: 'Cargando perfiles…',
+            title: 'Stormi',
+            subtitle: 'Elige tu espacio o crea uno nuevo',
+            addProfile: 'Añadir perfil',
+            whoIsWatching: '¿Quién está viendo?',
+            chooseProfile: 'Elegir un perfil',
+            editProfiles: 'Gestionar perfiles',
+            mainProfileBadge: 'Principal',
+            activeBadge: 'Activo',
+            useProfile: 'Elegir',
+            edit: 'Editar',
+            delete: 'Eliminar',
+            deleteConfirm: '¿Eliminar este perfil? Esta acción no se puede deshacer.',
+            createTitle: 'Nuevo perfil',
+            createPlaceholder: 'Nombre del perfil',
+            createSubmit: 'Crear',
+            errorLoad: 'No se pudieron cargar los perfiles',
+            errorCreate: 'No se pudo crear el perfil',
+            errorUpdate: 'No se pudo actualizar el perfil',
+            errorDelete: 'No se pudo eliminar el perfil',
+            switchProfile: 'Cambiar de perfil',
         },
         home: {
             title: 'Panel de control',
@@ -2109,6 +2205,7 @@ const translations: Record<Language, Translations> = {
             sectionFamilyTitle: 'Familie',
             sectionFamilySubtitle: 'Verwaltung der Familiengruppe',
             sectionFamilyDescription: 'Ein Bereich für Ihren Haushalt: Mitglieder und automatische Freigaben untereinander.',
+            familyProfilesTitle: 'Familienprofile',
             backToCommunity: 'Zurück zur Community',
         },
         media: {
@@ -2249,6 +2346,29 @@ const translations: Record<Language, Translations> = {
             configUnavailable: 'Konfiguration nicht verfügbar. Bitte versuchen Sie es später erneut.',
             googleAuthError: 'Fehler bei der Google-Authentifizierung',
             configErrorDetail: 'GOOGLE_CLIENT_ID nicht in Cloudflare konfiguriert. Bitte konfigurieren Sie Ihre Anwendung.'
+        },
+        selectProfile: {
+            loading: 'Profile werden geladen…',
+            title: 'Stormi',
+            subtitle: 'Wählen Sie Ihren Bereich oder erstellen Sie einen neuen',
+            addProfile: 'Profil hinzufügen',
+            whoIsWatching: 'Wer schaut zu?',
+            chooseProfile: 'Profil auswählen',
+            editProfiles: 'Profile verwalten',
+            mainProfileBadge: 'Haupt',
+            activeBadge: 'Aktiv',
+            useProfile: 'Verwenden',
+            edit: 'Bearbeiten',
+            delete: 'Löschen',
+            deleteConfirm: 'Dieses Profil löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+            createTitle: 'Neues Profil',
+            createPlaceholder: 'Profilname',
+            createSubmit: 'Erstellen',
+            errorLoad: 'Profile konnten nicht geladen werden',
+            errorCreate: 'Profil konnte nicht erstellt werden',
+            errorUpdate: 'Profil konnte nicht aktualisiert werden',
+            errorDelete: 'Profil konnte nicht gelöscht werden',
+            switchProfile: 'Profil wechseln',
         },
         home: {
             title: 'Dashboard',

@@ -1,7 +1,7 @@
 // INFO : menu au survol de l'image de profil (Manage profile, Account, Help center) — cibles tactiles ≥ 44px
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router';
-import type { User as UserProfile } from '~/types/auth';
+import { Link, useNavigate } from 'react-router';
+import type { User as UserProfile, StreamingProfile } from '~/types/auth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { useLanguage } from '~/contexts/LanguageContext';
@@ -11,10 +11,24 @@ const CLOSE_DELAY_MS = 220;
 
 interface ProfileDropdownProps {
     user: UserProfile;
+    activeProfile?: StreamingProfile | null;
     onLogout: () => void;
+    onSwitchProfile?: () => void;
 }
 
-export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
+export function ProfileDropdown({ user, activeProfile, onLogout, onSwitchProfile }: ProfileDropdownProps) {
+    const navigate = useNavigate();
+    // Profil actif (principal ou secondaire) : afficher son avatar ou l’initiale de son nom
+    const displayName = activeProfile?.name ?? user.name;
+    const displayPicture = activeProfile
+        ? (activeProfile.avatar_url && String(activeProfile.avatar_url).trim() !== '' ? activeProfile.avatar_url : null)
+        : user.picture;
+
+    const handleSwitchProfile = () => {
+        setOpen(false);
+        onSwitchProfile?.();
+        navigate('/select-profile');
+    };
     const { theme } = useTheme();
     const { t } = useLanguage();
     const [open, setOpen] = useState(false);
@@ -65,15 +79,15 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                 aria-label={t('profileMenu.account')}
                 className="profile-dropdown-trigger"
             >
-                {user.picture ? (
+                {displayPicture ? (
                     <img
-                        src={user.picture}
+                        src={displayPicture}
                         alt=""
                         className="profile-dropdown-avatar-img"
                     />
                 ) : (
                     <span className="profile-dropdown-avatar-fallback">
-                        {user.name?.charAt(0)?.toUpperCase() || '?'}
+                        {displayName?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                 )}
             </button>
@@ -100,6 +114,17 @@ export function ProfileDropdown({ user, onLogout }: ProfileDropdownProps) {
                             <User size={18} strokeWidth={2} aria-hidden />
                             {t('profileMenu.account')}
                         </Link>
+                        {onSwitchProfile && (
+                            <button
+                                type="button"
+                                role="menuitem"
+                                onClick={handleSwitchProfile}
+                                className={menuItemClass}
+                            >
+                                <User size={18} strokeWidth={2} aria-hidden />
+                                {t('selectProfile.switchProfile')}
+                            </button>
+                        )}
                         <Link
                             to="/help"
                             prefetch="intent"

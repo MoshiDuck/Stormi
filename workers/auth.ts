@@ -66,9 +66,39 @@ export function registerAuthRoutes(app: Hono<{ Bindings: Bindings }>) {
                     } else {
                         console.error('❌ Échec de l\'insertion dans D1');
                     }
-                } else {
                 }
 
+                // Table user_profile : profils de type streaming (plusieurs par compte)
+                const profileTable = await c.env.DATABASE.prepare(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='user_profile'"
+                ).first();
+                if (!profileTable) {
+                    await c.env.DATABASE.exec(`
+                        CREATE TABLE user_profile (
+                            id TEXT PRIMARY KEY,
+                            account_id TEXT NOT NULL,
+                            name TEXT NOT NULL,
+                            avatar_url TEXT,
+                            is_main INTEGER NOT NULL DEFAULT 0,
+                            sort_order INTEGER NOT NULL DEFAULT 0,
+                            created_at INTEGER DEFAULT (strftime('%s', 'now')),
+                            updated_at INTEGER DEFAULT (strftime('%s', 'now')),
+                            FOREIGN KEY (account_id) REFERENCES profil(id)
+                        )
+                    `);
+                }
+
+                // Créer le profil principal (streaming) si aucun n'existe pour ce compte
+                const mainProfile = await c.env.DATABASE.prepare(
+                    `SELECT id FROM user_profile WHERE account_id = ? AND is_main = 1`
+                ).bind(googleId).first();
+                if (!mainProfile) {
+                    const mainProfileId = `main_${googleId}`;
+                    await c.env.DATABASE.prepare(`
+                        INSERT INTO user_profile (id, account_id, name, avatar_url, is_main, sort_order)
+                        VALUES (?, ?, ?, ?, 1, 0)
+                    `).bind(mainProfileId, googleId, name || email || 'Profil principal', picture).run();
+                }
             } catch (dbErr) {
                 console.error('❌ Erreur base de données:', dbErr);
                 // On continue même si l'insertion échoue, ce n'est pas bloquant

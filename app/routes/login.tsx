@@ -16,7 +16,7 @@ import { useLanguage } from '~/contexts/LanguageContext';
 export default function LoginRoute() {
     const { config, loading: configLoading, error: configError } = useConfig();
     const { credential, error: electronError, openAuthInBrowser } = useElectronAuth();
-    const { user, handleAuthWithToken, setError, loading: authInitialLoading, error: authError } = useAuth();
+    const { user, handleAuthWithToken, setError, loading: authInitialLoading, error: authError, hasSelectedProfile } = useAuth();
     const { t } = useLanguage();
     const isElectron = typeof window !== 'undefined' && (window.electronAPI?.isElectron || false);
 
@@ -47,9 +47,9 @@ export default function LoginRoute() {
         }
     };
 
-    // Si l'utilisateur est déjà connecté, rediriger vers la page d'accueil
+    // Si l'utilisateur est déjà connecté, rediriger vers sélection de profil ou accueil
     if (user && !authInitialLoading) {
-        return <Navigate to="/home" replace />;
+        return <Navigate to={hasSelectedProfile() ? '/home' : '/select-profile'} replace />;
     }
 
     if (configLoading || authInitialLoading) {

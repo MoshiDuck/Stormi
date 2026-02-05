@@ -1,12 +1,13 @@
 // INFO : app/hooks/useAuth.ts
 import { useState, useEffect, useCallback, useContext } from 'react';
-import type { CredentialResponse } from '@react-oauth/google';
-import type { ApiAuthResponse, AuthConfig } from '~/types/auth';
+import type { ApiAuthResponse, AuthConfig, StreamingProfile } from '~/types/auth';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '~/contexts/AuthContext';
 import { clearLocalCache } from '~/utils/cache/localCache';
 import { clearServiceWorkerCache, setServiceWorkerUserId } from '~/utils/cache/serviceWorker';
 import { handleCacheInvalidation } from '~/utils/cache/cacheInvalidation';
+
+const STORAGE_ACTIVE_PROFILE = 'stormi_active_profile';
 
 // Type guard pour ApiAuthResponse
 function isApiAuthResponse(obj: unknown): obj is ApiAuthResponse {
@@ -23,11 +24,30 @@ export function useAuth() {
     if (context !== undefined) return context;
 
     const [user, setUser] = useState<ApiAuthResponse['user'] | null>(null);
+    const [activeProfile, setActiveProfileState] = useState<StreamingProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    // Charger l'utilisateur depuis localStorage au démarrage
+    const setActiveProfile = useCallback((profile: StreamingProfile | null) => {
+        setActiveProfileState(profile);
+        if (profile) {
+            localStorage.setItem(STORAGE_ACTIVE_PROFILE, JSON.stringify(profile));
+        } else {
+            localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
+        }
+    }, []);
+
+    const clearActiveProfile = useCallback(() => {
+        setActiveProfileState(null);
+        localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
+    }, []);
+
+    const hasSelectedProfile = useCallback(() => {
+        return !!activeProfile?.id && activeProfile.account_id === user?.id;
+    }, [activeProfile, user?.id]);
+
+    // Charger l'utilisateur et le profil actif depuis localStorage au démarrage
     useEffect(() => {
         const storedUser = localStorage.getItem('stormi_user');
         const storedToken = localStorage.getItem('stormi_token');
@@ -36,17 +56,30 @@ export function useAuth() {
             try {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);
-                
-                // ISOLATION STRICTE : Envoyer le userId au Service Worker
-                // Le SW ne cache rien sans userId (pas de cache public)
+
+                const storedProfile = localStorage.getItem(STORAGE_ACTIVE_PROFILE);
+                if (storedProfile) {
+                    try {
+                        const profile = JSON.parse(storedProfile) as StreamingProfile;
+                        if (profile?.id && profile.account_id === parsedUser?.id) {
+                            setActiveProfileState(profile);
+                        } else {
+                            localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
+                        }
+                    } catch {
+                        localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
+                    }
+                }
+
                 if (parsedUser?.id) {
                     setServiceWorkerUserId(parsedUser.id);
                 }
             } catch (e) {
-                // Nettoyer les données corrompues
                 localStorage.removeItem('stormi_token');
                 localStorage.removeItem('stormi_user');
+                localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
                 setUser(null);
+                setActiveProfileState(null);
             }
         }
         setLoading(false);
@@ -86,12 +119,12 @@ export function useAuth() {
             localStorage.setItem('stormi_token', data.token);
             setUser(completeUser);
 
-            // ISOLATION STRICTE : Envoyer le userId au Service Worker après login
             if (completeUser.id) {
                 setServiceWorkerUserId(completeUser.id);
             }
 
-            navigate('/home');
+            // Après login : sélection de profil (pas d'entrée directe dans l'app)
+            navigate('/select-profile');
         } catch (err: any) {
             setError(err.message || 'Erreur d\'authentification');
         } finally {
@@ -126,7 +159,8 @@ export function useAuth() {
         // Nettoyer localStorage
         localStorage.removeItem('stormi_token');
         localStorage.removeItem('stormi_user');
-        
+        localStorage.removeItem(STORAGE_ACTIVE_PROFILE);
+
         // Nettoyer sessionStorage (stats cache)
         if (typeof window !== 'undefined') {
             const keys = Object.keys(sessionStorage);
@@ -138,6 +172,7 @@ export function useAuth() {
         }
         
         setUser(null);
+        setActiveProfileState(null);
         setError(null);
         navigate('/login');
     }, [navigate, user?.id]);
@@ -146,11 +181,15 @@ export function useAuth() {
 
     return {
         user,
+        activeProfile,
+        setActiveProfile,
+        clearActiveProfile,
+        hasSelectedProfile,
         loading,
         error,
         setError,
         handleAuthWithToken,
         logout,
-        isAuthenticated
+        isAuthenticated,
     };
 }

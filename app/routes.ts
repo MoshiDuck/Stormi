@@ -12,6 +12,7 @@ export default [
     layout("routes/_public.tsx", [
         route("splash", "routes/splash.tsx"),
         route("login", "routes/login.tsx"),
+        route("select-profile", "routes/select-profile.tsx"),
     ]),
 
     layout("routes/_app.tsx", [

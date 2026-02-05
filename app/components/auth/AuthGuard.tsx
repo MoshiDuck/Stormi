@@ -1,6 +1,6 @@
 // INFO : app/components/AuthGuard.tsx
-// Non connecté sur une page protégée → affichage immédiat du SplashScreen (évite fenêtre noire),
-// puis SplashScreen redirige vers /login après le délai.
+// Non connecté sur une page protégée → SplashScreen puis /login.
+// Connecté sans profil sélectionné → redirection vers /select-profile.
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
@@ -19,26 +19,38 @@ export function AuthGuard({
                               requireAuth = true,
                               redirectTo = '/splash'
                           }: AuthGuardProps) {
-    const { user, loading } = useAuth();
+    const { user, loading, hasSelectedProfile } = useAuth();
     const { t } = useLanguage();
     const location = useLocation();
     const navigate = useNavigate();
+    const hasProfile = hasSelectedProfile();
 
-    // Redirection impérative pour "connecté sur page publique" (ex. login → home)
+    // Connecté sur page publique (login) : rediriger vers sélection de profil ou home
     useEffect(() => {
         if (loading) return;
         if (!requireAuth && user) {
-            navigate('/home', { replace: true });
+            navigate(hasProfile ? '/home' : '/select-profile', { replace: true });
         }
-    }, [loading, user, requireAuth, navigate]);
+    }, [loading, user, requireAuth, navigate, hasProfile]);
+
+    // Connecté mais pas de profil sélectionné : rediriger vers sélection de profil
+    useEffect(() => {
+        if (loading) return;
+        if (requireAuth && user && !hasProfile && location.pathname !== '/select-profile') {
+            navigate('/select-profile', { replace: true });
+        }
+    }, [loading, user, requireAuth, hasProfile, location.pathname, navigate]);
 
     if (loading) {
         return <LoadingSpinner />;
     }
 
-    // Non connecté : afficher le splash (logo + fond) puis redirection vers /login par SplashScreen
     if (requireAuth && !user) {
         return <SplashScreen />;
+    }
+
+    if (requireAuth && user && !hasProfile) {
+        return <LoadingSpinner message={t('selectProfile.loading')} />;
     }
 
     if (!requireAuth && user) {

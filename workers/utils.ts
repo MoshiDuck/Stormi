@@ -101,3 +101,50 @@ export async function createJWTAsync(
 
     return `${toSign}.${sigB64}`;
 }
+
+function base64UrlDecode(input: string): string {
+    let base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = base64.length % 4;
+    if (pad) base64 += '='.repeat(4 - pad);
+    return atob(base64);
+}
+
+/** Payload JWT Stormi (sub = account id Google). */
+export interface JwtPayload {
+    sub: string;
+    email?: string;
+    name?: string;
+    picture?: string;
+    email_verified?: boolean;
+    iat?: number;
+    exp?: number;
+}
+
+/**
+ * Vérifie et décode un JWT Stormi. Retourne le payload ou null si invalide/expiré.
+ */
+export async function verifyJWTAsync(token: string, secret: string): Promise<JwtPayload | null> {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const [, payloadB64, sigB64] = parts;
+        const toSign = `${parts[0]}.${payloadB64}`;
+        const payloadJson = base64UrlDecode(payloadB64);
+        const payload = JSON.parse(payloadJson) as JwtPayload;
+        if (payload.exp != null && payload.exp < Math.floor(Date.now() / 1000)) return null;
+
+        const enc = new TextEncoder();
+        const key = await crypto.subtle.importKey(
+            'raw',
+            enc.encode(secret),
+            { name: 'HMAC', hash: 'SHA-256' },
+            false,
+            ['verify']
+        );
+        const sigBin = Uint8Array.from(atob(sigB64.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+        const ok = await crypto.subtle.verify('HMAC', key, sigBin, enc.encode(toSign));
+        return ok ? payload : null;
+    } catch {
+        return null;
+    }
+}

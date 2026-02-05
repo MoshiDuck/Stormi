@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { createRequestHandler } from 'react-router';
 import type { Bindings } from './types.js';
 import { registerAuthRoutes } from './auth.js';
+import { registerProfileRoutes } from './profiles.js';
 import { generateGoogleAuthUrl, corsHeaders, noCacheHeaders } from './utils.js';
 import uploadRoutes from './upload.js';
 import { generateCacheKey, invalidateCache } from './cache.js';
@@ -1398,6 +1399,7 @@ app.get('/oauth-callback', handleOAuthCallback);
 
 // Routes d'authentification supplémentaires
 registerAuthRoutes(app);
+registerProfileRoutes(app);
 
 // Routes d'upload - IMPORTANT: monter avant le catch-all React Router
 app.route('/', uploadRoutes);

@@ -1,7 +1,7 @@
 // INFO : app/components/Navigation.tsx — barre du haut : logo + profil (phone/tablet) ou logo + liens + profil (desktop). BottomNav = barre du bas sur phone/tablet.
 import React from 'react';
 import { Link, useLocation } from 'react-router';
-import type { User } from '~/types/auth';
+import type { User, StreamingProfile } from '~/types/auth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { useBreakpoint, useIsTenFoot } from '~/hooks/useBreakpoint';
@@ -21,7 +21,9 @@ import {
 
 interface NavigationProps {
     user: User;
+    activeProfile?: StreamingProfile | null;
     onLogout: () => void;
+    onSwitchProfile?: () => void;
 }
 
 interface NavItemConfig {
@@ -103,7 +105,7 @@ function NavLink({
     );
 }
 
-export function Navigation({ user, onLogout }: NavigationProps) {
+export function Navigation({ user, activeProfile, onLogout, onSwitchProfile }: NavigationProps) {
     const location = useLocation();
     const { theme, themeId } = useTheme();
     const { t } = useLanguage();
@@ -155,7 +157,7 @@ export function Navigation({ user, onLogout }: NavigationProps) {
                         )}
                     </div>
 
-                    <ProfileDropdown user={user} onLogout={onLogout} />
+                    <ProfileDropdown user={user} activeProfile={activeProfile} onLogout={onLogout} onSwitchProfile={onSwitchProfile} />
                 </div>
             </nav>
 

@@ -23,6 +23,21 @@ export interface User {
     email_verified?: boolean | string;
 }
 
+/** Profil de type streaming (plusieurs par compte). */
+export interface StreamingProfile {
+    id: string;
+    account_id: string;
+    name: string;
+    avatar_url: string | null;
+    is_main: boolean;
+    sort_order: number;
+    created_at: number;
+    updated_at: number;
+}
+
+/** Profil actif en session (stocké après sélection). */
+export type ActiveProfile = StreamingProfile;
+
 export interface AuthConfig {
     googleClientId: string | null;
     baseUrl: string;

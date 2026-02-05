@@ -24,7 +24,7 @@ import { darkTheme } from '~/utils/ui/theme';
 import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT, MAIN_TOP_OFFSET } from '~/utils/ui/breakpoints';
 
 function AppLayoutContent() {
-    const { user, logout } = useAuth();
+    const { user, activeProfile, logout, clearActiveProfile } = useAuth();
     const { theme } = useTheme();
     const navigation = useNavigation();
     const location = useLocation();
@@ -44,7 +44,7 @@ function AppLayoutContent() {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: theme.background.primary }}>
             <AppLayoutLoadingBar visible={isNavigating} />
-            <Navigation user={user!} onLogout={logout} />
+            <Navigation user={user!} activeProfile={activeProfile} onLogout={logout} onSwitchProfile={clearActiveProfile} />
             <main
                 ref={mainRef}
                 tabIndex={-1}
