@@ -13,7 +13,7 @@ const PIN_RATE_LIMIT_WINDOW_SEC = 900; // 15 min
 const PIN_MAX_ATTEMPTS = 5;
 
 const CREATE_USER_PROFILE_TABLE =
-    "CREATE TABLE IF NOT EXISTS user_profile (id TEXT PRIMARY KEY, account_id TEXT NOT NULL, name TEXT NOT NULL, avatar_url TEXT, is_main INTEGER NOT NULL DEFAULT 0, sort_order INTEGER NOT NULL DEFAULT 0, created_at INTEGER DEFAULT (strftime('%s', 'now')), updated_at INTEGER DEFAULT (strftime('%s', 'now')))";
+    "CREATE TABLE IF NOT EXISTS user_profile (id TEXT PRIMARY KEY, account_id TEXT NOT NULL, name TEXT NOT NULL, avatar_url TEXT, is_main INTEGER NOT NULL DEFAULT 0, is_child INTEGER NOT NULL DEFAULT 0, sort_order INTEGER NOT NULL DEFAULT 0, created_at INTEGER DEFAULT (strftime('%s', 'now')), updated_at INTEGER DEFAULT (strftime('%s', 'now')))";
 
 const CREATE_ACCOUNT_PIN_TABLE =
     "CREATE TABLE IF NOT EXISTS account_pin (account_id TEXT PRIMARY KEY, pin_salt TEXT NOT NULL, pin_hash TEXT NOT NULL)";
@@ -31,6 +31,7 @@ type ProfileRow = {
     name: string;
     avatar_url: string | null;
     is_main: boolean;
+    is_child: boolean;
     sort_order: number;
     created_at: number;
     updated_at: number;
@@ -44,6 +45,7 @@ function toProfileRow(raw: unknown): ProfileRow {
         name: String(r.name ?? ''),
         avatar_url: r.avatar_url != null && r.avatar_url !== '' ? String(r.avatar_url) : null,
         is_main: Boolean(r.is_main),
+        is_child: Boolean(r.is_child),
         sort_order: Number(r.sort_order) || 0,
         created_at: Number(r.created_at) || 0,
         updated_at: Number(r.updated_at) || 0,
@@ -89,6 +91,14 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
         }
     }
 
+    async function ensureUserProfileColumns(db: D1Database): Promise<void> {
+        try {
+            await db.prepare('ALTER TABLE user_profile ADD COLUMN is_child INTEGER NOT NULL DEFAULT 0').run();
+        } catch {
+            // Colonne déjà existante
+        }
+    }
+
     async function ensureMainProfile(db: D1Database, accountId: string): Promise<void> {
         try {
             const existing = await db.prepare('SELECT id FROM user_profile WHERE account_id = ? AND is_main = 1').bind(accountId).first();
@@ -104,7 +114,7 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             const now = Math.floor(Date.now() / 1000);
 
             await db.prepare(
-                'INSERT INTO user_profile (id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, 1, 0, ?, ?)'
+                'INSERT INTO user_profile (id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, 1, 0, 0, ?, ?)'
             ).bind(mainId, accountId, name, picture, now, now).run();
         } catch {
             // Profil principal déjà créé (concurrence) ou compte absent : on continue
@@ -164,6 +174,7 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
 
         try {
             await ensureUserProfileTable(db);
+            await ensureUserProfileColumns(db);
             await ensureMainProfile(db, accountId);
         } catch {
             // Ne pas bloquer : on tente quand même la lecture
@@ -173,7 +184,7 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
         try {
             d1Result = await db
                 .prepare(
-                    'SELECT id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at FROM user_profile WHERE account_id = ? ORDER BY is_main DESC, sort_order ASC, created_at ASC'
+                    'SELECT id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at FROM user_profile WHERE account_id = ? ORDER BY is_main DESC, sort_order ASC, created_at ASC'
                 )
                 .bind(accountId)
                 .all();
@@ -245,10 +256,18 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
         if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
         try {
             await ensureUserProfileTable(c.env.DATABASE);
-            const body = (await c.req.json()) as { name?: string; avatar_url?: string };
-            const name = typeof body.name === 'string' ? body.name.trim() : '';
+            await ensureUserProfileColumns(c.env.DATABASE);
+            const body = (await c.req.json()) as { name?: string; avatar_url?: string; is_child?: boolean };
+            const isChild = body.is_child === true;
+            let name = typeof body.name === 'string' ? body.name.trim() : '';
+            if (isChild && !name) name = 'Profil enfant';
             if (!name || name.length > 100) return json(c, { error: 'Nom invalide (1–100 caractères)' }, 400);
             const avatarUrl = typeof body.avatar_url === 'string' ? body.avatar_url.trim() || '' : '';
+
+            if (isChild) {
+                const existingChild = await c.env.DATABASE.prepare('SELECT id FROM user_profile WHERE account_id = ? AND is_child = 1').bind(accountId).first();
+                if (existingChild) return json(c, { error: 'Un seul profil enfant autorisé par compte' }, 400);
+            }
 
             const maxOrder = await c.env.DATABASE.prepare('SELECT COALESCE(MAX(sort_order), -1) + 1 AS next FROM user_profile WHERE account_id = ?').bind(accountId).first() as { next?: number } | null;
             const sortOrder = maxOrder?.next ?? 0;
@@ -256,11 +275,11 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             const id = `prof_${accountId}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
             const now = Math.floor(Date.now() / 1000);
             await c.env.DATABASE.prepare(
-                'INSERT INTO user_profile (id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, 0, ?, ?, ?)'
-            ).bind(id, accountId, name, avatarUrl, sortOrder, now, now).run();
+                'INSERT INTO user_profile (id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)'
+            ).bind(id, accountId, name, avatarUrl, isChild ? 1 : 0, sortOrder, now, now).run();
 
             const row = await c.env.DATABASE.prepare(
-                'SELECT id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at FROM user_profile WHERE id = ?'
+                'SELECT id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at FROM user_profile WHERE id = ?'
             ).bind(id).first();
             const profile = toProfileRow(row);
             return json(c, { profile }, 201);
@@ -308,7 +327,7 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
                 bindings.push(avatarUrl);
             }
             if (updates.length === 0) {
-                const row = await c.env.DATABASE.prepare('SELECT id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at FROM user_profile WHERE id = ?').bind(id).first();
+                const row = await c.env.DATABASE.prepare('SELECT id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at FROM user_profile WHERE id = ?').bind(id).first();
                 return json(c, { profile: toProfileRow(row) });
             }
             updates.push('updated_at = ?');
@@ -316,7 +335,7 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             bindings.push(id);
             await c.env.DATABASE.prepare(`UPDATE user_profile SET ${updates.join(', ')} WHERE id = ?`).bind(...bindings).run();
 
-            const row = await c.env.DATABASE.prepare('SELECT id, account_id, name, avatar_url, is_main, sort_order, created_at, updated_at FROM user_profile WHERE id = ?').bind(id).first();
+            const row = await c.env.DATABASE.prepare('SELECT id, account_id, name, avatar_url, is_main, is_child, sort_order, created_at, updated_at FROM user_profile WHERE id = ?').bind(id).first();
             return json(c, { profile: toProfileRow(row) });
         } catch (e) {
             console.error('PATCH /api/profiles/:id:', e);

@@ -30,6 +30,7 @@ export interface StreamingProfile {
     name: string;
     avatar_url: string | null;
     is_main: boolean;
+    is_child: boolean;
     sort_order: number;
     created_at: number;
     updated_at: number;

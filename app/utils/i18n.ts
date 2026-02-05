@@ -151,6 +151,10 @@ export interface Translations {
         deleteConfirm: string;
         createTitle: string;
         createPlaceholder: string;
+        profileTypeAdult: string;
+        profileTypeChild: string;
+        childProfileNoNameHint: string;
+        onlyOneChildAllowed: string;
         createSubmit: string;
         errorLoad: string;
         errorCreate: string;
@@ -844,6 +848,10 @@ const translations: Record<Language, Translations> = {
             deleteConfirm: 'Supprimer ce profil ? Cette action est irréversible.',
             createTitle: 'Nouveau profil',
             createPlaceholder: 'Nom du profil',
+            profileTypeAdult: 'Adulte',
+            profileTypeChild: 'Enfant',
+            childProfileNoNameHint: 'Aucun nom requis pour le profil enfant.',
+            onlyOneChildAllowed: 'Un seul profil enfant autorisé.',
             createSubmit: 'Créer',
             errorLoad: 'Impossible de charger les profils',
             errorCreate: 'Impossible de créer le profil',
@@ -1375,6 +1383,10 @@ const translations: Record<Language, Translations> = {
             deleteConfirm: 'Delete this profile? This action cannot be undone.',
             createTitle: 'New profile',
             createPlaceholder: 'Profile name',
+            profileTypeAdult: 'Adult',
+            profileTypeChild: 'Child',
+            childProfileNoNameHint: 'No name required for child profile.',
+            onlyOneChildAllowed: 'Only one child profile allowed.',
             createSubmit: 'Create',
             errorLoad: 'Could not load profiles',
             errorCreate: 'Could not create profile',
@@ -1904,6 +1916,10 @@ const translations: Record<Language, Translations> = {
             deleteConfirm: '¿Eliminar este perfil? Esta acción no se puede deshacer.',
             createTitle: 'Nuevo perfil',
             createPlaceholder: 'Nombre del perfil',
+            profileTypeAdult: 'Adulto',
+            profileTypeChild: 'Niño',
+            childProfileNoNameHint: 'No se requiere nombre para el perfil infantil.',
+            onlyOneChildAllowed: 'Solo se permite un perfil infantil.',
             createSubmit: 'Crear',
             errorLoad: 'No se pudieron cargar los perfiles',
             errorCreate: 'No se pudo crear el perfil',
@@ -2435,6 +2451,10 @@ const translations: Record<Language, Translations> = {
             deleteConfirm: 'Dieses Profil löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
             createTitle: 'Neues Profil',
             createPlaceholder: 'Profilname',
+            profileTypeAdult: 'Erwachsener',
+            profileTypeChild: 'Kind',
+            childProfileNoNameHint: 'Kein Name für das Kinderprofil erforderlich.',
+            onlyOneChildAllowed: 'Nur ein Kinderprofil erlaubt.',
             createSubmit: 'Erstellen',
             errorLoad: 'Profile konnten nicht geladen werden',
             errorCreate: 'Profil konnte nicht erstellt werden',

@@ -30,6 +30,7 @@ export default function CommunityFamilyRoute() {
     const [error, setError] = useState<string | null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [addName, setAddName] = useState('');
+    const [addIsChild, setAddIsChild] = useState(false);
     const [addSubmitting, setAddSubmitting] = useState(false);
     const [addError, setAddError] = useState<string | null>(null);
     const [editId, setEditId] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export default function CommunityFamilyRoute() {
     const [deleteSubmitting, setDeleteSubmitting] = useState(false);
     const [showPinAfterAdd, setShowPinAfterAdd] = useState(false);
     const [pinModalModeAfterAdd, setPinModalModeAfterAdd] = useState<PinModalMode>('set');
+    const [pendingAdd, setPendingAdd] = useState<{ name: string; is_child: boolean } | null>(null);
     const [showPinForEdit, setShowPinForEdit] = useState(false);
     const [showPinForDelete, setShowPinForDelete] = useState(false);
 
@@ -66,9 +68,36 @@ export default function CommunityFamilyRoute() {
         fetchProfiles();
     }, [fetchProfiles]);
 
+    const hasChildProfile = profiles.some((p) => p.is_child);
+
     const handleAddProfile = async () => {
-        const name = addName.trim();
-        if (!name || !config?.baseUrl) return;
+        if (!config?.baseUrl) return;
+        if (hasChildProfile) {
+            if (!addName.trim()) return;
+        } else {
+            if (!addIsChild && !addName.trim()) return;
+        }
+        const token = localStorage.getItem('stormi_token');
+        if (!token) return;
+        setAddError(null);
+        setPendingAdd({
+            name: hasChildProfile ? addName.trim() : addIsChild ? t('selectProfile.profileTypeChild') : addName.trim(),
+            is_child: hasChildProfile ? false : addIsChild,
+        });
+        try {
+            const statusRes = await fetch(`${config.baseUrl}/api/profiles/pin/status`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const statusData = (await statusRes.json()) as { hasPin?: boolean };
+            setPinModalModeAfterAdd(statusData.hasPin ? 'confirm' : 'set');
+        } catch {
+            setPinModalModeAfterAdd('set');
+        }
+        setShowPinAfterAdd(true);
+    };
+
+    const handleCreateProfileAfterPinSuccess = async () => {
+        if (!pendingAdd || !config?.baseUrl) return;
         const token = localStorage.getItem('stormi_token');
         if (!token) return;
         setAddSubmitting(true);
@@ -77,23 +106,16 @@ export default function CommunityFamilyRoute() {
             const res = await fetch(`${config.baseUrl}/api/profiles`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({ name: pendingAdd.name, is_child: pendingAdd.is_child }),
             });
             const data = (await res.json()) as { error?: string; profile?: StreamingProfile };
             if (!res.ok) throw new Error(data.error || t('selectProfile.errorCreate'));
             if (data.profile) setProfiles((prev) => [...prev, data.profile as StreamingProfile]);
+            setShowPinAfterAdd(false);
             setShowAddModal(false);
             setAddName('');
-            try {
-                const statusRes = await fetch(`${config.baseUrl}/api/profiles/pin/status`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                const statusData = (await statusRes.json()) as { hasPin?: boolean };
-                setPinModalModeAfterAdd(statusData.hasPin ? 'confirm' : 'set');
-            } catch {
-                setPinModalModeAfterAdd('set');
-            }
-            setShowPinAfterAdd(true);
+            setAddIsChild(false);
+            setPendingAdd(null);
         } catch (e: unknown) {
             setAddError(e instanceof Error ? e.message : t('selectProfile.errorCreate'));
         } finally {
@@ -540,25 +562,92 @@ export default function CommunityFamilyRoute() {
                         >
                             {t('selectProfile.createTitle')}
                         </h2>
-                        <input
-                            type="text"
-                            value={addName}
-                            onChange={(e) => setAddName(e.target.value)}
-                            placeholder={t('selectProfile.createPlaceholder')}
-                            maxLength={100}
-                            autoFocus
-                            style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                fontSize: 16,
-                                borderRadius: theme.radius.medium,
-                                border: `1px solid ${theme.border.primary}`,
-                                backgroundColor: theme.background.tertiary,
-                                color: theme.text.primary,
-                                marginBottom: 16,
-                                boxSizing: 'border-box',
-                            }}
-                        />
+                        {hasChildProfile ? (
+                            <input
+                                type="text"
+                                value={addName}
+                                onChange={(e) => setAddName(e.target.value)}
+                                placeholder={t('selectProfile.createPlaceholder')}
+                                maxLength={100}
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    fontSize: 16,
+                                    borderRadius: theme.radius.medium,
+                                    border: `1px solid ${theme.border.primary}`,
+                                    backgroundColor: theme.background.tertiary,
+                                    color: theme.text.primary,
+                                    marginBottom: 16,
+                                    boxSizing: 'border-box',
+                                }}
+                            />
+                        ) : !addIsChild ? (
+                            <input
+                                type="text"
+                                value={addName}
+                                onChange={(e) => setAddName(e.target.value)}
+                                placeholder={t('selectProfile.createPlaceholder')}
+                                maxLength={100}
+                                autoFocus
+                                style={{
+                                    width: '100%',
+                                    padding: '12px 16px',
+                                    fontSize: 16,
+                                    borderRadius: theme.radius.medium,
+                                    border: `1px solid ${theme.border.primary}`,
+                                    backgroundColor: theme.background.tertiary,
+                                    color: theme.text.primary,
+                                    marginBottom: 16,
+                                    boxSizing: 'border-box',
+                                }}
+                            />
+                        ) : (
+                            <p style={{ fontSize: 14, color: theme.text.secondary, marginBottom: 16 }}>
+                                {t('selectProfile.childProfileNoNameHint')}
+                            </p>
+                        )}
+                        {!hasChildProfile && (
+                            <div style={{ marginBottom: 16 }}>
+                                <span style={{ fontSize: 14, fontWeight: 500, color: theme.text.secondary, display: 'block', marginBottom: 8 }}>
+                                    {t('selectProfile.profileTypeAdult')} / {t('selectProfile.profileTypeChild')}
+                                </span>
+                                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAddIsChild(false)}
+                                        style={{
+                                            padding: '10px 20px',
+                                            fontSize: 14,
+                                            fontWeight: 500,
+                                            color: addIsChild ? theme.text.secondary : theme.text.primary,
+                                            backgroundColor: addIsChild ? theme.background.tertiary : theme.background.primary,
+                                            border: `2px solid ${addIsChild ? theme.border.secondary : theme.accent.blue}`,
+                                            borderRadius: theme.radius.medium,
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        {t('selectProfile.profileTypeAdult')}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAddIsChild(true)}
+                                        style={{
+                                            padding: '10px 20px',
+                                            fontSize: 14,
+                                            fontWeight: 500,
+                                            color: addIsChild ? theme.text.primary : theme.text.secondary,
+                                            backgroundColor: addIsChild ? theme.background.primary : theme.background.tertiary,
+                                            border: `2px solid ${addIsChild ? theme.accent.blue : theme.border.secondary}`,
+                                            borderRadius: theme.radius.medium,
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        {t('selectProfile.profileTypeChild')}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                         {addError && (
                             <p style={{ color: theme.accent.red, fontSize: 14, marginBottom: 12 }}>{addError}</p>
                         )}
@@ -583,7 +672,7 @@ export default function CommunityFamilyRoute() {
                             <button
                                 type="button"
                                 onClick={handleAddProfile}
-                                disabled={!addName.trim() || addSubmitting}
+                                disabled={(hasChildProfile ? !addName.trim() : !addName.trim() && !addIsChild) || addSubmitting}
                                 style={{
                                     padding: '10px 20px',
                                     fontSize: 14,
@@ -592,7 +681,7 @@ export default function CommunityFamilyRoute() {
                                     backgroundColor: theme.accent.blue,
                                     border: 'none',
                                     borderRadius: theme.radius.medium,
-                                    cursor: addName.trim() && !addSubmitting ? 'pointer' : 'not-allowed',
+                                    cursor: (hasChildProfile ? addName.trim() : addName.trim() || addIsChild) && !addSubmitting ? 'pointer' : 'not-allowed',
                                 }}
                             >
                                 {addSubmitting ? t('common.loading') : t('selectProfile.createSubmit')}
@@ -712,7 +801,7 @@ export default function CommunityFamilyRoute() {
                 isOpen={showPinAfterAdd}
                 mode={pinModalModeAfterAdd}
                 onClose={() => setShowPinAfterAdd(false)}
-                onSuccess={() => setShowPinAfterAdd(false)}
+                onSuccess={() => void handleCreateProfileAfterPinSuccess()}
             />
 
             <PinModal
