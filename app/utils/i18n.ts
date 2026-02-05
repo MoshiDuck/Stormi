@@ -158,6 +158,24 @@ export interface Translations {
         errorDelete: string;
         switchProfile: string;
     };
+    pin: {
+        createTitle: string;
+        createDescription: string;
+        confirmTitle: string;
+        confirmDescription: string;
+        enterTitle: string;
+        enterDescription: string;
+        placeholder: string;
+        confirmPlaceholder: string;
+        submit: string;
+        cancel: string;
+        required: string;
+        mustBe4Digits: string;
+        mismatch: string;
+        setSuccess: string;
+        incorrect: string;
+        rateLimited: string;
+    };
     // Home
     home: {
         title: string;
@@ -833,6 +851,24 @@ const translations: Record<Language, Translations> = {
             errorDelete: 'Impossible de supprimer le profil',
             switchProfile: 'Changer de profil',
         },
+        pin: {
+            createTitle: 'Définir votre code PIN',
+            createDescription: 'Protégez la gestion des profils secondaires avec un code à 4 chiffres. Seul le profil principal pourra le modifier.',
+            confirmTitle: 'Confirmer votre code PIN',
+            confirmDescription: 'Entrez votre code PIN pour confirmer.',
+            enterTitle: 'Code PIN requis',
+            enterDescription: 'Entrez votre code PIN pour continuer.',
+            placeholder: 'Code PIN (4 chiffres)',
+            confirmPlaceholder: 'Confirmer le code PIN',
+            submit: 'Valider',
+            cancel: 'Annuler',
+            required: 'Code PIN requis',
+            mustBe4Digits: 'Le code doit contenir exactement 4 chiffres',
+            mismatch: 'Les deux codes ne correspondent pas',
+            setSuccess: 'Code PIN enregistré',
+            incorrect: 'Code PIN incorrect',
+            rateLimited: 'Trop de tentatives. Réessayez dans 15 minutes.',
+        },
         home: {
             title: 'Tableau de bord',
             welcome: 'Bienvenue sur votre espace personnel, {name}',
@@ -1346,6 +1382,24 @@ const translations: Record<Language, Translations> = {
             errorDelete: 'Could not delete profile',
             switchProfile: 'Switch profile',
         },
+        pin: {
+            createTitle: 'Set your PIN code',
+            createDescription: 'Protect secondary profile management with a 4-digit code. Only the main profile can change it.',
+            confirmTitle: 'Confirm your PIN code',
+            confirmDescription: 'Enter your PIN code to confirm.',
+            enterTitle: 'PIN code required',
+            enterDescription: 'Enter your PIN code to continue.',
+            placeholder: 'PIN code (4 digits)',
+            confirmPlaceholder: 'Confirm PIN code',
+            submit: 'Confirm',
+            cancel: 'Cancel',
+            required: 'PIN code required',
+            mustBe4Digits: 'Code must be exactly 4 digits',
+            mismatch: 'The two codes do not match',
+            setSuccess: 'PIN code saved',
+            incorrect: 'Incorrect PIN code',
+            rateLimited: 'Too many attempts. Try again in 15 minutes.',
+        },
         home: {
             title: 'Dashboard',
             welcome: 'Welcome to your personal space, {name}',
@@ -1856,6 +1910,24 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'No se pudo actualizar el perfil',
             errorDelete: 'No se pudo eliminar el perfil',
             switchProfile: 'Cambiar de perfil',
+        },
+        pin: {
+            createTitle: 'Definir su código PIN',
+            createDescription: 'Proteja la gestión de perfiles secundarios con un código de 4 dígitos. Solo el perfil principal podrá modificarlo.',
+            confirmTitle: 'Confirmar su código PIN',
+            confirmDescription: 'Introduzca su código PIN para confirmar.',
+            enterTitle: 'Código PIN requerido',
+            enterDescription: 'Introduzca su código PIN para continuar.',
+            placeholder: 'Código PIN (4 dígitos)',
+            confirmPlaceholder: 'Confirmar código PIN',
+            submit: 'Validar',
+            cancel: 'Cancelar',
+            required: 'Código PIN requerido',
+            mustBe4Digits: 'El código debe tener exactamente 4 dígitos',
+            mismatch: 'Los dos códigos no coinciden',
+            setSuccess: 'Código PIN guardado',
+            incorrect: 'Código PIN incorrecto',
+            rateLimited: 'Demasiados intentos. Vuelva a intentarlo en 15 minutos.',
         },
         home: {
             title: 'Panel de control',
@@ -2369,6 +2441,24 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'Profil konnte nicht aktualisiert werden',
             errorDelete: 'Profil konnte nicht gelöscht werden',
             switchProfile: 'Profil wechseln',
+        },
+        pin: {
+            createTitle: 'PIN-Code festlegen',
+            createDescription: 'Schützen Sie die Verwaltung von Nebenprofilen mit einem 4-stelligen Code. Nur das Hauptprofil kann ihn ändern.',
+            confirmTitle: 'PIN-Code bestätigen',
+            confirmDescription: 'Geben Sie Ihren PIN-Code zur Bestätigung ein.',
+            enterTitle: 'PIN-Code erforderlich',
+            enterDescription: 'Geben Sie Ihren PIN-Code ein, um fortzufahren.',
+            placeholder: 'PIN-Code (4 Ziffern)',
+            confirmPlaceholder: 'PIN-Code bestätigen',
+            submit: 'Bestätigen',
+            cancel: 'Abbrechen',
+            required: 'PIN-Code erforderlich',
+            mustBe4Digits: 'Der Code muss genau 4 Ziffern haben',
+            mismatch: 'Die beiden Codes stimmen nicht überein',
+            setSuccess: 'PIN-Code gespeichert',
+            incorrect: 'Falscher PIN-Code',
+            rateLimited: 'Zu viele Versuche. Bitte in 15 Minuten erneut versuchen.',
         },
         home: {
             title: 'Dashboard',

@@ -9,6 +9,7 @@ import { darkTheme } from '~/utils/ui/theme';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { ConfirmDialog } from '~/components/ui/ConfirmDialog';
+import { PinModal, type PinModalMode } from '~/components/profile/PinModal';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 
 const AVATAR_SIZE = 120;
@@ -32,6 +33,10 @@ export default function SelectProfileRoute() {
     const [editSubmitting, setEditSubmitting] = useState(false);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
     const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+    const [showPinAfterAdd, setShowPinAfterAdd] = useState(false);
+    const [pinModalModeAfterAdd, setPinModalModeAfterAdd] = useState<PinModalMode>('set');
+    const [showPinForEdit, setShowPinForEdit] = useState(false);
+    const [showPinForDelete, setShowPinForDelete] = useState(false);
 
     const fetchProfiles = useCallback(async () => {
         if (!config?.baseUrl || !user) return;
@@ -88,6 +93,16 @@ export default function SelectProfileRoute() {
             if (data.profile) setProfiles((prev) => [...prev, data.profile as StreamingProfile]);
             setShowAddModal(false);
             setAddName('');
+            try {
+                const statusRes = await fetch(`${config.baseUrl}/api/profiles/pin/status`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const statusData = (await statusRes.json()) as { hasPin?: boolean };
+                setPinModalModeAfterAdd(statusData.hasPin ? 'confirm' : 'set');
+            } catch {
+                setPinModalModeAfterAdd('set');
+            }
+            setShowPinAfterAdd(true);
         } catch (e: any) {
             setAddError(e.message || t('selectProfile.errorCreate'));
         } finally {
@@ -95,18 +110,23 @@ export default function SelectProfileRoute() {
         }
     };
 
-    const handleUpdateProfile = async () => {
+    const editingProfile = editId ? profiles.find((p) => p.id === editId) : null;
+    const isEditingMain = editingProfile?.is_main ?? false;
+
+    const handleUpdateProfile = async (pin?: string) => {
         if (!editId || !config?.baseUrl) return;
         const name = editName.trim();
         if (!name) return;
         const token = localStorage.getItem('stormi_token');
         if (!token) return;
+        if (!isEditingMain && !pin) return;
         setEditSubmitting(true);
         try {
+            const body = isEditingMain ? { name } : { name, pin };
             const res = await fetch(`${config.baseUrl}/api/profiles/${editId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify(body),
             });
             const data = (await res.json()) as { error?: string; profile?: StreamingProfile };
             if (!res.ok) throw new Error(data.error || t('selectProfile.errorUpdate'));
@@ -118,26 +138,39 @@ export default function SelectProfileRoute() {
             }
             setEditId(null);
             setEditName('');
+            setShowPinForEdit(false);
         } finally {
             setEditSubmitting(false);
         }
     };
 
-    const handleDeleteProfile = async () => {
+    const handleSaveEditClick = () => {
+        if (!editName.trim()) return;
+        if (isEditingMain) {
+            void handleUpdateProfile();
+        } else {
+            setShowPinForEdit(true);
+        }
+    };
+
+    const handleDeleteProfile = async (pin?: string) => {
         if (!deleteConfirmId || !config?.baseUrl) return;
         const token = localStorage.getItem('stormi_token');
         if (!token) return;
+        if (!pin) return;
         setDeleteSubmitting(true);
         try {
             const res = await fetch(`${config.baseUrl}/api/profiles/${deleteConfirmId}`, {
                 method: 'DELETE',
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ pin }),
             });
             const data = (await res.json()) as { error?: string };
             if (!res.ok) throw new Error(data.error || t('selectProfile.errorDelete'));
             setProfiles((prev) => prev.filter((p) => p.id !== deleteConfirmId));
             clearActiveProfile();
             setDeleteConfirmId(null);
+            setShowPinForDelete(false);
         } finally {
             setDeleteSubmitting(false);
         }
@@ -578,7 +611,7 @@ export default function SelectProfileRoute() {
                             </button>
                             <button
                                 type="button"
-                                onClick={handleUpdateProfile}
+                                onClick={handleSaveEditClick}
                                 disabled={!editName.trim() || editSubmitting}
                                 style={{
                                     padding: '10px 20px',
@@ -599,14 +632,39 @@ export default function SelectProfileRoute() {
             )}
 
             <ConfirmDialog
-                isOpen={!!deleteConfirmId}
+                isOpen={!!deleteConfirmId && !showPinForDelete}
                 title={t('selectProfile.delete')}
                 message={t('selectProfile.deleteConfirm')}
                 confirmText={t('common.delete')}
                 cancelText={t('common.cancel')}
                 confirmColor={darkTheme.accent.red}
-                onConfirm={handleDeleteProfile}
+                onConfirm={() => setShowPinForDelete(true)}
                 onCancel={() => setDeleteConfirmId(null)}
+            />
+
+            <PinModal
+                isOpen={showPinAfterAdd}
+                mode={pinModalModeAfterAdd}
+                onClose={() => setShowPinAfterAdd(false)}
+                onSuccess={() => setShowPinAfterAdd(false)}
+            />
+
+            <PinModal
+                isOpen={showPinForEdit}
+                mode="enter"
+                onClose={() => setShowPinForEdit(false)}
+                onSubmitPin={async (pin) => {
+                    await handleUpdateProfile(pin);
+                }}
+            />
+
+            <PinModal
+                isOpen={showPinForDelete}
+                mode="enter"
+                onClose={() => setShowPinForDelete(false)}
+                onSubmitPin={async (pin) => {
+                    await handleDeleteProfile(pin);
+                }}
             />
         </div>
     );

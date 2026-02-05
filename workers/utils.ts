@@ -148,3 +148,50 @@ export async function verifyJWTAsync(token: string, secret: string): Promise<Jwt
         return null;
     }
 }
+
+// ——— Code PIN (4 chiffres) : stockage sécurisé PBKDF2 ———
+const PIN_PBKDF2_ITERATIONS = 100_000;
+const PIN_SALT_BYTES = 16;
+const PIN_HASH_BYTES = 32;
+
+/** Génère un sel aléatoire pour le PIN (base64). */
+export function generatePinSalt(): string {
+    const bytes = new Uint8Array(PIN_SALT_BYTES);
+    crypto.getRandomValues(bytes);
+    return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/** Hash le PIN avec PBKDF2 (salt en base64url, retourne hash en base64url). */
+export async function hashPin(saltB64: string, pin: string): Promise<string> {
+    const saltBin = Uint8Array.from(atob(saltB64.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+    const key = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(pin),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+    );
+    const derived = await crypto.subtle.deriveBits(
+        {
+            name: 'PBKDF2',
+            salt: saltBin,
+            iterations: PIN_PBKDF2_ITERATIONS,
+            hash: 'SHA-256',
+        },
+        key,
+        PIN_HASH_BYTES * 8
+    );
+    const hash = btoa(String.fromCharCode(...new Uint8Array(derived))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return hash;
+}
+
+/** Vérifie un PIN contre un hash stocké. */
+export async function verifyPin(saltB64: string, storedHashB64: string, pin: string): Promise<boolean> {
+    const computed = await hashPin(saltB64, pin);
+    return computed === storedHashB64;
+}
+
+/** Valide le format PIN (4 chiffres). */
+export function isValidPinFormat(pin: string): boolean {
+    return /^\d{4}$/.test(pin);
+}
