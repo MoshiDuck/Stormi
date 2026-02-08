@@ -161,6 +161,14 @@ export interface Translations {
         errorUpdate: string;
         errorDelete: string;
         switchProfile: string;
+        hideFromProfile: string;
+        hideFromProfileTitle: string;
+        chooseProfileToHide: string;
+        hiddenFromProfile: string;
+        showInProfile: string;
+        showInProfileTitle: string;
+        chooseProfileToShow: string;
+        shownInProfile: string;
     };
     pin: {
         createTitle: string;
@@ -858,6 +866,14 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'Impossible de modifier le profil',
             errorDelete: 'Impossible de supprimer le profil',
             switchProfile: 'Changer de profil',
+            hideFromProfile: 'Masquer pour le profil',
+            hideFromProfileTitle: 'Masquer ce contenu pour un profil',
+            chooseProfileToHide: 'Choisir un profil',
+            hiddenFromProfile: 'Masqué pour ce profil',
+            showInProfile: 'Réafficher pour le profil',
+            showInProfileTitle: 'Réafficher ce contenu pour un profil',
+            chooseProfileToShow: 'Choisir un profil',
+            shownInProfile: 'Réaffiché pour ce profil',
         },
         pin: {
             createTitle: 'Définir votre code PIN',
@@ -1393,6 +1409,14 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'Could not update profile',
             errorDelete: 'Could not delete profile',
             switchProfile: 'Switch profile',
+            hideFromProfile: 'Hide from profile',
+            hideFromProfileTitle: 'Hide this content from a profile',
+            chooseProfileToHide: 'Choose a profile',
+            hiddenFromProfile: 'Hidden from this profile',
+            showInProfile: 'Show in profile',
+            showInProfileTitle: 'Show this content for a profile again',
+            chooseProfileToShow: 'Choose a profile',
+            shownInProfile: 'Shown for this profile again',
         },
         pin: {
             createTitle: 'Set your PIN code',
@@ -1926,6 +1950,14 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'No se pudo actualizar el perfil',
             errorDelete: 'No se pudo eliminar el perfil',
             switchProfile: 'Cambiar de perfil',
+            hideFromProfile: 'Ocultar para el perfil',
+            hideFromProfileTitle: 'Ocultar este contenido para un perfil',
+            chooseProfileToHide: 'Elegir un perfil',
+            hiddenFromProfile: 'Oculto para este perfil',
+            showInProfile: 'Mostrar de nuevo para el perfil',
+            showInProfileTitle: 'Mostrar este contenido de nuevo para un perfil',
+            chooseProfileToShow: 'Elegir un perfil',
+            shownInProfile: 'Mostrado de nuevo para este perfil',
         },
         pin: {
             createTitle: 'Definir su código PIN',
@@ -2461,6 +2493,14 @@ const translations: Record<Language, Translations> = {
             errorUpdate: 'Profil konnte nicht aktualisiert werden',
             errorDelete: 'Profil konnte nicht gelöscht werden',
             switchProfile: 'Profil wechseln',
+            hideFromProfile: 'Für Profil ausblenden',
+            hideFromProfileTitle: 'Diesen Inhalt für ein Profil ausblenden',
+            chooseProfileToHide: 'Profil wählen',
+            hiddenFromProfile: 'Für dieses Profil ausgeblendet',
+            showInProfile: 'Wieder für Profil anzeigen',
+            showInProfileTitle: 'Diesen Inhalt wieder für ein Profil anzeigen',
+            chooseProfileToShow: 'Profil wählen',
+            shownInProfile: 'Wieder für dieses Profil angezeigt',
         },
         pin: {
             createTitle: 'PIN-Code festlegen',

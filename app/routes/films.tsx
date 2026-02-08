@@ -16,6 +16,9 @@ import { useToast } from '~/components/ui/Toast';
 import { useCacheInvalidationTrigger } from '~/utils/cache/cacheInvalidation';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { MediaPageSkeleton } from '~/components/ui/MediaPageSkeleton';
+import { useProfileRestrictions } from '~/hooks/useProfileRestrictions';
+import { HideFromProfileButton } from '~/components/profile/HideFromProfileButton';
+import type { ContentRestriction } from '~/types/auth';
 
 export function meta() {
     return [
@@ -84,8 +87,19 @@ const netflixTheme = {
     }
 };
 
+function filterMoviesByRestrictions<T extends { file_id: string }>(
+    list: T[],
+    restrictions: ContentRestriction[]
+): T[] {
+    const categoryHidden = restrictions.some((r) => r.scope === 'category' && r.reference === 'videos');
+    if (categoryHidden) return [];
+    const hiddenFileIds = new Set(restrictions.filter((r) => r.scope === 'file').map((r) => r.reference));
+    if (hiddenFileIds.size === 0) return list;
+    return list.filter((f) => !hiddenFileIds.has(f.file_id));
+}
+
 export default function FilmsRoute() {
-    const { user } = useAuth();
+    const { user, activeProfile } = useAuth();
     const { t } = useLanguage();
     const { config } = useConfig();
     const breakpoint = useBreakpoint();
@@ -104,6 +118,24 @@ export default function FilmsRoute() {
     });
     const [heroMovie, setHeroMovie] = useState<FileItem | null>(null);
     const { showToast, ToastContainer } = useToast();
+    const { restrictions } = useProfileRestrictions(
+        activeProfile && !activeProfile.is_main ? activeProfile.id : null
+    );
+    const isMainProfile = activeProfile?.is_main ?? true;
+    const displayedMovies = React.useMemo(() => {
+        if (isMainProfile) return organizedMovies;
+        return {
+            unidentified: filterMoviesByRestrictions(organizedMovies.unidentified, restrictions),
+            byGenre: organizedMovies.byGenre.map((g) => ({
+                genre: g.genre,
+                movies: filterMoviesByRestrictions(g.movies, restrictions),
+            })).filter((g) => g.movies.length > 0),
+            recentlyAdded: filterMoviesByRestrictions(organizedMovies.recentlyAdded, restrictions),
+            top10: filterMoviesByRestrictions(organizedMovies.top10, restrictions),
+            continueWatching: filterMoviesByRestrictions(organizedMovies.continueWatching, restrictions),
+        };
+    }, [organizedMovies, restrictions, isMainProfile]);
+    const displayedHeroMovie = isMainProfile ? heroMovie : (displayedMovies.recentlyAdded[0] ?? displayedMovies.byGenre[0]?.movies[0] ?? null);
 
     // Callback pour mise à jour optimiste après suppression
     const handleFileDeleted = useCallback((fileId: string) => {
@@ -858,8 +890,8 @@ export default function FilmsRoute() {
         );
     }
 
-    const hasContent = organizedMovies.unidentified.length > 0 || 
-                       organizedMovies.byGenre.length > 0;
+    const hasContent = displayedMovies.unidentified.length > 0 || 
+                       displayedMovies.byGenre.length > 0;
 
     return (
         <>
@@ -869,17 +901,17 @@ export default function FilmsRoute() {
                     </div>
                     
                     {/* Hero Banner moderne */}
-                    {heroMovie && (
+                    {displayedHeroMovie && (
                         <DraggableItem
-                            dragId={`hero-${heroMovie.file_id}`}
+                            dragId={`hero-${displayedHeroMovie.file_id}`}
                             item={{
-                                file_id: heroMovie.file_id,
-                                category: heroMovie.category,
-                                filename: heroMovie.filename,
-                                size: heroMovie.size,
-                                mime_type: heroMovie.mime_type,
-                                dragLabel: heroMovie.title || heroMovie.filename,
-                                previewUrl: heroMovie.backdrop_url || heroMovie.thumbnail_url || undefined,
+                                file_id: displayedHeroMovie.file_id,
+                                category: displayedHeroMovie.category,
+                                filename: displayedHeroMovie.filename,
+                                size: displayedHeroMovie.size,
+                                mime_type: displayedHeroMovie.mime_type,
+                                dragLabel: displayedHeroMovie.title || displayedHeroMovie.filename,
+                                previewUrl: displayedHeroMovie.backdrop_url || displayedHeroMovie.thumbnail_url || undefined,
                             }}
                         >
                         <div style={{
@@ -897,7 +929,7 @@ export default function FilmsRoute() {
                                 left: 0,
                                 right: 0,
                                 bottom: '-10%',
-                                backgroundImage: `url(${heroMovie.backdrop_url?.replace('/w500/', '/original/') || heroMovie.backdrop_url || heroMovie.thumbnail_url})`,
+                                backgroundImage: `url(${displayedHeroMovie.backdrop_url?.replace('/w500/', '/original/') || displayedHeroMovie.backdrop_url || displayedHeroMovie.thumbnail_url})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center center',
                                 filter: 'brightness(0.4)',
@@ -925,7 +957,16 @@ export default function FilmsRoute() {
                                 background: 'linear-gradient(to right, rgba(20,20,20,1) 0%, rgba(20,20,20,0.9) 30%, rgba(20,20,20,0.5) 60%, transparent 100%)',
                                 zIndex: 1
                             }} />
-                            
+                            {isMainProfile && (
+                                <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 5 }} onClick={(e) => e.stopPropagation()}>
+                                    <HideFromProfileButton
+                                        scope="file"
+                                        reference={displayedHeroMovie.file_id}
+                                        onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                        onError={(msg) => showToast(msg, 'error')}
+                                    />
+                                </div>
+                            )}
                             {/* Contenu avec animation */}
                             <div style={{
                                 position: 'absolute',
@@ -948,7 +989,7 @@ export default function FilmsRoute() {
                                     wordBreak: 'break-word',
                                     overflowWrap: 'break-word',
                                 }}>
-                                    {heroMovie.title}
+                                    {displayedHeroMovie.title}
                                 </h1>
                                 
                                 <div style={{ 
@@ -958,7 +999,7 @@ export default function FilmsRoute() {
                                     marginBottom: '20px',
                                     flexWrap: 'wrap'
                                 }}>
-                                {heroMovie.year && (
+                                {displayedHeroMovie.year && (
                                     <div style={{
                                         fontSize: '18px',
                                             color: netflixTheme.accent.green,
@@ -973,20 +1014,20 @@ export default function FilmsRoute() {
                                                 borderRadius: '50%',
                                                 backgroundColor: netflixTheme.accent.green
                                             }} />
-                                        {heroMovie.year}
+                                        {displayedHeroMovie.year}
                                     </div>
                                 )}
-                                    {heroMovie.duration && (
+                                    {displayedHeroMovie.duration && (
                                         <div style={{
                                             fontSize: '16px',
                                             color: netflixTheme.text.secondary,
                                             fontWeight: '500'
                                         }}>
-                                            {formatDuration(heroMovie.duration)}
+                                            {formatDuration(displayedHeroMovie.duration)}
                                         </div>
                                     )}
-                                    {heroMovie.genres && (() => {
-                                        const genres = JSON.parse(heroMovie.genres);
+                                    {displayedHeroMovie.genres && (() => {
+                                        const genres = JSON.parse(displayedHeroMovie.genres);
                                         return genres.length > 0 && (
                                             <div style={{
                                                 fontSize: '16px',
@@ -999,7 +1040,7 @@ export default function FilmsRoute() {
                                     })()}
                                 </div>
                                 
-                                {heroMovie.description && (
+                                {displayedHeroMovie.description && (
                                     <p style={{
                                         fontSize: 'clamp(14px, 1.5vw, 20px)',
                                         color: netflixTheme.text.primary,
@@ -1012,13 +1053,13 @@ export default function FilmsRoute() {
                                         textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
                                         maxWidth: '550px'
                                     }}>
-                                        {heroMovie.description}
+                                        {displayedHeroMovie.description}
                                     </p>
                                 )}
                                 
                                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                                     <button
-                                        onClick={() => handleVideoClick(heroMovie.file_id, heroMovie.category)}
+                                        onClick={() => handleVideoClick(displayedHeroMovie.file_id, displayedHeroMovie.category)}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -1048,7 +1089,7 @@ export default function FilmsRoute() {
                                         <span>{t('media.play')}</span>
                                     </button>
                                     <button
-                                        onClick={() => handleVideoClick(heroMovie.file_id, heroMovie.category)}
+                                        onClick={() => handleVideoClick(displayedHeroMovie.file_id, displayedHeroMovie.category)}
                                         style={{
                                         display: 'flex',
                                         alignItems: 'center',
@@ -1101,9 +1142,9 @@ export default function FilmsRoute() {
                     )}
                     
                     {/* Continuer de regarder */}
-                    {organizedMovies.continueWatching.length > 0 && (
+                    {displayedMovies.continueWatching.length > 0 && (
                         <NetflixCarousel title={t('home.continueWatching')}>
-                            {organizedMovies.continueWatching.map((file, index) => (
+                            {displayedMovies.continueWatching.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
                                     dragId={`continueWatching-${file.file_id}-${index}`}
@@ -1118,6 +1159,16 @@ export default function FilmsRoute() {
                                     }}
                                 >
                                     <div style={{ position: 'relative' }}>
+                                        {isMainProfile && (
+                                            <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                                                <HideFromProfileButton
+                                                    scope="file"
+                                                    reference={file.file_id}
+                                                    onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                                    onError={(msg) => showToast(msg, 'error')}
+                                                />
+                                            </div>
+                                        )}
                                         <MovieCard
                                             file={file}
                                             onClick={() => handleVideoClick(file.file_id, file.category)}
@@ -1146,9 +1197,9 @@ export default function FilmsRoute() {
                     )}
                     
                     {/* Top 10 */}
-                    {organizedMovies.top10.length > 0 && (
+                    {displayedMovies.top10.length > 0 && (
                         <NetflixCarousel title={t('videos.top10')}>
-                            {organizedMovies.top10.map((file, index) => (
+                            {displayedMovies.top10.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
                                     dragId={`top10-${file.file_id}-${index}`}
@@ -1163,6 +1214,16 @@ export default function FilmsRoute() {
                                     }}
                                 >
                                     <div style={{ position: 'relative' }}>
+                                        {isMainProfile && (
+                                            <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                                                <HideFromProfileButton
+                                                    scope="file"
+                                                    reference={file.file_id}
+                                                    onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                                    onError={(msg) => showToast(msg, 'error')}
+                                                />
+                                            </div>
+                                        )}
                                         <MovieCard
                                             file={file}
                                             onClick={() => handleVideoClick(file.file_id, file.category)}
@@ -1225,9 +1286,9 @@ export default function FilmsRoute() {
                     )}
                     
                     {/* Fichiers non identifiés */}
-                    {organizedMovies.unidentified.length > 0 && (
+                    {displayedMovies.unidentified.length > 0 && (
                         <NetflixCarousel title={t('videos.unidentifiedFiles')} icon="📁">
-                            {organizedMovies.unidentified.map((file, index) => (
+                            {displayedMovies.unidentified.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
                                     dragId={`unidentified-${file.file_id}-${index}`}
@@ -1241,16 +1302,28 @@ export default function FilmsRoute() {
                                         previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
-                                    <UnidentifiedCard file={file} />
+                                    <div style={{ position: 'relative' }}>
+                                        {isMainProfile && (
+                                            <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                                                <HideFromProfileButton
+                                                    scope="file"
+                                                    reference={file.file_id}
+                                                    onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                                    onError={(msg) => showToast(msg, 'error')}
+                                                />
+                                            </div>
+                                        )}
+                                        <UnidentifiedCard file={file} />
+                                    </div>
                                 </DraggableItem>
                             ))}
                         </NetflixCarousel>
                     )}
                     
                     {/* Ajoutés récemment */}
-                    {organizedMovies.recentlyAdded.length > 0 && (
+                    {displayedMovies.recentlyAdded.length > 0 && (
                         <NetflixCarousel title={t('videos.recentlyAdded')} icon="🆕">
-                            {organizedMovies.recentlyAdded.map((file, index) => (
+                            {displayedMovies.recentlyAdded.map((file, index) => (
                                 <DraggableItem
                                     key={file.file_id}
                                     dragId={`recentlyAdded-${file.file_id}-${index}`}
@@ -1264,17 +1337,29 @@ export default function FilmsRoute() {
                                         previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
-                                    <MovieCard
-                                        file={file}
-                                        onClick={() => handleVideoClick(file.file_id, file.category)}
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        {isMainProfile && (
+                                            <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                                                <HideFromProfileButton
+                                                    scope="file"
+                                                    reference={file.file_id}
+                                                    onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                                    onError={(msg) => showToast(msg, 'error')}
+                                                />
+                                            </div>
+                                        )}
+                                        <MovieCard
+                                            file={file}
+                                            onClick={() => handleVideoClick(file.file_id, file.category)}
+                                        />
+                                    </div>
                                 </DraggableItem>
                             ))}
                         </NetflixCarousel>
                     )}
                     
                     {/* Films par genre (id pour deep link ?genre=) */}
-                    {organizedMovies.byGenre.map((genreGroup) => (
+                    {displayedMovies.byGenre.map((genreGroup) => (
                         <div key={genreGroup.genre} id={`genre-${encodeURIComponent(genreGroup.genre)}`}>
                         <NetflixCarousel title={genreGroup.genre}>
                             {genreGroup.movies.map((file, index) => (
@@ -1291,11 +1376,23 @@ export default function FilmsRoute() {
                                         previewUrl: getThumbnailUrl(file) || undefined,
                                     }}
                                 >
-                                    <MovieCard
-                                        file={file}
-                                        genre={genreGroup.genre}
-                                        onClick={() => handleVideoClick(file.file_id, file.category)}
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        {isMainProfile && (
+                                            <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }} onClick={(e) => e.stopPropagation()}>
+                                                <HideFromProfileButton
+                                                    scope="file"
+                                                    reference={file.file_id}
+                                                    onSuccess={() => showToast(t('selectProfile.hiddenFromProfile'), 'success')}
+                                                    onError={(msg) => showToast(msg, 'error')}
+                                                />
+                                            </div>
+                                        )}
+                                        <MovieCard
+                                            file={file}
+                                            genre={genreGroup.genre}
+                                            onClick={() => handleVideoClick(file.file_id, file.category)}
+                                        />
+                                    </div>
                                 </DraggableItem>
                             ))}
                         </NetflixCarousel>

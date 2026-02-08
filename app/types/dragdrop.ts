@@ -19,7 +19,7 @@ export interface DraggableFileItem {
 /**
  * Types d'actions disponibles pour le drag & drop
  */
-export type DropZoneAction = 'delete' | 'archive' | 'move' | 'favorite';
+export type DropZoneAction = 'delete' | 'archive' | 'move' | 'favorite' | 'hide_from_profile' | 'show_in_profile';
 
 /**
  * Configuration d'une zone de drop

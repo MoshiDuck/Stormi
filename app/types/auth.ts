@@ -39,6 +39,15 @@ export interface StreamingProfile {
 /** Profil actif en session (stocké après sélection). */
 export type ActiveProfile = StreamingProfile;
 
+/** Restriction de contenu : un profil ne peut pas voir cet élément du catalogue. */
+export type ContentRestrictionScope = 'file' | 'show' | 'artist' | 'category';
+
+export interface ContentRestriction {
+    scope: ContentRestrictionScope;
+    reference: string;
+    created_at?: number;
+}
+
 export interface AuthConfig {
     googleClientId: string | null;
     baseUrl: string;

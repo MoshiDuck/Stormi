@@ -21,6 +21,9 @@ const CREATE_ACCOUNT_PIN_TABLE =
 const CREATE_PIN_RATE_LIMIT_TABLE =
     "CREATE TABLE IF NOT EXISTS pin_rate_limit (account_id TEXT PRIMARY KEY, attempts_count INTEGER NOT NULL DEFAULT 0, window_start INTEGER NOT NULL)";
 
+const CREATE_PROFILE_CONTENT_RESTRICTION_TABLE =
+    "CREATE TABLE IF NOT EXISTS profile_content_restriction (profile_id TEXT NOT NULL, scope TEXT NOT NULL, reference TEXT NOT NULL, created_at INTEGER DEFAULT (strftime('%s', 'now')), PRIMARY KEY (profile_id, scope, reference))";
+
 function json<T>(c: { json: (body: T, status?: number, headers?: Record<string, string>) => Response }, body: T, status = 200) {
     return c.json(body, status, CORS);
 }
@@ -66,6 +69,8 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
     app.options('/api/profiles/pin/status', (c) => new Response(null, { status: 204, headers: CORS }));
     app.options('/api/profiles/pin/set', (c) => new Response(null, { status: 204, headers: CORS }));
     app.options('/api/profiles/pin/verify', (c) => new Response(null, { status: 204, headers: CORS }));
+    app.options('/api/profiles/:id/restrictions', (c) => new Response(null, { status: 204, headers: CORS }));
+    app.options('/api/profiles/restrictions-for-item', (c) => new Response(null, { status: 204, headers: CORS }));
 
     async function getAccountFromAuth(c: { req: { header: (name: string) => string | undefined }; env: Bindings }): Promise<string | null> {
         try {
@@ -96,6 +101,14 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             await db.prepare('ALTER TABLE user_profile ADD COLUMN is_child INTEGER NOT NULL DEFAULT 0').run();
         } catch {
             // Colonne déjà existante
+        }
+    }
+
+    async function ensureProfileRestrictionTable(db: D1Database): Promise<void> {
+        try {
+            await db.prepare(CREATE_PROFILE_CONTENT_RESTRICTION_TABLE).run();
+        } catch {
+            // Table déjà existante
         }
     }
 
@@ -362,10 +375,113 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             if (pinResult.rateLimited) return json(c, { error: 'Trop de tentatives. Réessayez dans 15 minutes.' }, 429);
             if (!pinResult.ok) return json(c, { error: 'Code PIN incorrect' }, 403);
 
+            await c.env.DATABASE.prepare('DELETE FROM profile_content_restriction WHERE profile_id = ?').bind(id).run();
             await c.env.DATABASE.prepare('DELETE FROM user_profile WHERE id = ?').bind(id).run();
             return json(c, { success: true });
         } catch (e) {
             console.error('DELETE /api/profiles/:id:', e);
+            return json(c, { error: 'Erreur serveur' }, 500);
+        }
+    });
+
+    // Quels profils du compte ont une restriction pour un item (scope + reference)
+    app.get('/api/profiles/restrictions-for-item', async (c) => {
+        if (!c.env.DATABASE) return json(c, { error: 'Configuration serveur' }, 500);
+        const accountId = await getAccountFromAuth(c);
+        if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
+        const scope = c.req.query('scope')?.trim().toLowerCase() ?? '';
+        const reference = c.req.query('reference')?.trim() ?? '';
+        if (!scope || !reference) return json(c, { error: 'scope et reference requis (query)' }, 400);
+        try {
+            await ensureProfileRestrictionTable(c.env.DATABASE);
+            const profilesResult = await c.env.DATABASE.prepare('SELECT id FROM user_profile WHERE account_id = ?').bind(accountId).all();
+            const profileRows = getResultsFromD1All(profilesResult) as { id?: string }[];
+            const profileIds = profileRows.map((r) => String(r.id ?? '')).filter(Boolean);
+            if (profileIds.length === 0) return json(c, { profileIds: [] });
+            const placeholders = profileIds.map(() => '?').join(',');
+            const result = await c.env.DATABASE.prepare(
+                `SELECT profile_id FROM profile_content_restriction WHERE scope = ? AND reference = ? AND profile_id IN (${placeholders})`
+            ).bind(scope, reference, ...profileIds).all();
+            const rows = getResultsFromD1All(result) as { profile_id?: string }[];
+            const restrictedProfileIds = rows.map((r) => String(r.profile_id ?? '')).filter(Boolean);
+            return json(c, { profileIds: restrictedProfileIds });
+        } catch (e) {
+            console.error('GET /api/profiles/restrictions-for-item:', e);
+            return json(c, { error: 'Erreur serveur' }, 500);
+        }
+    });
+
+    // Restrictions de contenu par profil (ce que le profil ne peut pas voir du catalogue principal)
+    app.get('/api/profiles/:id/restrictions', async (c) => {
+        if (!c.env.DATABASE) return json(c, { error: 'Configuration serveur' }, 500);
+        const accountId = await getAccountFromAuth(c);
+        if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
+        const id = c.req.param('id');
+        if (!id) return json(c, { error: 'ID manquant' }, 400);
+        try {
+            const profile = await c.env.DATABASE.prepare('SELECT id, account_id FROM user_profile WHERE id = ? AND account_id = ?').bind(id, accountId).first() as { id?: string } | null;
+            if (!profile) return json(c, { error: 'Profil non trouvé' }, 404);
+            await ensureProfileRestrictionTable(c.env.DATABASE);
+            const result = await c.env.DATABASE.prepare('SELECT profile_id, scope, reference, created_at FROM profile_content_restriction WHERE profile_id = ? ORDER BY created_at ASC').bind(id).all();
+            const rows = getResultsFromD1All(result);
+            const restrictions = rows.map((r: unknown) => {
+                const row = r && typeof r === 'object' ? r as Record<string, unknown> : {};
+                return { scope: String(row.scope ?? ''), reference: String(row.reference ?? ''), created_at: Number(row.created_at ?? 0) };
+            });
+            return json(c, { restrictions });
+        } catch (e) {
+            console.error('GET /api/profiles/:id/restrictions:', e);
+            return json(c, { error: 'Erreur serveur' }, 500);
+        }
+    });
+
+    app.post('/api/profiles/:id/restrictions', async (c) => {
+        if (!c.env.DATABASE) return json(c, { error: 'Configuration serveur' }, 500);
+        const accountId = await getAccountFromAuth(c);
+        if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
+        const id = c.req.param('id');
+        if (!id) return json(c, { error: 'ID manquant' }, 400);
+        try {
+            const profile = await c.env.DATABASE.prepare('SELECT id, account_id FROM user_profile WHERE id = ? AND account_id = ?').bind(id, accountId).first() as { id?: string } | null;
+            if (!profile) return json(c, { error: 'Profil non trouvé' }, 404);
+            const body = (await c.req.json()) as { scope?: string; reference?: string };
+            const scope = typeof body.scope === 'string' ? body.scope.trim().toLowerCase() : '';
+            const reference = typeof body.reference === 'string' ? body.reference.trim() : '';
+            const allowedScopes = ['file', 'show', 'artist', 'category'];
+            if (!allowedScopes.includes(scope) || !reference) return json(c, { error: 'scope (file|show|artist|category) et reference requis' }, 400);
+            await ensureProfileRestrictionTable(c.env.DATABASE);
+            await c.env.DATABASE.prepare('INSERT OR IGNORE INTO profile_content_restriction (profile_id, scope, reference, created_at) VALUES (?, ?, ?, ?)').bind(id, scope, reference, Math.floor(Date.now() / 1000)).run();
+            const restrictions = await c.env.DATABASE.prepare('SELECT profile_id, scope, reference, created_at FROM profile_content_restriction WHERE profile_id = ? ORDER BY created_at ASC').bind(id).all();
+            const rows = getResultsFromD1All(restrictions);
+            const list = rows.map((r: unknown) => {
+                const row = r && typeof r === 'object' ? r as Record<string, unknown> : {};
+                return { scope: String(row.scope ?? ''), reference: String(row.reference ?? ''), created_at: Number(row.created_at ?? 0) };
+            });
+            return json(c, { restrictions: list });
+        } catch (e) {
+            console.error('POST /api/profiles/:id/restrictions:', e);
+            return json(c, { error: 'Erreur serveur' }, 500);
+        }
+    });
+
+    app.delete('/api/profiles/:id/restrictions', async (c) => {
+        if (!c.env.DATABASE) return json(c, { error: 'Configuration serveur' }, 500);
+        const accountId = await getAccountFromAuth(c);
+        if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
+        const id = c.req.param('id');
+        if (!id) return json(c, { error: 'ID manquant' }, 400);
+        try {
+            const profile = await c.env.DATABASE.prepare('SELECT id, account_id FROM user_profile WHERE id = ? AND account_id = ?').bind(id, accountId).first() as { id?: string } | null;
+            if (!profile) return json(c, { error: 'Profil non trouvé' }, 404);
+            const body = (await c.req.json()) as { scope?: string; reference?: string };
+            const scope = typeof body.scope === 'string' ? body.scope.trim().toLowerCase() : '';
+            const reference = typeof body.reference === 'string' ? body.reference.trim() : '';
+            if (!scope || !reference) return json(c, { error: 'scope et reference requis' }, 400);
+            await ensureProfileRestrictionTable(c.env.DATABASE);
+            await c.env.DATABASE.prepare('DELETE FROM profile_content_restriction WHERE profile_id = ? AND scope = ? AND reference = ?').bind(id, scope, reference).run();
+            return json(c, { success: true });
+        } catch (e) {
+            console.error('DELETE /api/profiles/:id/restrictions:', e);
             return json(c, { error: 'Erreur serveur' }, 500);
         }
     });
