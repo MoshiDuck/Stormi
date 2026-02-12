@@ -17,6 +17,7 @@ class FileItem {
   final String? artists;
   final String? albums;
   final String? albumThumbnails;
+  final String? mimeType;
 
   const FileItem({
     required this.fileId,
@@ -37,6 +38,7 @@ class FileItem {
     this.artists,
     this.albums,
     this.albumThumbnails,
+    this.mimeType,
   });
 
   factory FileItem.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,7 @@ class FileItem {
       artists: json['artists'] as String?,
       albums: json['albums'] as String?,
       albumThumbnails: json['album_thumbnails'] as String?,
+      mimeType: json['mime_type'] as String?,
     );
   }
 

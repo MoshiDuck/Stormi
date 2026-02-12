@@ -7,6 +7,7 @@ import '../providers/cache_invalidation_notifier.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auth_service.dart';
+import '../utils/responsive.dart';
 import 'upload_screen.dart';
 import 'watch_screen.dart';
 import 'music_screen.dart';
@@ -59,6 +60,13 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final theme = context.watch<ThemeProvider>();
     final lang = context.watch<LanguageProvider>();
+    final r = Responsive.of(context);
+    final iconSize = r.iconSize(22);
+    final fontSize = r.sp(10.5);
+    final barPaddingH = r.wp(1).clamp(2, 10).toDouble();
+    final barPaddingV = r.hp(0.8).clamp(4, 10).toDouble();
+    final itemPaddingH = r.wp(1).clamp(2, 8).toDouble();
+    final itemPaddingV = r.hp(0.6).clamp(4, 8).toDouble();
 
     return Scaffold(
       backgroundColor: theme.themeData.scaffoldBackgroundColor,
@@ -85,43 +93,63 @@ class _MainShellState extends State<MainShell> {
           ],
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(_tabs.length, (i) {
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: r.navBarHeight),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: barPaddingH, vertical: barPaddingV),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: r.maxContentWidth),
+                  child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(_tabs.length, (i) {
                 final item = _tabs[i];
                 final selected = _currentIndex == i;
                 final label = lang.t(item.labelKey);
                 final activeColor = theme.navIconColor;
                 final inactiveColor = theme.navIconColorInactive;
-                return InkWell(
-                  onTap: () => setState(() => _currentIndex = i),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          item.icon,
-                          size: 26,
-                          color: selected ? activeColor : inactiveColor,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                return Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _currentIndex = i),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: itemPaddingH,
+                        vertical: itemPaddingV,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            item.icon,
+                            size: iconSize,
                             color: selected ? activeColor : inactiveColor,
                           ),
-                        ),
-                      ],
+                          SizedBox(height: r.gapS * 0.5),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                                color: selected ? activeColor : inactiveColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               }),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

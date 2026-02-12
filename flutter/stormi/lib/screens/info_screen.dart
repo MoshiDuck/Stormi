@@ -9,6 +9,8 @@ import '../providers/theme_provider.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../services/cache_service.dart';
+import '../utils/responsive.dart';
+import 'match_screen.dart';
 import 'player_screen.dart';
 
 /// Page détail d’un fichier (film / série / etc.).
@@ -52,6 +54,9 @@ class _InfoScreenState extends State<InfoScreen> {
     final thumbUrl = f != null && (f.thumbnailUrl?.isNotEmpty == true)
         ? f.thumbnailUrl!
         : ApiClient.thumbnailUrl(category, fileId);
+    final r = Responsive.of(context);
+    final posterW = (r.safeWidth * 0.7).clamp(200.0, 320.0);
+    final posterH = (posterW * (400 / 280)).clamp(280.0, 460.0);
 
     return Scaffold(
       backgroundColor: theme.themeData.scaffoldBackgroundColor,
@@ -70,58 +75,58 @@ class _InfoScreenState extends State<InfoScreen> {
           children: [
             Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(r.radius),
                 child: Image.network(
                   thumbUrl,
-                  width: 280,
-                  height: 400,
+                  width: posterW,
+                  height: posterH,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
-                    width: 280,
-                    height: 400,
+                    width: posterW,
+                    height: posterH,
                     color: colorScheme.surfaceContainerHighest,
-                    child: Icon(Icons.broken_image, color: colorScheme.onSurface.withValues(alpha: 0.5), size: 64),
+                    child: Icon(Icons.broken_image, color: colorScheme.onSurface.withValues(alpha: 0.5), size: r.iconSize(64)),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(r.padH),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     f?.displayTitle ?? fileId,
-                    style: TextStyle(color: colorScheme.onSurface, fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(24), fontWeight: FontWeight.bold),
                   ),
                   if (f?.year != null || f?.duration != null) ...[
-                    const SizedBox(height: 8),
+                    SizedBox(height: r.gapS),
                     Row(
                       children: [
-                        if (f!.year != null) Text('${f.year}', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8))),
+                        if (f!.year != null) Text('${f.year}', style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(14))),
                         if (f.duration != null) ...[
-                          if (f.year != null) const SizedBox(width: 12),
-                          Text(_formatDuration(f.duration!), style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8))),
+                          if (f.year != null) SizedBox(width: r.gapS),
+                          Text(_formatDuration(f.duration!), style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(14))),
                         ],
                       ],
                     ),
                   ],
                   if (f?.description?.isNotEmpty == true) ...[
-                    const SizedBox(height: 16),
+                    SizedBox(height: r.gap),
                     Text(
                       f!.description!,
-                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.85), height: 1.5),
+                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.85), height: 1.5, fontSize: r.sp(14)),
                       maxLines: 6,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 24),
+                  SizedBox(height: r.padV),
                   if (_watchProgress != null && _watchProgress!.currentTime > 0) ...[
                     Text(
                       '${lang.t('info.resumeAt')} ${_formatDuration(_watchProgress!.currentTime.round())}',
-                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: 14),
+                      style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(14)),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: r.gapS),
                   ],
                   SizedBox(
                     width: double.infinity,
@@ -132,21 +137,34 @@ class _InfoScreenState extends State<InfoScreen> {
                       style: FilledButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: r.padV * 0.7),
                       ),
                     ),
                   ),
                   if (category == 'videos' || category == 'musics') ...[
-                    const SizedBox(height: 12),
+                    SizedBox(height: r.gapS),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _openMatch(context),
+                        icon: Icon(Icons.search_rounded, color: colorScheme.primary),
+                        label: Text(lang.t('info.identify'), style: TextStyle(color: colorScheme.primary, fontSize: r.sp(15))),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: colorScheme.primary),
+                          padding: EdgeInsets.symmetric(vertical: r.padV * 0.7),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: r.gapS),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         onPressed: () => _delete(context),
                         icon: Icon(Icons.delete_outline_rounded, color: colorScheme.error),
-                        label: Text(lang.t('common.delete'), style: TextStyle(color: colorScheme.error)),
+                        label: Text(lang.t('common.delete'), style: TextStyle(color: colorScheme.error, fontSize: r.sp(15))),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: colorScheme.error),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: r.padV * 0.7),
                         ),
                       ),
                     ),
@@ -209,6 +227,21 @@ class _InfoScreenState extends State<InfoScreen> {
       return '${h}h ${min}min';
     }
     return s > 0 ? '${m}min ${s}s' : '${m}min';
+  }
+
+  Future<void> _openMatch(BuildContext context) async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => MatchScreen(category: widget.category, fileId: widget.fileId),
+      ),
+    );
+    final userId = context.read<AuthService>().user?.id;
+    if (result == true && mounted && userId != null) {
+      context.read<CacheInvalidationNotifier>().invalidateAfterUpload(userId, widget.category);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.read<LanguageProvider>().t('match.saved')), backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+      );
+    }
   }
 
   void _play(BuildContext context) {

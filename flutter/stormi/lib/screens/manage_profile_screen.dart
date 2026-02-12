@@ -6,6 +6,7 @@ import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auth_service.dart';
 import '../services/cache_service.dart';
+import '../utils/responsive.dart';
 import 'theme_settings_screen.dart';
 import 'language_settings_screen.dart';
 import 'help_screen.dart';
@@ -20,41 +21,42 @@ class ManageProfileScreen extends StatelessWidget {
     final lang = context.watch<LanguageProvider>();
     final colorScheme = theme.themeData.colorScheme;
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: theme.themeData.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.themeData.appBarTheme.backgroundColor,
         foregroundColor: theme.themeData.appBarTheme.foregroundColor,
-        title: Text(lang.t('manage.title'), style: TextStyle(color: colorScheme.onSurface)),
+        title: Text(lang.t('manage.title'), style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18))),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(r.padH),
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.only(bottom: r.gap),
               child: Text(
                 '← ${lang.t('manage.backToProfile')}',
-                style: TextStyle(color: colorScheme.primary, fontSize: 14, fontWeight: FontWeight.w500),
+                style: TextStyle(color: colorScheme.primary, fontSize: r.sp(14), fontWeight: FontWeight.w500),
               ),
             ),
           ),
           Text(
             lang.t('manage.title'),
-            style: TextStyle(color: colorScheme.onSurface, fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(24), fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: r.gapS),
           Text(
             lang.t('manage.subtitle'),
-            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 15),
+            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: r.sp(15)),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: r.padV),
           _CardTile(
             icon: Icons.palette_outlined,
             title: lang.t('manage.appearance'),
@@ -66,7 +68,7 @@ class ManageProfileScreen extends StatelessWidget {
             cardColor: cardColor,
             colorScheme: colorScheme,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: r.gapS),
           _CardTile(
             icon: Icons.language_rounded,
             title: lang.t('manage.language'),
@@ -78,7 +80,7 @@ class ManageProfileScreen extends StatelessWidget {
             cardColor: cardColor,
             colorScheme: colorScheme,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: r.gapS),
           _CardTile(
             icon: Icons.person_outline_rounded,
             title: lang.t('manage.personalData'),
@@ -87,7 +89,7 @@ class ManageProfileScreen extends StatelessWidget {
             cardColor: cardColor,
             colorScheme: colorScheme,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: r.gapS),
           _CardTile(
             icon: Icons.help_outline_rounded,
             title: lang.t('manage.help'),
@@ -99,7 +101,7 @@ class ManageProfileScreen extends StatelessWidget {
             cardColor: cardColor,
             colorScheme: colorScheme,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: r.gapS),
           _LogoutCardTile(
             lang: lang,
             colorScheme: colorScheme,
@@ -158,16 +160,17 @@ class _LogoutCardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final r = Responsive.of(context);
     return Card(
       color: cardColor,
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: EdgeInsets.symmetric(horizontal: r.padH, vertical: r.gapS),
         leading: CircleAvatar(
           backgroundColor: colorScheme.errorContainer,
           child: Icon(Icons.logout_rounded, color: colorScheme.error),
         ),
-        title: Text(lang.t('profile.logout'), style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500)),
-        subtitle: Text(lang.t('dialogs.logoutMessage'), style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 13)),
+        title: Text(lang.t('profile.logout'), style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: r.sp(16))),
+        subtitle: Text(lang.t('dialogs.logoutMessage'), style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: r.sp(13))),
         trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurface.withValues(alpha: 0.6)),
         onTap: onLogout,
       ),
@@ -194,16 +197,17 @@ class _CardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final r = Responsive.of(context);
     return Card(
       color: cardColor,
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: EdgeInsets.symmetric(horizontal: r.padH, vertical: r.gapS),
         leading: CircleAvatar(
           backgroundColor: colorScheme.surfaceContainerHighest,
           child: Icon(icon, color: colorScheme.primary),
         ),
-        title: Text(title, style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 13)),
+        title: Text(title, style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: r.sp(16))),
+        subtitle: Text(subtitle, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: r.sp(13))),
         trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurface.withValues(alpha: 0.6)),
         onTap: onTap,
       ),

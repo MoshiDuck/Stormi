@@ -10,6 +10,7 @@ import '../providers/theme_provider.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../services/cache_service.dart';
+import '../utils/responsive.dart';
 import 'info_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -140,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = context.watch<ThemeProvider>();
     final lang = context.watch<LanguageProvider>();
     final colorScheme = theme.themeData.colorScheme;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: theme.themeData.scaffoldBackgroundColor,
@@ -167,14 +169,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (!widget.showAsStatisticsPage) SliverToBoxAdapter(child: _buildAppBar(theme, lang)),
                         if (_stats != null) SliverToBoxAdapter(child: _buildStatsCard(context, theme, lang)),
                         if (_continueWatching.isNotEmpty) ...[
-                          SliverToBoxAdapter(child: _sectionTitle(lang.t('home.continueWatching'), theme)),
+                          SliverToBoxAdapter(child: _sectionTitle(context, lang.t('home.continueWatching'), theme)),
                           SliverToBoxAdapter(child: _horizontalList(_continueWatching, theme)),
                         ],
                         if (_recentlyAdded.isNotEmpty) ...[
-                          SliverToBoxAdapter(child: _sectionTitle(lang.t('home.recentlyAdded'), theme)),
+                          SliverToBoxAdapter(child: _sectionTitle(context, lang.t('home.recentlyAdded'), theme)),
                           SliverToBoxAdapter(child: _horizontalList(_recentlyAdded, theme)),
                         ],
-                        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                        SliverToBoxAdapter(child: SizedBox(height: Responsive.of(context).padV)),
                       ],
                     ),
         ),
@@ -184,15 +186,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildAppBar(ThemeProvider theme, LanguageProvider lang) {
     final colorScheme = theme.themeData.colorScheme;
+    final r = Responsive.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: EdgeInsets.fromLTRB(r.padH, r.padV * 0.8, r.padH, r.gapS),
       child: Row(
         children: [
           Text(
             'Stormi',
             style: TextStyle(
               color: colorScheme.onSurface,
-              fontSize: 24,
+              fontSize: r.sp(24),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -203,16 +206,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildError(BuildContext context, ThemeProvider theme, LanguageProvider lang) {
     final colorScheme = theme.themeData.colorScheme;
+    final r = Responsive.of(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(r.padH),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: colorScheme.onSurface.withValues(alpha: 0.7)),
-            const SizedBox(height: 16),
-            Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8))),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, size: r.iconSize(48), color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            SizedBox(height: r.gap),
+            Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(14))),
+            SizedBox(height: r.gap),
             FilledButton.icon(
               onPressed: _load,
               icon: const Icon(Icons.refresh),
@@ -229,51 +233,55 @@ class _HomeScreenState extends State<HomeScreen> {
     final s = _stats!;
     final colorScheme = theme.themeData.colorScheme;
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+    final r = Responsive.of(context);
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(horizontal: r.padH, vertical: r.gapS),
+      padding: EdgeInsets.all(r.padH),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(r.radius),
         border: Border.all(color: theme.themeData.dividerColor),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _statItem(lang.t('home.files'), '${s.fileCount}', colorScheme),
-          _statItem(lang.t('home.size'), '${s.totalSizeGB.toStringAsFixed(1)} Go', colorScheme),
+          _statItem(context, lang.t('home.files'), '${s.fileCount}', colorScheme),
+          _statItem(context, lang.t('home.size'), '${s.totalSizeGB.toStringAsFixed(1)} Go', colorScheme),
         ],
       ),
     );
   }
 
-  Widget _statItem(String label, String value, ColorScheme colorScheme) {
+  Widget _statItem(BuildContext context, String label, String value, ColorScheme colorScheme) {
+    final r = Responsive.of(context);
     return Column(
       children: [
-        Text(value, style: TextStyle(color: colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 12)),
+        Text(value, style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(20), fontWeight: FontWeight.bold)),
+        SizedBox(height: r.gapS),
+        Text(label, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: r.sp(12))),
       ],
     );
   }
 
-  Widget _sectionTitle(String title, ThemeProvider theme) {
+  Widget _sectionTitle(BuildContext context, String title, ThemeProvider theme) {
     final colorScheme = theme.themeData.colorScheme;
+    final r = Responsive.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: EdgeInsets.fromLTRB(r.padH, r.padV, r.padH, r.gapS),
       child: Text(
         title,
-        style: TextStyle(color: colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w600),
+        style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18), fontWeight: FontWeight.w600),
       ),
     );
   }
 
   Widget _horizontalList(List<FileItem> items, ThemeProvider theme) {
+    final r = Responsive.of(context);
     return SizedBox(
-      height: 160,
+      height: r.hp(22).clamp(140, 200).toDouble(),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: r.gapS),
         itemCount: items.length,
         itemBuilder: (context, i) {
           final f = items[i];
@@ -287,6 +295,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _posterCard(FileItem f, ThemeProvider theme, {double? progress}) {
     final colorScheme = theme.themeData.colorScheme;
+    final r = Responsive.of(context);
+    final cardW = r.wp(28).clamp(90, 140).toDouble();
+    final cardH = (cardW * 150 / 110).clamp(120, 180).toDouble();
     final thumbUrl = f.thumbnailUrl != null && f.thumbnailUrl!.isNotEmpty
         ? f.thumbnailUrl
         : ApiClient.thumbnailUrl(f.category, f.fileId);
@@ -300,51 +311,51 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
       child: Container(
-      width: 110,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Stack(
-              children: [
-                Image.network(
-                  thumbUrl!,
-                  width: 110,
-                  height: 150,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 110,
-                    height: 150,
-                    color: colorScheme.surfaceContainerHighest,
-                    child: Icon(Icons.broken_image, color: colorScheme.onSurface.withValues(alpha: 0.5)),
-                  ),
-                ),
-                if (progress != null && progress > 0)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: LinearProgressIndicator(
-                      value: progress / 100,
-                      backgroundColor: Colors.black45,
-                      valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+        width: cardW,
+        margin: EdgeInsets.symmetric(horizontal: r.gapS * 0.5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(r.radius * 0.7),
+              child: Stack(
+                children: [
+                  Image.network(
+                    thumbUrl!,
+                    width: cardW,
+                    height: cardH,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      width: cardW,
+                      height: cardH,
+                      color: colorScheme.surfaceContainerHighest,
+                      child: Icon(Icons.broken_image, color: colorScheme.onSurface.withValues(alpha: 0.5)),
                     ),
                   ),
-              ],
+                  if (progress != null && progress > 0)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: LinearProgressIndicator(
+                        value: progress / 100,
+                        backgroundColor: Colors.black45,
+                        valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            f.displayTitle,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: colorScheme.onSurface, fontSize: 12),
-          ),
-        ],
+            SizedBox(height: r.gapS * 0.7),
+            Text(
+              f.displayTitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(12)),
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

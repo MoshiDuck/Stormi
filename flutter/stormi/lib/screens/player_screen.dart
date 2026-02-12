@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
+import '../utils/responsive.dart';
 
 /// Lecteur vidéo/audio plein écran (portrait du site reader). Sauvegarde la progression si fileId/userId fournis.
 class PlayerScreen extends StatefulWidget {
@@ -80,6 +81,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -88,7 +90,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
         foregroundColor: Colors.white,
         title: Text(
           widget.title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: Colors.white, fontSize: r.sp(16)),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -100,17 +102,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
       body: Center(
         child: _error != null
             ? Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(r.padH),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, size: 48, color: colorScheme.error),
-                    const SizedBox(height: 16),
-                    Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: colorScheme.error)),
-                    const SizedBox(height: 16),
+                    Icon(Icons.error_outline, size: r.iconSize(48), color: colorScheme.error),
+                    SizedBox(height: r.gap),
+                    Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: colorScheme.error, fontSize: r.sp(14))),
+                    SizedBox(height: r.gap),
                     FilledButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Fermer'),
+                      child: Text('Fermer', style: TextStyle(fontSize: r.sp(15))),
                     ),
                   ],
                 ),

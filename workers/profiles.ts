@@ -65,6 +65,7 @@ function getResultsFromD1All(result: unknown): unknown[] {
 
 export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
     app.options('/api/profiles', (c) => new Response(null, { status: 204, headers: CORS }));
+    app.options('/api/profiles/reorder', (c) => new Response(null, { status: 204, headers: CORS }));
     app.options('/api/profiles/:id', (c) => new Response(null, { status: 204, headers: CORS }));
     app.options('/api/profiles/pin/status', (c) => new Response(null, { status: 204, headers: CORS }));
     app.options('/api/profiles/pin/set', (c) => new Response(null, { status: 204, headers: CORS }));
@@ -380,6 +381,28 @@ export function registerProfileRoutes(app: Hono<{ Bindings: Bindings }>) {
             return json(c, { success: true });
         } catch (e) {
             console.error('DELETE /api/profiles/:id:', e);
+            return json(c, { error: 'Erreur serveur' }, 500);
+        }
+    });
+
+    // Réordonner les profils (ordre d'affichage)
+    app.post('/api/profiles/reorder', async (c) => {
+        if (!c.env.DATABASE) return json(c, { error: 'Configuration serveur' }, 500);
+        const accountId = await getAccountFromAuth(c);
+        if (!accountId) return json(c, { error: 'Non autorisé' }, 401);
+        try {
+            const body = (await c.req.json()) as { profileIds?: string[] };
+            const profileIds = Array.isArray(body.profileIds) ? body.profileIds.filter((id): id is string => typeof id === 'string') : [];
+            if (profileIds.length === 0) return json(c, { success: true });
+            const now = Math.floor(Date.now() / 1000);
+            for (let i = 0; i < profileIds.length; i++) {
+                await c.env.DATABASE.prepare(
+                    'UPDATE user_profile SET sort_order = ?, updated_at = ? WHERE id = ? AND account_id = ?'
+                ).bind(i, now, profileIds[i], accountId).run();
+            }
+            return json(c, { success: true });
+        } catch (e) {
+            console.error('POST /api/profiles/reorder:', e);
             return json(c, { error: 'Erreur serveur' }, 500);
         }
     });

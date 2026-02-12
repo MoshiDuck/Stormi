@@ -320,7 +320,12 @@ app.post('/api/upload', async (c) => {
         const formData = await c.req.formData();
         const file = formData.get('file') as File;
         const userId = formData.get('userId') as string;
+        const filenameFromField = (formData.get('filename') as string | null)?.trim() || undefined;
+        const filenameFromHeader = (c.req.header('X-Upload-Filename') || '').trim() || undefined;
+        const filenameForCategory = filenameFromField || filenameFromHeader;
         const basicMetadataStr = formData.get('basicMetadata') as string | null;
+        // Log diagnostic catégorie (Flutter envoie filename en champ + en-tête; si vide → tout part en others)
+        console.log('[UPLOAD] filenameFromField=' + JSON.stringify(filenameFromField) + ' filenameFromHeader=' + JSON.stringify(filenameFromHeader) + ' file.name=' + JSON.stringify(file?.name) + ' file.type=' + JSON.stringify(file?.type));
         const fileCreatedAtStr = formData.get('file_created_at') as string | null;
         let basicMetadata: any = null;
         let fileCreatedAt: number | null = null;
@@ -357,12 +362,14 @@ app.post('/api/upload', async (c) => {
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 2. Classifier le fichier
-        const category = classifyFileByMimeType(file.type);
+        // 2. Classifier le fichier (MIME + fallback par extension pour clients type Flutter qui envoient application/octet-stream)
+        const nameForCategory = filenameForCategory || file?.name || '';
+        const category = classifyFileByMimeType(file.type, nameForCategory || undefined);
+        console.log('[UPLOAD] nameForCategory=' + JSON.stringify(nameForCategory) + ' category=' + category);
 
         // 3. Générer un fileId basé sur le hash
         const timestamp = Date.now();
-        const extension = file.name.split('.').pop() || 'bin';
+        const extension = (nameForCategory && nameForCategory.includes('.')) ? nameForCategory.split('.').pop()! : (typeof file?.name === 'string' && file.name.includes('.')) ? file.name.split('.').pop()! : 'bin';
         const fileId = `${hash.slice(0, 16)}_${timestamp}.${extension}`;
 
         // 4. Vérifier si le fichier existe déjà (déduplication)
@@ -382,7 +389,7 @@ app.post('/api/upload', async (c) => {
                 success: true,
                 file: {
                     id: existingFileId,
-                    name: file.name,
+                    name: nameForCategory || file.name,
                     size: file.size,
                     type: file.type,
                     url: `/api/files/${category}/${existingFileId}`,
@@ -391,10 +398,9 @@ app.post('/api/upload', async (c) => {
             });
         }
 
-        // 5. Uploader le fichier sur R2 avec la bonne extension
-        const fileExtension = file.name.split('.').pop() || 'bin';
+        // 5. Uploader le fichier sur R2 avec la bonne extension (utiliser extension issu du nom, pas file.name vide depuis Flutter)
         await c.env.STORAGE.put(
-            `${category}/${fileId}/content.${fileExtension}`,
+            `${category}/${fileId}/content.${extension}`,
             fileBuffer,
             {
                 httpMetadata: {
@@ -415,7 +421,7 @@ app.post('/api/upload', async (c) => {
                 file.size,
                 file.type,
                 hash,
-                file.name, // TOUJOURS utiliser le nom original du fichier
+                nameForCategory || file.name || fileId, // nom original (champ filename depuis Flutter)
                 Math.floor(Date.now() / 1000),
                 fileCreatedAt
             ).run();
@@ -431,7 +437,7 @@ app.post('/api/upload', async (c) => {
                     file.size,
                     file.type,
                     hash,
-                    file.name,
+                    nameForCategory || file.name || fileId,
                     Math.floor(Date.now() / 1000)
                 ).run();
             } else {
@@ -1361,7 +1367,7 @@ app.post('/api/upload', async (c) => {
             success: true,
             file: {
                 id: fileId,
-                name: file.name,
+                name: nameForCategory || file.name,
                 size: file.size,
                 type: file.type,
                 url: `/api/files/${category}/${fileId}`
@@ -1374,14 +1380,31 @@ app.post('/api/upload', async (c) => {
     }
 });
 
-function classifyFileByMimeType(mimeType: string): string {
-    if (mimeType.startsWith('image/')) return 'images';
-    if (mimeType.startsWith('video/')) return 'videos';
-    if (mimeType.startsWith('audio/')) return 'musics';
-    if (mimeType === 'application/pdf') return 'documents';
-    if (mimeType.includes('word') || mimeType.includes('excel') || mimeType.includes('powerpoint')) return 'documents';
-    if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('tar') || mimeType.includes('7z')) return 'archives';
-    if (mimeType.includes('exe') || mimeType.includes('dmg') || mimeType.includes('msi')) return 'executables';
+/** Extensions -> category (fallback quand le client envoie un MIME générique, ex. Flutter) */
+const EXTENSION_TO_CATEGORY: Record<string, string> = {
+    '.jpg': 'images', '.jpeg': 'images', '.png': 'images', '.gif': 'images', '.webp': 'images', '.bmp': 'images', '.nef': 'images', '.heic': 'images',
+    '.pdf': 'documents', '.doc': 'documents', '.docx': 'documents', '.xls': 'documents', '.xlsx': 'documents', '.txt': 'documents', '.csv': 'documents', '.html': 'documents',
+    '.mp4': 'videos', '.avi': 'videos', '.mov': 'videos', '.mkv': 'videos', '.webm': 'videos',
+    '.mp3': 'musics', '.wav': 'musics', '.flac': 'musics', '.m4a': 'musics', '.ogg': 'musics', '.aac': 'musics',
+    '.zip': 'archives', '.rar': 'archives', '.tar': 'archives', '.gz': 'archives', '.7z': 'archives',
+    '.exe': 'executables', '.dmg': 'executables', '.pkg': 'executables', '.msi': 'executables', '.apk': 'executables', '.app': 'executables', '.deb': 'executables', '.rpm': 'executables', '.appimage': 'executables', '.run': 'executables', '.bin': 'executables', '.sh': 'executables', '.bat': 'executables', '.cmd': 'executables', '.com': 'executables', '.scr': 'executables', '.appx': 'executables', '.ipa': 'executables',
+};
+
+function classifyFileByMimeType(mimeType: string, filename?: string): string {
+    const m = (mimeType || '').toLowerCase();
+    if (m && m !== 'application/octet-stream') {
+        if (m.startsWith('image/')) return 'images';
+        if (m.startsWith('video/')) return 'videos';
+        if (m.startsWith('audio/')) return 'musics';
+        if (m === 'application/pdf') return 'documents';
+        if (m.includes('word') || m.includes('excel') || m.includes('powerpoint') || m.includes('document') || m.includes('spreadsheet')) return 'documents';
+        if (m.includes('zip') || m.includes('rar') || m.includes('tar') || m.includes('7z') || m.includes('gzip')) return 'archives';
+        if (m.includes('exe') || m.includes('dmg') || m.includes('msi') || m.includes('executable') || m.includes('package')) return 'executables';
+    }
+    if (filename) {
+        const ext = '.' + (filename.split('.').pop() || '').toLowerCase();
+        if (ext && EXTENSION_TO_CATEGORY[ext]) return EXTENSION_TO_CATEGORY[ext];
+    }
     return 'others';
 }
 

@@ -9,11 +9,13 @@ import 'api_client.dart';
 
 const _storageKeyToken = 'stormi_jwt_token';
 const _storageKeyUserId = 'stormi_user_id';
+const _storageKeyActiveProfileId = 'stormi_active_profile_id';
 
 class AuthState {
   final ConfigResponse? config;
   final String? token;
   final stormi_models.User? user;
+  final String? activeProfileId;
   final bool loading;
   final String? error;
 
@@ -21,12 +23,14 @@ class AuthState {
     this.config,
     this.token,
     this.user,
+    this.activeProfileId,
     this.loading = false,
     this.error,
   });
 
   bool get isAuthenticated => token != null && token!.isNotEmpty;
   bool get hasGoogleAuth => config?.hasGoogleAuth ?? false;
+  bool get hasSelectedProfile => activeProfileId != null && activeProfileId!.isNotEmpty;
 }
 
 class AuthService extends ChangeNotifier {
@@ -42,13 +46,16 @@ class AuthService extends ChangeNotifier {
   ConfigResponse? get config => _state.config;
   String? get token => _state.token;
   stormi_models.User? get user => _state.user;
+  String? get activeProfileId => _state.activeProfileId;
   bool get isAuthenticated => _state.isAuthenticated;
+  bool get hasSelectedProfile => _state.hasSelectedProfile;
 
   Future<void> init() async {
     _setState(_state.copyWith(loading: true, error: null));
     try {
       final config = await _api.getConfig();
       final token = await _storage.read(key: _storageKeyToken);
+      final activeProfileId = await _storage.read(key: _storageKeyActiveProfileId);
       stormi_models.User? user;
       if (token != null && token.isNotEmpty) {
         final userId = await _storage.read(key: _storageKeyUserId);
@@ -59,12 +66,30 @@ class AuthService extends ChangeNotifier {
         config: config,
         token: token,
         user: user,
+        activeProfileId: activeProfileId,
         loading: false,
       ));
     } catch (e, st) {
       debugPrint('AuthService.init error: $e $st');
       _setState(_state.copyWith(loading: false, error: e.toString()));
     }
+  }
+
+  Future<void> setActiveProfile(String profileId) async {
+    await _storage.write(key: _storageKeyActiveProfileId, value: profileId);
+    _setState(_state.copyWith(activeProfileId: profileId));
+  }
+
+  Future<void> clearActiveProfile() async {
+    await _storage.delete(key: _storageKeyActiveProfileId);
+    _setState(AuthState(
+      config: _state.config,
+      token: _state.token,
+      user: _state.user,
+      activeProfileId: null,
+      loading: _state.loading,
+      error: _state.error,
+    ));
   }
 
   Future<void> signInWithGoogle() async {
@@ -112,6 +137,7 @@ class AuthService extends ChangeNotifier {
         config: _state.config,
         token: authResponse.token,
         user: authResponse.user,
+        activeProfileId: _state.activeProfileId,
         loading: false,
       ));
     } catch (e, st) {
@@ -123,6 +149,7 @@ class AuthService extends ChangeNotifier {
   Future<void> signOut() async {
     await _storage.delete(key: _storageKeyToken);
     await _storage.delete(key: _storageKeyUserId);
+    await _storage.delete(key: _storageKeyActiveProfileId);
     _api.setToken(null);
     try {
       await FirebaseAuth.instance.signOut();
@@ -130,7 +157,7 @@ class AuthService extends ChangeNotifier {
     try {
       await GoogleSignIn().signOut();
     } catch (_) {}
-    _setState(AuthState(config: _state.config, loading: false));
+    _setState(AuthState(config: _state.config, activeProfileId: null, loading: false));
   }
 
   void _setState(AuthState s) {
@@ -144,6 +171,7 @@ extension _AuthStateCopy on AuthState {
     ConfigResponse? config,
     String? token,
     stormi_models.User? user,
+    String? activeProfileId,
     bool? loading,
     String? error,
   }) {
@@ -151,6 +179,7 @@ extension _AuthStateCopy on AuthState {
       config: config ?? this.config,
       token: token ?? this.token,
       user: user ?? this.user,
+      activeProfileId: activeProfileId ?? this.activeProfileId,
       loading: loading ?? this.loading,
       error: error ?? this.error,
     );

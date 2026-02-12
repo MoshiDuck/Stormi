@@ -6,6 +6,7 @@ import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auth_service.dart';
 import '../services/cache_service.dart';
+import '../utils/responsive.dart';
 import 'manage_profile_screen.dart';
 import 'home_screen.dart';
 import 'community_screen.dart';
@@ -20,34 +21,35 @@ class ProfileScreen extends StatelessWidget {
     final lang = context.watch<LanguageProvider>();
     final colorScheme = theme.themeData.colorScheme;
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: theme.themeData.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.themeData.appBarTheme.backgroundColor,
         foregroundColor: theme.themeData.appBarTheme.foregroundColor,
-        title: Text(lang.t('profile.title'), style: TextStyle(color: colorScheme.onSurface)),
+        title: Text(lang.t('profile.title'), style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18))),
       ),
       body: Consumer<AuthService>(
         builder: (context, auth, _) {
           final user = auth.user;
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(r.padH),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
+                SizedBox(height: r.gapS),
                 GestureDetector(
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ManageProfileScreen())),
                   child: Text(
                     '${lang.t('profile.manage')} →',
-                    style: TextStyle(color: colorScheme.primary, fontSize: 14, fontWeight: FontWeight.w500),
+                    style: TextStyle(color: colorScheme.primary, fontSize: r.sp(14), fontWeight: FontWeight.w500),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: r.padV),
                 Center(
                   child: CircleAvatar(
-                    radius: 50,
+                    radius: r.wp(14).clamp(40, 56).toDouble(),
                     backgroundColor: colorScheme.surfaceContainerHighest,
                     backgroundImage: user?.picture != null && user!.picture!.isNotEmpty
                         ? NetworkImage(user.picture!)
@@ -57,18 +59,18 @@ class ProfileScreen extends StatelessWidget {
                             (user?.name?.isNotEmpty == true)
                                 ? user!.name!.substring(0, 1).toUpperCase()
                                 : '?',
-                            style: TextStyle(fontSize: 36, color: colorScheme.onSurface),
+                            style: TextStyle(fontSize: r.sp(32), color: colorScheme.onSurface),
                           )
                         : null,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: r.gap),
                 Center(
                   child: Text(
                     user?.name ?? lang.t('profile.title'),
                     style: TextStyle(
                       color: colorScheme.onSurface,
-                      fontSize: 22,
+                      fontSize: r.sp(22),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -78,35 +80,37 @@ class ProfileScreen extends StatelessWidget {
                     lang.t('profile.subtitle'),
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.7),
-                      fontSize: 14,
+                      fontSize: r.sp(14),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                _sectionTitle(lang.t('profile.personalInfo'), Icons.person_outline_rounded, colorScheme),
-                const SizedBox(height: 8),
+                SizedBox(height: r.padV),
+                _sectionTitle(lang.t('profile.personalInfo'), Icons.person_outline_rounded, colorScheme, r),
+                SizedBox(height: r.gapS),
                 _infoCard(
                   theme,
                   lang,
                   colorScheme,
                   [
-                    _infoRow(lang.t('profile.fullName'), user?.name ?? lang.t('profile.notSpecified'), colorScheme),
-                    _infoRow(lang.t('profile.emailLabel'), user?.email ?? lang.t('profile.notSpecified'), colorScheme),
+                    _infoRow(lang.t('profile.fullName'), user?.name ?? lang.t('profile.notSpecified'), colorScheme, r),
+                    _infoRow(lang.t('profile.emailLabel'), user?.email ?? lang.t('profile.notSpecified'), colorScheme, r),
                     if (user?.emailVerified != null)
                       _infoRow(
                         lang.t('profile.verificationStatus'),
                         user!.emailVerified! ? lang.t('profile.emailVerified') : lang.t('profile.emailNotVerified'),
                         colorScheme,
+                        r,
                         isVerified: user.emailVerified,
                       ),
-                    _infoRow(lang.t('profile.userId'), user?.id ?? '', colorScheme, monospace: true),
+                    _infoRow(lang.t('profile.userId'), user?.id ?? '', colorScheme, r, monospace: true),
                   ],
+                  r,
                 ),
-                const SizedBox(height: 20),
-                _sectionTitle(lang.t('profile.connectedAccount'), Icons.link_rounded, colorScheme),
-                const SizedBox(height: 8),
-                _connectedAccountCard(theme, lang, colorScheme),
-                const SizedBox(height: 24),
+                SizedBox(height: r.padV),
+                _sectionTitle(lang.t('profile.connectedAccount'), Icons.link_rounded, colorScheme, r),
+                SizedBox(height: r.gapS),
+                _connectedAccountCard(theme, lang, colorScheme, r),
+                SizedBox(height: r.padV),
                 Card(
                   color: cardColor,
                   child: Column(
@@ -141,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: r.padV),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -179,7 +183,7 @@ class ProfileScreen extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFea4335),
                       side: const BorderSide(color: Color(0xFFea4335)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: r.padV * 0.7),
                     ),
                   ),
                 ),
@@ -191,28 +195,28 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title, IconData icon, ColorScheme colorScheme) {
+  Widget _sectionTitle(String title, IconData icon, ColorScheme colorScheme, Responsive r) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: r.gapS),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: colorScheme.primary),
-          const SizedBox(width: 8),
+          Icon(icon, size: r.iconSize(20), color: colorScheme.primary),
+          SizedBox(width: r.gapS),
           Text(
             title,
-            style: TextStyle(color: colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18), fontWeight: FontWeight.w600),
           ),
         ],
       ),
     );
   }
 
-  Widget _infoCard(ThemeProvider theme, LanguageProvider lang, ColorScheme colorScheme, List<Widget> rows) {
+  Widget _infoCard(ThemeProvider theme, LanguageProvider lang, ColorScheme colorScheme, List<Widget> rows, Responsive r) {
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
     return Card(
       color: cardColor,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(r.padH),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: rows,
@@ -221,9 +225,9 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoRow(String label, String value, ColorScheme colorScheme, {bool? isVerified, bool monospace = false}) {
+  Widget _infoRow(String label, String value, ColorScheme colorScheme, Responsive r, {bool? isVerified, bool monospace = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: r.gapS),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,16 +235,16 @@ class ProfileScreen extends StatelessWidget {
             label,
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 12,
+              fontSize: r.sp(12),
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: r.gapS * 0.5),
           Text(
             value,
             style: TextStyle(
               color: isVerified == true ? const Color(0xFF34a853) : (isVerified == false ? const Color(0xFFea4335) : colorScheme.onSurface),
-              fontSize: monospace ? 13 : 15,
+              fontSize: r.sp(monospace ? 13 : 15),
               fontFamily: monospace ? 'monospace' : null,
             ),
             overflow: TextOverflow.ellipsis,
@@ -250,12 +254,13 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _connectedAccountCard(ThemeProvider theme, LanguageProvider lang, ColorScheme colorScheme) {
+  Widget _connectedAccountCard(ThemeProvider theme, LanguageProvider lang, ColorScheme colorScheme, Responsive r) {
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+    final iconSize = r.iconSize(24);
     return Card(
       color: cardColor,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(r.padH),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -263,38 +268,38 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Image.network(
                   'https://www.google.com/favicon.ico',
-                  width: 24,
-                  height: 24,
-                  errorBuilder: (_, __, ___) => Icon(Icons.link, size: 24, color: colorScheme.primary),
+                  width: iconSize,
+                  height: iconSize,
+                  errorBuilder: (_, __, ___) => Icon(Icons.link, size: iconSize, color: colorScheme.primary),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: r.gapS),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         lang.t('profile.googleAccount'),
-                        style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: 16),
+                        style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500, fontSize: r.sp(16)),
                       ),
                       Text(
                         lang.t('profile.connectedViaGoogle'),
-                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
+                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: r.sp(14)),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: r.gapS),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(r.gapS),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(r.radius * 0.7),
               ),
               child: Text(
                 lang.t('profile.accountSecureHint'),
-                style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: 13),
+                style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(13)),
               ),
             ),
           ],

@@ -10,6 +10,8 @@ import '../providers/theme_provider.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
 import '../services/cache_service.dart';
+import '../utils/responsive.dart';
+import '../utils/upload_metadata.dart';
 
 /// Upload de fichiers (portrait du site) : sélection + envoi vers /api/upload.
 /// [showBackButton] false quand affiché comme onglet dans la nav (comme le site).
@@ -66,7 +68,12 @@ class _UploadScreenState extends State<UploadScreen> {
       if (!mounted) return;
       setState(() => _status = '${done + 1} / $_total');
 
-      final uploadResult = await api.uploadFile(file, user!.id!);
+      final basicMetadata = await getBasicMetadataForUpload(file);
+      final uploadResult = await api.uploadFile(
+        file,
+        user!.id!,
+        basicMetadata: basicMetadata,
+      );
       if (!uploadResult.success && uploadResult.error != null) {
         lastError = uploadResult.error;
       }
@@ -109,13 +116,14 @@ class _UploadScreenState extends State<UploadScreen> {
     final lang = context.watch<LanguageProvider>();
     final colorScheme = theme.themeData.colorScheme;
     final bg = theme.themeData.scaffoldBackgroundColor;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
         backgroundColor: theme.themeData.appBarTheme.backgroundColor,
         foregroundColor: theme.themeData.appBarTheme.foregroundColor,
-        title: Text(lang.t('upload.title'), style: TextStyle(color: colorScheme.onSurface)),
+        title: Text(lang.t('upload.title'), style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18))),
         leading: widget.showBackButton
             ? IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
@@ -125,18 +133,44 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(horizontal: r.padH, vertical: r.padV),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 16),
+              Text(
+                lang.t('upload.title'),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                  fontSize: r.sp(22),
+                ),
+              ),
+              SizedBox(height: r.gapS),
+              Text(
+                '${lang.t('upload.dragDrop')} — ${lang.t('upload.dragDropOr')}',
+                style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
+                  fontSize: r.sp(14),
+                ),
+              ),
+              SizedBox(height: r.padV),
+              Text(
+                lang.t('upload.selectFile'),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                  fontSize: r.sp(16),
+                ),
+              ),
+              SizedBox(height: r.gapS),
               GestureDetector(
                 onTap: _uploading ? null : _pickAndUpload,
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+                  padding: EdgeInsets.symmetric(vertical: r.hp(5).clamp(32, 56).toDouble(), horizontal: r.padH),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(r.radius),
                     border: Border.all(
                       color: colorScheme.primary.withValues(alpha: 0.5),
                       width: 2,
@@ -148,25 +182,34 @@ class _UploadScreenState extends State<UploadScreen> {
                     children: [
                       Icon(
                         Icons.cloud_upload_rounded,
-                        size: 64,
+                        size: r.iconSize(48),
                         color: colorScheme.primary.withValues(alpha: 0.9),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: r.gapS),
                       Text(
                         lang.t('upload.dragDrop'),
                         style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          color: colorScheme.primary,
+                          fontSize: r.sp(16),
+                          fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: r.gapS * 0.5),
                       Text(
                         lang.t('upload.dragDropOr'),
                         style: TextStyle(
                           color: colorScheme.onSurface.withValues(alpha: 0.7),
-                          fontSize: 14,
+                          fontSize: r.sp(14),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: r.gapS),
+                      Text(
+                        lang.t('upload.supportedFormats'),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                          fontSize: r.sp(12),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -175,19 +218,19 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
               ),
               if (_uploading) ...[
-                const SizedBox(height: 24),
+                SizedBox(height: r.padV),
                 LinearProgressIndicator(
                   value: _total > 0 ? _current / _total : null,
                   backgroundColor: colorScheme.surface,
                   valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: r.gapS),
                 Text(
                   '${lang.t('upload.uploading')} $_status',
-                  style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: 14),
+                  style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8), fontSize: r.sp(14)),
                 ),
               ],
-              const SizedBox(height: 24),
+              SizedBox(height: r.padV),
               FilledButton.icon(
                 onPressed: _uploading ? null : _pickAndUpload,
                 icon: const Icon(Icons.upload_file_rounded),
@@ -195,14 +238,14 @@ class _UploadScreenState extends State<UploadScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  padding: EdgeInsets.symmetric(horizontal: r.padH * 1.5, vertical: r.padV * 0.8),
                 ),
               ),
               if (_error != null) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: r.gap),
                 Text(
                   _error!,
-                  style: TextStyle(color: colorScheme.error, fontSize: 13),
+                  style: TextStyle(color: colorScheme.error, fontSize: r.sp(13)),
                   textAlign: TextAlign.center,
                 ),
               ],

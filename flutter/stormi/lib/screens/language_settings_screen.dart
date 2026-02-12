@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
+import '../utils/responsive.dart';
 
 /// Langue : FR, EN, ES, DE (portrait du site, persisté).
 class LanguageSettingsScreen extends StatelessWidget {
@@ -15,20 +16,21 @@ class LanguageSettingsScreen extends StatelessWidget {
     final colorScheme = theme.themeData.colorScheme;
     final bg = theme.themeData.scaffoldBackgroundColor;
     final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+    final r = Responsive.of(context);
 
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
         backgroundColor: theme.themeData.appBarTheme.backgroundColor,
         foregroundColor: theme.themeData.appBarTheme.foregroundColor,
-        title: Text(lang.t('language.title'), style: TextStyle(color: colorScheme.onSurface)),
+        title: Text(lang.t('language.title'), style: TextStyle(color: colorScheme.onSurface, fontSize: r.sp(18))),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(r.padH),
         children: [
           _LangTile(
             code: AppLanguage.fr,
@@ -39,7 +41,7 @@ class LanguageSettingsScreen extends StatelessWidget {
             textColor: colorScheme.onSurface,
             primary: colorScheme.primary,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: r.gapS),
           _LangTile(
             code: AppLanguage.en,
             label: lang.t('language.en'),
@@ -49,7 +51,7 @@ class LanguageSettingsScreen extends StatelessWidget {
             textColor: colorScheme.onSurface,
             primary: colorScheme.primary,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: r.gapS),
           _LangTile(
             code: AppLanguage.es,
             label: lang.t('language.es'),
@@ -59,7 +61,7 @@ class LanguageSettingsScreen extends StatelessWidget {
             textColor: colorScheme.onSurface,
             primary: colorScheme.primary,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: r.gapS),
           _LangTile(
             code: AppLanguage.de,
             label: lang.t('language.de'),
@@ -96,11 +98,12 @@ class _LangTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final r = Responsive.of(context);
     return Card(
       color: cardColor,
       child: ListTile(
-        title: Text(label, style: TextStyle(color: textColor)),
-        trailing: selected ? Icon(Icons.check_rounded, color: primary) : null,
+        title: Text(label, style: TextStyle(color: textColor, fontSize: r.sp(16))),
+        trailing: selected ? Icon(Icons.check_rounded, color: primary, size: r.iconSize(24)) : null,
         onTap: onTap,
       ),
     );
