@@ -24,7 +24,7 @@ import { useLanguage } from '~/contexts/LanguageContext';
 const SPLASH_LOADING_TIMEOUT_MS = 5000;
 /** Durée minimale d’affichage du splash (évite fenêtre noire / flash avant redirection). */
 const MIN_SPLASH_DISPLAY_MS = 1200;
-/** Délai avant redirection : connecté → /home, non connecté → /login (au moins MIN_SPLASH_DISPLAY_MS). */
+/** Délai avant redirection : connecté → /films (Regarder), non connecté → /login (au moins MIN_SPLASH_DISPLAY_MS). */
 const REDIRECT_DELAY_MS = { whenLoggedIn: 1500, whenGuest: 800 };
 
 // Positions fixes des particules (évite recalcul et layout à chaque rendu)
@@ -60,7 +60,7 @@ export function SplashScreen() {
 
         const desiredDelay = user ? REDIRECT_DELAY_MS.whenLoggedIn : REDIRECT_DELAY_MS.whenGuest;
         const delay = Math.max(desiredDelay, MIN_SPLASH_DISPLAY_MS);
-        const target = user ? '/home' : '/login';
+        const target = user ? '/films' : '/login';
 
         const timer = setTimeout(() => navigate(target, { replace: true }), delay);
         return () => clearTimeout(timer);

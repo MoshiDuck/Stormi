@@ -203,7 +203,7 @@ export function ErrorBoundary() {
             <body style={{ backgroundColor: '#121212', color: '#e0e0e0', margin: 0, padding: 40, fontFamily: 'system-ui' }}>
                 <h1 style={{ marginBottom: 16 }}>{T.errors.title}</h1>
                 <p style={{ color: '#b0b0b0', marginBottom: 24 }}>{message}</p>
-                <a href="/home" style={{ color: '#4285f4', textDecoration: 'underline' }}>
+                <a href="/films" style={{ color: '#4285f4', textDecoration: 'underline' }}>
                     {T.notFound.backHome}
                 </a>
                 <Scripts />

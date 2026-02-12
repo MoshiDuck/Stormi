@@ -57,7 +57,7 @@ export default function NotFoundRoute() {
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', alignItems: 'center' }}>
                 <Link
-                    to="/home"
+                    to="/films"
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',

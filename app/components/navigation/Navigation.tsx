@@ -7,12 +7,10 @@ import { useLanguage } from '~/contexts/LanguageContext';
 import { ProfileDropdown } from '~/components/navigation/ProfileDropdown';
 import { StormiLogo } from '~/components/navigation/StormiLogo';
 import {
-    Home,
     Upload,
     Film,
     Music,
     Library,
-    Users,
     MonitorPlay,
     type LucideIcon,
 } from 'lucide-react';
@@ -32,9 +30,8 @@ interface NavItemConfig {
     activePaths?: string[];
 }
 
+// Ordre : Regarder, Écouter, Bibliothèque, Ajouter, Lecteur local (plus d’accueil ; stats + communauté dans le profil)
 const navItems: NavItemConfig[] = [
-    { to: '/home', labelKey: 'nav.home', ariaKey: 'nav.homeAriaLabel', icon: Home },
-    { to: '/upload', labelKey: 'nav.add', ariaKey: 'nav.addAriaLabel', icon: Upload },
     {
         to: '/films',
         labelKey: 'nav.watch',
@@ -44,7 +41,7 @@ const navItems: NavItemConfig[] = [
     },
     { to: '/musics', labelKey: 'nav.listen', ariaKey: 'nav.listenAriaLabel', icon: Music },
     { to: '/library', labelKey: 'nav.library', ariaKey: 'nav.libraryAriaLabel', icon: Library },
-    { to: '/community', labelKey: 'nav.community', ariaKey: 'nav.communityAriaLabel', icon: Users },
+    { to: '/upload', labelKey: 'nav.add', ariaKey: 'nav.addAriaLabel', icon: Upload },
     {
         to: '/lecteur-local',
         labelKey: 'nav.localPlayer',
@@ -106,14 +103,14 @@ export function Navigation({ user, activeProfile, onLogout, onSwitchProfile }: N
             <nav
                 className="nav-bar"
                 role="navigation"
-                aria-label={t('nav.home')}
+                aria-label={t('nav.watch')}
             >
                 <div className="nav-bar-inner">
                     <div className="nav-bar-left">
                         <Link
-                            to="/home"
+                            to="/films"
                             prefetch="intent"
-                            aria-label={t('nav.home')}
+                            aria-label={t('nav.watch')}
                             className="nav-logo-link"
                         >
                             <StormiLogo theme={logoTheme} />

@@ -149,7 +149,7 @@ export async function handleCacheInvalidation(event: CacheInvalidationEvent): Pr
 
 /**
  * Invalide les stats affichées sur la page d'accueil (client-side).
- * Déclenche la réexécution du clientLoader de /home via l'événement stormi:stats-invalidated.
+ * Déclenche la réexécution du clientLoader de /statistics via l'événement stormi:stats-invalidated.
  * À appeler après un upload, une suppression ou toute action modifiant le nombre/taille des fichiers.
  */
 export function invalidateStats(userId: string): void {

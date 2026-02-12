@@ -67,13 +67,13 @@ export default function SelectProfileRoute() {
         return <Navigate to="/login" replace />;
     }
     if (hasSelectedProfile()) {
-        return <Navigate to="/home" replace />;
+        return <Navigate to="/films" replace />;
     }
 
     const handleSelectProfile = (profile: StreamingProfile) => {
         if (editMode) return;
         setActiveProfile(profile);
-        navigate('/home', { replace: true });
+        navigate('/films', { replace: true });
     };
 
     const hasChildProfile = profiles.some((p) => p.is_child);

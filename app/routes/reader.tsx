@@ -405,7 +405,7 @@ export default function ReaderRoute() {
     
     const navigateBack = () => {
         if (category === 'local') {
-            navigate('/home');
+            navigate('/films');
         } else if (category === 'musics') {
             navigate('/musics');
         } else if (category === 'images') {

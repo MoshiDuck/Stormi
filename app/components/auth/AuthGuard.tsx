@@ -29,7 +29,7 @@ export function AuthGuard({
     useEffect(() => {
         if (loading) return;
         if (!requireAuth && user) {
-            navigate(hasProfile ? '/home' : '/select-profile', { replace: true });
+            navigate(hasProfile ? '/films' : '/select-profile', { replace: true });
         }
     }, [loading, user, requireAuth, navigate, hasProfile]);
 

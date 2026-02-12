@@ -551,7 +551,7 @@ export default function UploadRoute() {
                                 gap: 10,
                             }}>
                                 <Link
-                                    to="/home"
+                                    to="/films"
                                     prefetch="intent"
                                     style={{
                                         display: 'inline-flex',

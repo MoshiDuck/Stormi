@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'providers/cache_invalidation_notifier.dart';
+import 'providers/language_provider.dart';
+import 'providers/theme_provider.dart';
 import 'services/api_client.dart';
 import 'services/auth_service.dart';
-import 'screens/home_screen.dart';
+import 'services/cache_service.dart';
 import 'screens/login_screen.dart';
+import 'screens/main_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,22 +25,27 @@ class StormiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthService(apiClient: ApiClient())..init(),
-      child: MaterialApp(
-        title: 'Stormi',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: const Color(0xFF121212),
-          colorScheme: ColorScheme.dark(
-            primary: const Color(0xFF4285f4),
-            surface: const Color(0xFF1a1a1a),
-            onSurface: Colors.white,
-          ),
-        ),
-        home: const AuthGate(),
+    final apiClient = ApiClient();
+    final cacheService = CacheService();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => AuthService(apiClient: apiClient)..init()),
+        ChangeNotifierProvider(create: (_) => CacheInvalidationNotifier()),
+        Provider<ApiClient>.value(value: apiClient),
+        Provider<CacheService>.value(value: cacheService),
+      ],
+      child: Consumer2<ThemeProvider, LanguageProvider>(
+        builder: (context, theme, lang, _) {
+          return MaterialApp(
+            title: 'Stormi',
+            debugShowCheckedModeBanner: false,
+            theme: theme.themeData,
+            locale: Locale(lang.languageCode),
+            home: const AuthGate(),
+          );
+        },
       ),
     );
   }
@@ -50,15 +59,16 @@ class AuthGate extends StatelessWidget {
     return Consumer<AuthService>(
       builder: (context, auth, _) {
         if (auth.state.loading && auth.state.config == null) {
-          return const Scaffold(
-            backgroundColor: Color(0xFF121212),
+          final theme = context.read<ThemeProvider>();
+          return Scaffold(
+            backgroundColor: theme.themeData.scaffoldBackgroundColor,
             body: Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(color: theme.themeData.colorScheme.primary),
             ),
           );
         }
         if (auth.isAuthenticated) {
-          return const HomeScreen();
+          return const MainShell();
         }
         return const LoginScreen();
       },

@@ -5,7 +5,7 @@ import type { User as UserProfile, StreamingProfile } from '~/types/auth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { UserCircle, User, HelpCircle, LogOut } from 'lucide-react';
+import { UserCircle, User, BarChart3, Users, Settings, HelpCircle, LogOut } from 'lucide-react';
 
 const CLOSE_DELAY_MS = 220;
 
@@ -97,15 +97,6 @@ export function ProfileDropdown({ user, activeProfile, onLogout, onSwitchProfile
                     <div aria-hidden className="profile-dropdown-bridge" />
                     <div role="menu" className="profile-dropdown-menu">
                         <Link
-                            to="/manage-profile"
-                            prefetch="intent"
-                            role="menuitem"
-                            className={menuItemClass}
-                        >
-                            <UserCircle size={18} strokeWidth={2} aria-hidden />
-                            {t('profileMenu.manageProfile')}
-                        </Link>
-                        <Link
                             to="/profile"
                             prefetch="intent"
                             role="menuitem"
@@ -113,6 +104,42 @@ export function ProfileDropdown({ user, activeProfile, onLogout, onSwitchProfile
                         >
                             <User size={18} strokeWidth={2} aria-hidden />
                             {t('profileMenu.account')}
+                        </Link>
+                        <Link
+                            to="/statistics"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <BarChart3 size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.statistics')}
+                        </Link>
+                        <Link
+                            to="/community"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <Users size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.community')}
+                        </Link>
+                        <Link
+                            to="/manage-profile"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <Settings size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.manageProfile')}
+                        </Link>
+                        <Link
+                            to="/help"
+                            prefetch="intent"
+                            role="menuitem"
+                            className={menuItemClass}
+                        >
+                            <HelpCircle size={18} strokeWidth={2} aria-hidden />
+                            {t('profileMenu.helpCenter')}
                         </Link>
                         {onSwitchProfile && (
                             <button
@@ -125,15 +152,6 @@ export function ProfileDropdown({ user, activeProfile, onLogout, onSwitchProfile
                                 {t('selectProfile.switchProfile')}
                             </button>
                         )}
-                        <Link
-                            to="/help"
-                            prefetch="intent"
-                            role="menuitem"
-                            className={menuItemClass}
-                        >
-                            <HelpCircle size={18} strokeWidth={2} aria-hidden />
-                            {t('profileMenu.helpCenter')}
-                        </Link>
                         <div role="separator" className="profile-dropdown-separator" />
                         <button
                             type="button"

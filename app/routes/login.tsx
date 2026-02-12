@@ -49,7 +49,7 @@ export default function LoginRoute() {
 
     // Si l'utilisateur est déjà connecté, rediriger vers sélection de profil ou accueil
     if (user && !authInitialLoading) {
-        return <Navigate to={hasSelectedProfile() ? '/home' : '/select-profile'} replace />;
+        return <Navigate to={hasSelectedProfile() ? '/films' : '/select-profile'} replace />;
     }
 
     if (configLoading || authInitialLoading) {

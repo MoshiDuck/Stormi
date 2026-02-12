@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/language_provider.dart';
+import '../providers/theme_provider.dart';
 import '../services/auth_service.dart';
 
-/// Page de connexion alignée sur le site stormi.uk (fond sombre, carte, bouton Google).
+/// Page de connexion (portrait du site : thème + langue).
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  static const Color _bgPrimary = Color(0xFF121212);
-  static const Color _bgCard = Color(0xFF1a1a1a);
-  static const Color _textPrimary = Color(0xFFFFFFFF);
-  static const Color _textSecondary = Color(0xFFd1d1d1);
-  static const Color _textTertiary = Color(0xFFa8a8a8);
-  static const Color _border = Color(0xFF3a3a3a);
-  static const Color _accentBlue = Color(0xFF4285f4);
-
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<ThemeProvider>();
+    final lang = context.watch<LanguageProvider>();
+    final colorScheme = theme.themeData.colorScheme;
+    final bg = theme.themeData.scaffoldBackgroundColor;
+    final cardColor = theme.themeData.cardTheme.color ?? colorScheme.surface;
+
     return Scaffold(
-      backgroundColor: _bgPrimary,
+      backgroundColor: bg,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -28,8 +28,8 @@ class LoginScreen extends StatelessWidget {
               child: Consumer<AuthService>(
                 builder: (context, auth, _) {
                   if (auth.state.loading && auth.state.config == null) {
-                    return const Center(
-                      child: CircularProgressIndicator(color: _textPrimary),
+                    return Center(
+                      child: CircularProgressIndicator(color: colorScheme.primary),
                     );
                   }
                   final error = auth.state.error;
@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(40),
                     decoration: BoxDecoration(
-                      color: _bgCard,
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -51,22 +51,21 @@ class LoginScreen extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Titre Stormi (style site)
                         Text(
                           'Stormi',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: _textPrimary,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Connectez-vous pour accéder à vos médias',
+                          lang.t('login.subtitle'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
-                            color: _textSecondary,
+                            color: colorScheme.onSurface.withValues(alpha: 0.8),
                             height: 1.4,
                           ),
                         ),
@@ -76,13 +75,13 @@ class LoginScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF3a1a1a),
+                              color: colorScheme.errorContainer,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               error,
-                              style: const TextStyle(
-                                color: Color(0xFFea4335),
+                              style: TextStyle(
+                                color: colorScheme.error,
                                 fontSize: 14,
                               ),
                               textAlign: TextAlign.center,
@@ -92,10 +91,10 @@ class LoginScreen extends StatelessWidget {
                         ],
                         if (hasGoogle) ...[
                           Text(
-                            'Se connecter avec Google',
+                            lang.t('login.google'),
                             style: TextStyle(
                               fontSize: 15,
-                              color: _textSecondary,
+                              color: colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -107,27 +106,27 @@ class LoginScreen extends StatelessWidget {
                                   ? null
                                   : () => auth.signInWithGoogle(),
                               icon: auth.state.loading
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       width: 22,
                                       height: 22,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        color: colorScheme.onPrimary,
                                       ),
                                     )
                                   : const Icon(Icons.login, size: 22),
                               label: Text(
                                 auth.state.loading
-                                    ? 'Connexion…'
-                                    : 'Continuer avec Google',
+                                    ? lang.t('login.connecting')
+                                    : lang.t('login.google'),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               style: FilledButton.styleFrom(
-                                backgroundColor: _accentBlue,
-                                foregroundColor: Colors.white,
+                                backgroundColor: colorScheme.primary,
+                                foregroundColor: colorScheme.onPrimary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -136,9 +135,9 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ] else
                           Text(
-                            'Google Sign-In non configuré sur le serveur.',
+                            lang.t('login.configError'),
                             style: TextStyle(
-                              color: _textSecondary,
+                              color: colorScheme.onSurface.withValues(alpha: 0.8),
                               fontSize: 14,
                             ),
                             textAlign: TextAlign.center,
@@ -148,14 +147,14 @@ class LoginScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 20),
                           decoration: BoxDecoration(
                             border: Border(
-                              top: BorderSide(color: _border),
+                              top: BorderSide(color: theme.themeData.dividerColor),
                             ),
                           ),
                           child: Text(
-                            'En vous connectant, vous acceptez les conditions d\'utilisation du service.',
+                            lang.t('login.terms'),
                             style: TextStyle(
                               fontSize: 12,
-                              color: _textTertiary,
+                              color: colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                             textAlign: TextAlign.center,
                           ),

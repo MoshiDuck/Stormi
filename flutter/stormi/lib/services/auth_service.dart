@@ -54,6 +54,7 @@ class AuthService extends ChangeNotifier {
         final userId = await _storage.read(key: _storageKeyUserId);
         if (userId != null) user = stormi_models.User(id: userId);
       }
+      _api.setToken(token);
       _setState(AuthState(
         config: config,
         token: token,
@@ -91,15 +92,10 @@ class AuthService extends ChangeNotifier {
             loading: false, error: 'Token Google absent.'));
         return;
       }
-      await FirebaseAuth.instance.signInWithCredential(
-        GoogleAuthProvider.credential(
-          idToken: idToken,
-          accessToken: accessToken,
-        ),
-      );
+      // On n'appelle pas signInWithCredential pour éviter le bug Pigeon (List<Object?> vs PigeonUserDetails).
+      // On envoie uniquement l'idToken à notre API Stormi.
       final authResponse = await _api.authWithGoogle(idToken);
       if (!authResponse.success || authResponse.token == null) {
-        await FirebaseAuth.instance.signOut();
         _setState(_state.copyWith(
           loading: false,
           error: authResponse.error ?? 'Échec de la connexion.',
@@ -111,6 +107,7 @@ class AuthService extends ChangeNotifier {
         await _storage.write(
             key: _storageKeyUserId, value: authResponse.user!.id);
       }
+      _api.setToken(authResponse.token);
       _setState(AuthState(
         config: _state.config,
         token: authResponse.token,
@@ -119,9 +116,6 @@ class AuthService extends ChangeNotifier {
       ));
     } catch (e, st) {
       debugPrint('AuthService.signInWithGoogle error: $e $st');
-      try {
-        await FirebaseAuth.instance.signOut();
-      } catch (_) {}
       _setState(_state.copyWith(loading: false, error: e.toString()));
     }
   }
@@ -129,6 +123,7 @@ class AuthService extends ChangeNotifier {
   Future<void> signOut() async {
     await _storage.delete(key: _storageKeyToken);
     await _storage.delete(key: _storageKeyUserId);
+    _api.setToken(null);
     try {
       await FirebaseAuth.instance.signOut();
     } catch (_) {}

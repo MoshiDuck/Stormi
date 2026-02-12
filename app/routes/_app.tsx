@@ -132,7 +132,7 @@ export function ErrorBoundary() {
                     {t('common.retry')}
                 </button>
                 <a
-                    href="/home"
+                    href="/films"
                     style={{
                         display: 'inline-block',
                         padding: '12px 24px',

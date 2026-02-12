@@ -374,6 +374,8 @@ export interface Translations {
     profileMenu: {
         manageProfile: string;
         account: string;
+        statistics: string;
+        community: string;
         helpCenter: string;
     };
     // Manage profile page (langue, déconnexion, données locales)
@@ -1069,6 +1071,8 @@ const translations: Record<Language, Translations> = {
         profileMenu: {
             manageProfile: 'Gérer le profil',
             account: 'Compte',
+            statistics: 'Statistiques',
+            community: 'Communauté',
             helpCenter: 'Centre d\'aide'
         },
         manageProfile: {
@@ -1610,6 +1614,8 @@ const translations: Record<Language, Translations> = {
         profileMenu: {
             manageProfile: 'Manage profile',
             account: 'Account',
+            statistics: 'Statistics',
+            community: 'Community',
             helpCenter: 'Help center'
         },
         manageProfile: {
@@ -2153,6 +2159,8 @@ const translations: Record<Language, Translations> = {
         profileMenu: {
             manageProfile: 'Gestionar perfil',
             account: 'Cuenta',
+            statistics: 'Estadísticas',
+            community: 'Comunidad',
             helpCenter: 'Centro de ayuda'
         },
         manageProfile: {
@@ -2696,6 +2704,8 @@ const translations: Record<Language, Translations> = {
         profileMenu: {
             manageProfile: 'Profil verwalten',
             account: 'Konto',
+            statistics: 'Statistik',
+            community: 'Community',
             helpCenter: 'Hilfezentrum'
         },
         manageProfile: {
