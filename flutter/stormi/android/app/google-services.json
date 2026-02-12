@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "868527628012",
+    "project_id": "stormi-6dcea",
+    "storage_bucket": "stormi-6dcea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868527628012:android:c8ff0b31a53d78fc73cfc9",
+        "android_client_info": {
+          "package_name": "uk.stormi.stormi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAat03iwOj6HAVlR4GKoO79HTnWEQXjT5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

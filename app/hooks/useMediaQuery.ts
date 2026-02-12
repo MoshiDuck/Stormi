@@ -1,12 +1,8 @@
 // INFO : app/hooks/useMediaQuery.ts
-// Hook pour media queries (SSR-safe, pas de flash)
+// Hook pour media queries (SSR-safe)
 
 import { useState, useEffect } from 'react';
 
-/**
- * Retourne true si la media query correspond.
- * Côté SSR : retourne false (pas de window). Au montage, met à jour avec la vraie valeur.
- */
 export function useMediaQuery(query: string): boolean {
     const [matches, setMatches] = useState(false);
 

@@ -1,11 +1,9 @@
-// INFO : app/components/Navigation.tsx — barre du haut : logo + profil (phone/tablet) ou logo + liens + profil (desktop). BottomNav = barre du bas sur phone/tablet.
+// INFO : app/components/Navigation.tsx — barre du haut : logo + liens + profil (web desktop)
 import React from 'react';
 import { Link, useLocation } from 'react-router';
 import type { User, StreamingProfile } from '~/types/auth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { useBreakpoint, useIsTenFoot } from '~/hooks/useBreakpoint';
-import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 import { ProfileDropdown } from '~/components/navigation/ProfileDropdown';
 import { StormiLogo } from '~/components/navigation/StormiLogo';
 import {
@@ -55,17 +53,12 @@ const navItems: NavItemConfig[] = [
     },
 ];
 
-const iconSize = { default: 18, tenFoot: 22 };
-const linkPadding = { default: '10px 14px', tenFoot: '14px 18px' };
-
 function NavLink({
     to,
     label,
     ariaLabel,
     isActive,
     icon: Icon,
-    tenFoot,
-    onClick,
     theme,
 }: {
     to: string;
@@ -73,14 +66,8 @@ function NavLink({
     ariaLabel: string;
     isActive: boolean;
     icon: LucideIcon;
-    tenFoot?: boolean;
-    onClick?: () => void;
     theme: ReturnType<typeof useTheme>['theme'];
 }) {
-    const size = tenFoot ? iconSize.tenFoot : iconSize.default;
-    const padding = tenFoot ? linkPadding.tenFoot : linkPadding.default;
-    const minHeight = tenFoot ? TOUCH_TARGET_MIN : undefined;
-
     return (
         <Link
             to={to}
@@ -92,13 +79,10 @@ function NavLink({
                 color: isActive ? theme.accent.blue : theme.text.secondary,
                 backgroundColor: isActive ? `${theme.accent.blue}20` : 'transparent',
                 fontWeight: isActive ? 600 : 500,
-                padding,
-                minHeight,
-                minWidth: minHeight,
+                padding: '10px 14px',
             }}
-            onClick={onClick}
         >
-            <Icon size={size} strokeWidth={2.2} aria-hidden style={{ flexShrink: 0 }} />
+            <Icon size={18} strokeWidth={2.2} aria-hidden style={{ flexShrink: 0 }} />
             <span>{label}</span>
             {isActive && <span className="nav-link-indicator" aria-hidden />}
         </Link>
@@ -109,16 +93,12 @@ export function Navigation({ user, activeProfile, onLogout, onSwitchProfile }: N
     const location = useLocation();
     const { theme, themeId } = useTheme();
     const { t } = useLanguage();
-    const breakpoint = useBreakpoint();
-    const isTenFoot = useIsTenFoot();
-    const isMobileOrTablet = breakpoint === 'phone' || breakpoint === 'tablet';
 
     const isItemActive = (item: NavItemConfig) => {
         if (item.activePaths) return item.activePaths.some((p) => location.pathname === p);
         return location.pathname === item.to;
     };
 
-    const tenFoot = isTenFoot;
     const logoTheme = themeId === 'light' ? 'light' : 'dark';
 
     return (
@@ -139,22 +119,19 @@ export function Navigation({ user, activeProfile, onLogout, onSwitchProfile }: N
                             <StormiLogo theme={logoTheme} />
                         </Link>
 
-                        {!isMobileOrTablet && (
-                            <div className="nav-links">
-                                {navItems.map((item) => (
-                                    <NavLink
-                                        key={item.to}
-                                        to={item.to}
-                                        label={t(item.labelKey)}
-                                        ariaLabel={t(item.ariaKey)}
-                                        isActive={isItemActive(item)}
-                                        icon={item.icon}
-                                        tenFoot={tenFoot}
-                                        theme={theme}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        <div className="nav-links">
+                            {navItems.map((item) => (
+                                <NavLink
+                                    key={item.to}
+                                    to={item.to}
+                                    label={t(item.labelKey)}
+                                    ariaLabel={t(item.ariaKey)}
+                                    isActive={isItemActive(item)}
+                                    icon={item.icon}
+                                    theme={theme}
+                                />
+                            ))}
+                        </div>
                     </div>
 
                     <ProfileDropdown user={user} activeProfile={activeProfile} onLogout={onLogout} onSwitchProfile={onSwitchProfile} />
@@ -200,12 +177,6 @@ export function Navigation({ user, activeProfile, onLogout, onSwitchProfile }: N
                     align-items: center;
                     gap: 40px;
                     min-width: 0;
-                }
-
-                @media (max-width: 1023px) {
-                    .nav-bar-inner { padding: 0 12px; }
-                    .nav-bar-left { gap: 12px; }
-                    .nav-bar { padding: calc(10px + env(safe-area-inset-top, 0px)) 0 10px; }
                 }
 
                 .nav-logo-link {

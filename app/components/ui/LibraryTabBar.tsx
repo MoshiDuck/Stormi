@@ -28,7 +28,6 @@ export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) 
     const { t } = useLanguage();
     const breakpoint = useBreakpoint();
     const [, setSearchParams] = useSearchParams();
-    const isPhone = breakpoint === 'phone';
 
     const handleTabClick = (tab: LibraryTab) => {
         onTabChange?.(tab);
@@ -39,11 +38,11 @@ export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) 
         <div
             style={{
                 display: 'flex',
-                gap: isPhone ? 6 : 8,
-                marginBottom: isPhone ? 16 : 24,
-                padding: isPhone ? 4 : 6,
+                gap: breakpoint === 'narrow' ? 6 : 8,
+                marginBottom: breakpoint === 'narrow' ? 16 : 24,
+                padding: breakpoint === 'narrow' ? 4 : 6,
                 backgroundColor: darkTheme.background.tertiary,
-                borderRadius: isPhone ? 10 : 12,
+                borderRadius: breakpoint === 'narrow' ? 10 : 12,
                 width: 'fit-content',
                 maxWidth: '100%',
                 flexWrap: 'wrap',
@@ -66,8 +65,8 @@ export function LibraryTabBar({ selectedTab, onTabChange }: LibraryTabBarProps) 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: isPhone ? 6 : 8,
-                            padding: isPhone ? '10px 14px' : '10px 20px',
+                            gap: 8,
+                            padding: breakpoint === 'narrow' ? '10px 14px' : '10px 20px',
                             backgroundColor: isSelected ? darkTheme.accent.blue : 'transparent',
                             color: isSelected ? '#fff' : darkTheme.text.secondary,
                             border: 'none',

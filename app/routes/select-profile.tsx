@@ -13,7 +13,6 @@ import { PinModal, type PinModalMode } from '~/components/profile/PinModal';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 
 const AVATAR_SIZE = 120;
-const AVATAR_SIZE_MOBILE = 96;
 
 export default function SelectProfileRoute() {
     const { user, setActiveProfile, clearActiveProfile, hasSelectedProfile } = useAuth();
@@ -198,8 +197,7 @@ export default function SelectProfileRoute() {
         }
     };
 
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 600;
-    const avatarSize = isMobile ? AVATAR_SIZE_MOBILE : AVATAR_SIZE;
+    const avatarSize = AVATAR_SIZE;
 
     if (loading && profiles.length === 0) {
         return (

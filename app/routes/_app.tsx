@@ -17,11 +17,10 @@ import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { AuthGuard } from '~/components/auth/AuthGuard';
 import { ThemeProvider, useTheme } from '~/contexts/ThemeContext';
 import { Navigation } from '~/components/navigation/Navigation';
-import { BottomNav } from '~/components/navigation/BottomNav';
 import { PageTransition } from '~/components/navigation/PageTransition';
 import { AppLayoutLoadingBar } from '~/components/navigation/AppLayoutLoadingBar';
 import { darkTheme } from '~/utils/ui/theme';
-import { CONTENT_PADDING, CONTENT_MAX_WIDTH, BOTTOM_NAV_HEIGHT, MAIN_TOP_OFFSET } from '~/utils/ui/breakpoints';
+import { CONTENT_PADDING, CONTENT_MAX_WIDTH, MAIN_TOP_OFFSET } from '~/utils/ui/breakpoints';
 
 function AppLayoutContent() {
     const { user, activeProfile, logout, clearActiveProfile } = useAuth();
@@ -33,7 +32,6 @@ function AppLayoutContent() {
     const isNavigating = navigation.state === 'loading';
     const padding = CONTENT_PADDING[breakpoint];
     const maxWidth = CONTENT_MAX_WIDTH[breakpoint];
-    const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
 
     useEffect(() => {
         if (navigation.state === 'idle' && mainRef.current) {
@@ -55,9 +53,7 @@ function AppLayoutContent() {
                     paddingTop: `calc(${MAIN_TOP_OFFSET}px + env(safe-area-inset-top, 0px))`,
                     paddingLeft: padding,
                     paddingRight: padding,
-                    paddingBottom: showBottomNav
-                        ? `calc(${BOTTOM_NAV_HEIGHT}px + 16px + env(safe-area-inset-bottom, 0px))`
-                        : 40,
+                    paddingBottom: 40,
                     fontFamily: 'system-ui, sans-serif',
                     outline: 'none',
                     opacity: isNavigating ? 0 : 1,
@@ -74,7 +70,6 @@ function AppLayoutContent() {
                     <Outlet />
                 </PageTransition>
             </main>
-            {showBottomNav && <BottomNav />}
         </div>
     );
 }

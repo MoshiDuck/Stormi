@@ -1,5 +1,5 @@
 // INFO : app/components/ui/NetflixCarousel.tsx
-// Composant Carrousel style Netflix réutilisable (responsive : padding réduit sur mobile)
+// Composant Carrousel style Netflix réutilisable
 
 import React, { useState, useRef } from 'react';
 import { useLanguage } from '~/contexts/LanguageContext';
@@ -27,10 +27,9 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
-    const isPhone = breakpoint === 'phone';
-    const edgePadding = isPhone ? 12 : 40;
-    const arrowWidth = isPhone ? 36 : 50;
-    const marginBottom = isPhone ? 28 : 50;
+    const edgePadding = breakpoint === 'narrow' ? 20 : breakpoint === 'desktop' ? 32 : 40;
+    const arrowWidth = breakpoint === 'narrow' ? 40 : 50;
+    const marginBottom = breakpoint === 'narrow' ? 32 : 50;
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
@@ -54,10 +53,10 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
     return (
         <div style={{ marginBottom: marginBottom, position: 'relative', minWidth: 0 }}>
             <h2 style={{
-                fontSize: isPhone ? 18 : 'clamp(18px, 2vw, 24px)',
+                fontSize: 'clamp(18px, 2vw, 24px)',
                 fontWeight: 800,
                 color: netflixTheme.text.primary,
-                marginBottom: isPhone ? 12 : 20,
+                marginBottom: breakpoint === 'narrow' ? 12 : 20,
                 marginLeft: edgePadding,
                 marginRight: edgePadding,
                 display: 'flex',
@@ -68,7 +67,7 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
             }}>
-                {icon && <span style={{ fontSize: isPhone ? 20 : 24 }}>{icon}</span>} <span style={{ minWidth: 0 }}>{title}</span>
+                {icon && <span style={{ fontSize: 24 }}>{icon}</span>} <span style={{ minWidth: 0 }}>{title}</span>
             </h2>
             
             <div style={{ position: 'relative', overflow: 'visible', minWidth: 0 }}>
@@ -118,15 +117,15 @@ export const NetflixCarousel = ({ title, icon, children }: NetflixCarouselProps)
                     }}
                     style={{
                         display: 'flex',
-                        gap: isPhone ? 8 : 10,
+                        gap: breakpoint === 'narrow' ? 8 : 10,
                         overflowX: 'auto',
                         overflowY: 'hidden',
                         scrollbarWidth: 'none',
                         msOverflowStyle: 'none',
                         paddingLeft: edgePadding,
                         paddingRight: edgePadding,
-                        paddingTop: isPhone ? 40 : 60,
-                        paddingBottom: isPhone ? 40 : 60,
+                        paddingTop: breakpoint === 'narrow' ? 40 : 60,
+                        paddingBottom: breakpoint === 'narrow' ? 40 : 60,
                         scrollBehavior: 'smooth',
                         WebkitOverflowScrolling: 'touch',
                     }}

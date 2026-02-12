@@ -81,8 +81,6 @@ export default function HomeRoute() {
     const { t } = useLanguage();
     const breakpoint = useBreakpoint();
     const navigate = useNavigate();
-    const isPhone = breakpoint === 'phone';
-    const isTablet = breakpoint === 'tablet';
     const loaderData = useLoaderData() as { stats: StatsPayload | null; userId: string | null } | undefined;
     const revalidator = useRevalidator();
     const [stats, setStats] = useState<StatsPayload>(() => loaderData?.stats ?? { fileCount: 0, totalSizeGB: 0, billableGB: 0 });
@@ -302,8 +300,8 @@ export default function HomeRoute() {
 
     const cardBaseStyle: React.CSSProperties = {
         backgroundColor: darkTheme.background.secondary,
-        borderRadius: isPhone ? darkTheme.radius.large : darkTheme.radius.xlarge,
-        padding: isPhone ? '16px 14px' : '24px 22px',
+        borderRadius: darkTheme.radius.xlarge,
+        padding: '24px 22px',
         marginBottom: 0,
         border: `1px solid ${darkTheme.border.secondary}`,
         boxShadow: darkTheme.shadow.small,
@@ -424,9 +422,9 @@ export default function HomeRoute() {
                     {/* Vidéos, Musiques, Bibliothèque — cartes cliquables en colonnes */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: isPhone ? '1fr' : isTablet ? 'repeat(auto-fit, minmax(240px, 1fr))' : 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: isPhone ? 12 : 20,
-                        marginBottom: isPhone ? 20 : 28,
+                        gridTemplateColumns: breakpoint === 'narrow' ? 'repeat(auto-fit, minmax(240px, 1fr))' : 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: breakpoint === 'narrow' ? 16 : 20,
+                        marginBottom: breakpoint === 'narrow' ? 20 : 28,
                         minWidth: 0,
                     }}>
                     <section
@@ -701,8 +699,8 @@ export default function HomeRoute() {
                         {statsExpanded && (
                             <div id="home-stats-panel" role="region" aria-label={t('home.stats')} style={{
                                 display: 'grid',
-                                gridTemplateColumns: isPhone ? '1fr' : 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))',
-                                gap: isPhone ? 16 : 24,
+                                gridTemplateColumns: breakpoint === 'narrow' ? 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))' : 'repeat(auto-fit, minmax(min(350px, 100%), 1fr))',
+                                gap: breakpoint === 'narrow' ? 20 : 24,
                                 marginTop: 16,
                                 minWidth: 0,
                             }}>
@@ -760,13 +758,13 @@ export default function HomeRoute() {
                             <>
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: isPhone ? '1fr' : '1fr 1fr',
+                                gridTemplateColumns: '1fr 1fr',
                                 gap: 16,
                                 minWidth: 0,
                             }}>
                                 <div style={{ textAlign: 'center', minWidth: 0 }}>
                                     <div style={{
-                                        fontSize: isPhone ? 24 : 28,
+                                        fontSize: 28,
                                         fontWeight: 'bold',
                                         color: darkTheme.accent.blue,
                                         display: 'flex',
@@ -974,9 +972,9 @@ export default function HomeRoute() {
                             <div style={{
                                 marginTop: 24,
                                 display: 'grid',
-                                gridTemplateColumns: isPhone ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(150px, 1fr))',
-                                gap: isPhone ? 12 : 20,
-                                maxWidth: isPhone ? '100%' : 600,
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                                gap: 20,
+                                maxWidth: 600,
                                 margin: '24px auto 0',
                                 minWidth: 0,
                             }}>

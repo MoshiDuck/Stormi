@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
-import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
+import { CONTENT_PADDING, CONTENT_MAX_WIDTH } from '~/utils/ui/breakpoints';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 import { CategoryBar } from '~/components/ui/categoryBar';
 import { getCategoryRoute, getCategoryFromPathname } from '~/utils/routes';
@@ -112,7 +112,7 @@ export default function ExecutablesRoute() {
     if (loading && executables.length === 0) {
         return (
             <>
-                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
+                <div style={{ padding: pad, maxWidth: CONTENT_MAX_WIDTH[breakpoint], margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                         <LoadingSpinner size="large" message={t('categories.executables')} />
@@ -136,7 +136,7 @@ export default function ExecutablesRoute() {
 
     return (
         <>
-                <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1200, margin: '0 auto', minWidth: 0 }}>
+                <div style={{ padding: pad, maxWidth: CONTENT_MAX_WIDTH[breakpoint], margin: '0 auto', minWidth: 0 }}>
                     <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
 
                     <h1 style={{

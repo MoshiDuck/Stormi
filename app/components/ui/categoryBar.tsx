@@ -40,9 +40,9 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
     return (
         <div style={{
             backgroundColor: darkTheme.background.secondary,
-            borderRadius: breakpoint === 'phone' ? '10px' : '12px',
-            padding: breakpoint === 'phone' ? 12 : 20,
-            marginBottom: breakpoint === 'phone' ? 20 : 30,
+            borderRadius: breakpoint === 'narrow' ? '10px' : '12px',
+            padding: breakpoint === 'narrow' ? 12 : breakpoint === 'desktop' ? 16 : 20,
+            marginBottom: breakpoint === 'narrow' ? 20 : 30,
             boxShadow: darkTheme.shadow.medium,
             overflowX: 'auto',
             overflowY: 'hidden',
@@ -50,7 +50,7 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
         }}>
             <div style={{
                 display: 'flex',
-                gap: breakpoint === 'phone' ? 8 : 12,
+                gap: breakpoint === 'narrow' ? 8 : 12,
                 flexWrap: 'wrap',
                 alignItems: 'center',
                 minWidth: 'min-content',

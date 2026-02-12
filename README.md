@@ -9,8 +9,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers%20%2B%20D1%20%2B%20R2-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![WCAG 2.1 AA](https://img.shields.io/badge/WCAG-2.1%20AA-005A9C?logo=accessibility)](https://www.w3.org/WAI/WCAG21/quickref/)
+[![Flutter](https://img.shields.io/badge/Flutter-iOS%20%7C%20Android-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
 
-[**Site**](https://stormi.uk) · [**Documentation**](./docs/)
+[**Site**](https://stormi.uk) · [**Documentation**](./docs/) · [**Mobile (Flutter)**](./flutter/stormi/)
 
 </div>
 
@@ -18,15 +19,29 @@
 
 ## Présentation
 
-**Stormi** est une application web full‑stack pour gérer, organiser et consommer vos médias personnels (vidéos, musique, images, documents) via une interface moderne inspirée de Netflix et Spotify.
+**Stormi** est une application full‑stack pour gérer, organiser et consommer vos médias personnels (vidéos, musique, images, documents) via une interface moderne inspirée de Netflix et Spotify.
 
 Streaming HLS · Enrichissement TMDb/Spotify · Cache multi‑niveaux · Accessibilité WCAG 2.1 AA
+
+### Plateformes
+
+| Plateforme | Stack | Cible |
+|------------|--------|--------|
+| **Web** | React uniquement | [stormi.uk](https://stormi.uk) |
+| **Desktop** | Electron uniquement | macOS, Windows, Linux |
+| **Mobile** | Flutter uniquement | iOS, Android ([flutter/stormi/](./flutter/stormi/)) |
+
+- **React** = web uniquement (pas Android/iOS).
+- **Electron** = desktop uniquement (macOS, Windows, Linux ; pas mobile).
+- **Flutter** = mobile uniquement (Android, iOS ; pas web).
+
+Toutes les plateformes utilisent la même API (Cloudflare Workers).
 
 ---
 
 ## Table des matières
 
-[Documentation](#-documentation) · [Workflow Git](#-workflow-git) · [Roadmap](#-roadmap) · [Statistiques](#-statistiques)
+[Plateformes](#plateformes) · [Documentation](#-documentation) · [Workflow Git](#-workflow-git) · [Roadmap](#-roadmap) · [Statistiques](#-statistiques)
 
 ---
 

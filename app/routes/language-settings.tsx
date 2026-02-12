@@ -3,10 +3,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { LanguageSelector } from '~/components/ui/LanguageSelector';
 import { translations } from '~/utils/i18n';
-import { BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
 
 export function meta() {
     return [
@@ -18,8 +16,6 @@ export function meta() {
 export default function LanguageSettingsRoute() {
     const { theme } = useTheme();
     const { t } = useLanguage();
-    const breakpoint = useBreakpoint();
-    const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
 
     return (
         <div
@@ -28,9 +24,6 @@ export default function LanguageSettingsRoute() {
                 borderRadius: '12px',
                 padding: '40px',
                 boxShadow: theme.shadow.medium,
-                marginBottom: showBottomNav
-                    ? `calc(${BOTTOM_NAV_HEIGHT}px + 24px + env(safe-area-inset-bottom, 0px))`
-                    : 0,
             }}
         >
             <div style={{ marginBottom: '24px' }}>

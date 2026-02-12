@@ -4,10 +4,8 @@ import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useTheme } from '~/contexts/ThemeContext';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { ConfirmDialog } from '~/components/ui/ConfirmDialog';
 import { translations } from '~/utils/i18n';
-import { BOTTOM_NAV_HEIGHT } from '~/utils/ui/breakpoints';
 
 export function meta() {
     return [
@@ -36,8 +34,6 @@ export default function ManageProfileRoute() {
     const { user, logout } = useAuth();
     const { theme } = useTheme();
     const { t } = useLanguage();
-    const breakpoint = useBreakpoint();
-    const showBottomNav = breakpoint === 'phone' || breakpoint === 'tablet';
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -81,9 +77,6 @@ export default function ManageProfileRoute() {
                     borderRadius: '12px',
                     padding: '40px',
                     boxShadow: theme.shadow.medium,
-                    marginBottom: showBottomNav
-                        ? `calc(${BOTTOM_NAV_HEIGHT}px + 24px + env(safe-area-inset-bottom, 0px))`
-                        : 0,
                 }}
             >
                 <div style={{ marginBottom: '24px' }}>

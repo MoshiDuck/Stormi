@@ -1,4 +1,4 @@
-// INFO : app/routes/upload.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard. Responsive (téléphone, tablette, desktop).
+// INFO : app/routes/upload.tsx — contenu uniquement ; layout _app fournit Navigation + AuthGuard.
 import React, { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
@@ -7,6 +7,7 @@ import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { UploadManager, UploadManagerHandle } from '~/components/upload/UploadManager';
 import { useToast } from '~/components/ui/Toast';
 import { darkTheme } from '~/utils/ui/theme';
+import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
 import { formatFileSize, formatDate, formatDateTime } from '~/utils/format';
 import { useLanguage } from '~/contexts/LanguageContext';
 import { translations } from '~/utils/i18n';
@@ -37,11 +38,9 @@ export default function UploadRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const breakpoint = useBreakpoint();
-    const isPhone = breakpoint === 'phone';
-    const isTablet = breakpoint === 'tablet';
     const { showToast, ToastContainer } = useToast();
-    const pad = isPhone ? 16 : isTablet ? 24 : 30;
-    const gap = isPhone ? 16 : isTablet ? 24 : 30;
+    const pad = CONTENT_PADDING[breakpoint];
+    const gap = breakpoint === 'narrow' ? 20 : breakpoint === 'desktop' ? 24 : 30;
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
@@ -107,9 +106,9 @@ export default function UploadRoute() {
 
     return (
         <>
-                    <div style={{ marginBottom: isPhone ? 24 : 40, minWidth: 0 }}>
+                    <div style={{ marginBottom: 40, minWidth: 0 }}>
                         <h1 style={{
-                            fontSize: isPhone ? 24 : 32,
+                            fontSize: 32,
                             fontWeight: 'bold',
                             marginBottom: 8,
                             color: darkTheme.text.primary,
@@ -119,7 +118,7 @@ export default function UploadRoute() {
                         </h1>
                         <p style={{
                             color: darkTheme.text.secondary,
-                            fontSize: isPhone ? 14 : 16,
+                            fontSize: 16,
                             wordBreak: 'break-word',
                         }}>
                             {t('upload.dragDrop')} — {t('upload.dragDropOr')}
@@ -128,24 +127,24 @@ export default function UploadRoute() {
 
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: isPhone ? '1fr' : '1fr 1fr',
+                        gridTemplateColumns: '1fr 1fr',
                         gap,
-                        marginBottom: isPhone ? 24 : 40,
+                        marginBottom: 40,
                         minWidth: 0,
                     }}>
                         {/* Zone d'upload */}
                         <div style={{
                             backgroundColor: darkTheme.background.secondary,
-                            borderRadius: isPhone ? 10 : 12,
+                            borderRadius: 12,
                             padding: pad,
                             boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
                             border: `2px dashed ${darkTheme.border.secondary}`,
                             minWidth: 0,
                         }}>
                             <h2 style={{
-                                fontSize: isPhone ? 17 : 20,
+                                fontSize: 20,
                                 fontWeight: 600,
-                                marginBottom: isPhone ? 14 : 20,
+                                marginBottom: 20,
                                 color: darkTheme.text.primary,
                             }}>
                                 {t('upload.selectFile')}
@@ -154,12 +153,12 @@ export default function UploadRoute() {
                             <div style={{
                                 border: `2px dashed ${darkTheme.accent.blue}`,
                                 borderRadius: 8,
-                                padding: isPhone ? '24px 16px' : '40px 20px',
+                                padding: '40px 20px',
                                 textAlign: 'center',
                                 backgroundColor: darkTheme.background.tertiary,
                                 transition: 'all 0.3s',
                                 cursor: 'pointer',
-                                marginBottom: isPhone ? 14 : 20,
+                                marginBottom: 20,
                                 minWidth: 0,
                             }}
                                  onClick={() => {
@@ -177,11 +176,11 @@ export default function UploadRoute() {
                                      input.click();
                                  }}
                             >
-                                <div style={{ fontSize: isPhone ? 40 : 48, marginBottom: isPhone ? 12 : 16 }}>📤</div>
-                                <p style={{ marginBottom: 8, color: darkTheme.accent.blue, fontWeight: 500, fontSize: isPhone ? 14 : 16 }}>
+                                <div style={{ fontSize: 48, marginBottom: 16 }}>📤</div>
+                                <p style={{ marginBottom: 8, color: darkTheme.accent.blue, fontWeight: 500, fontSize: 16 }}>
                                     {t('upload.dragDrop')}
                                 </p>
-                                <p style={{ color: darkTheme.text.secondary, fontSize: isPhone ? 13 : 14, marginBottom: isPhone ? 12 : 16, wordBreak: 'break-word' }}>
+                                <p style={{ color: darkTheme.text.secondary, fontSize: 14, marginBottom: 16, wordBreak: 'break-word' }}>
                                     {t('upload.dragDropOr')}
                                 </p>
                                 <p style={{ color: darkTheme.text.tertiary, fontSize: 11, wordBreak: 'break-word' }}>
@@ -402,9 +401,9 @@ export default function UploadRoute() {
                             minWidth: 0,
                         }}>
                             <h2 style={{
-                                fontSize: isPhone ? 17 : 20,
+                                fontSize: 20,
                                 fontWeight: 600,
-                                marginBottom: isPhone ? 14 : 20,
+                                marginBottom: 20,
                                 color: darkTheme.text.primary,
                             }}>
                                 {t('upload.uploaded')}
@@ -413,24 +412,24 @@ export default function UploadRoute() {
                             {uploadedFiles.length === 0 ? (
                                 <div style={{
                                     textAlign: 'center',
-                                    padding: isPhone ? '24px 16px' : '40px 20px',
+                                    padding: '40px 20px',
                                     color: darkTheme.text.tertiary,
                                 }}>
-                                    <div style={{ fontSize: isPhone ? 40 : 48, marginBottom: 16 }}>📁</div>
-                                    <p style={{ marginBottom: 8, fontSize: isPhone ? 14 : 16, color: darkTheme.text.secondary }}>
+                                    <div style={{ fontSize: 48, marginBottom: 16 }}>📁</div>
+                                    <p style={{ marginBottom: 8, fontSize: 16, color: darkTheme.text.secondary }}>
                                         {t('upload.noUploads')}
                                     </p>
-                                    <p style={{ fontSize: isPhone ? 13 : 14 }}>
+                                    <p style={{ fontSize: 14 }}>
                                         {t('upload.filesWillAppearHere')}
                                     </p>
                                 </div>
                             ) : (
-                                <div style={{ maxHeight: isPhone ? 280 : 400, overflowY: 'auto', minWidth: 0 }}>
+                                <div style={{ maxHeight: 400, overflowY: 'auto', minWidth: 0 }}>
                                     {uploadedFiles.map((file) => (
                                         <div
                                             key={file.id}
                                             style={{
-                                                padding: isPhone ? 12 : 16,
+                                                padding: 16,
                                                 borderBottom: `1px solid ${darkTheme.border.primary}`,
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -520,14 +519,14 @@ export default function UploadRoute() {
                         <div style={{
                             backgroundColor: darkTheme.surface.success,
                             borderRadius: darkTheme.radius.large,
-                            padding: isPhone ? 16 : 24,
-                            marginBottom: isPhone ? 20 : 30,
+                            padding: 24,
+                            marginBottom: 30,
                             border: `1px solid ${darkTheme.accent.green}`,
                             boxShadow: darkTheme.shadow.medium,
                             minWidth: 0,
                         }}>
                             <h3 style={{
-                                fontSize: isPhone ? 16 : 18,
+                                fontSize: 18,
                                 fontWeight: 600,
                                 color: darkTheme.text.primary,
                                 marginBottom: 12,
@@ -540,7 +539,7 @@ export default function UploadRoute() {
                             </h3>
                             <p style={{
                                 color: darkTheme.text.secondary,
-                                fontSize: isPhone ? 13 : 14,
+                                fontSize: 14,
                                 marginBottom: 14,
                                 wordBreak: 'break-word',
                             }}>
@@ -650,9 +649,9 @@ export default function UploadRoute() {
                         minWidth: 0,
                     }}>
                         <h2 style={{
-                            fontSize: isPhone ? 17 : 20,
+                            fontSize: 20,
                             fontWeight: 600,
-                            marginBottom: isPhone ? 14 : 20,
+                            marginBottom: 20,
                             color: darkTheme.text.primary,
                         }}>
                             Informations
@@ -660,8 +659,8 @@ export default function UploadRoute() {
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: isPhone ? '1fr' : 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
-                            gap: isPhone ? 14 : 20,
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
+                            gap: 20,
                             minWidth: 0,
                         }}>
                             <div style={{
@@ -780,17 +779,17 @@ export default function UploadRoute() {
                 <footer style={{
                     backgroundColor: darkTheme.background.nav,
                     color: darkTheme.text.secondary,
-                    padding: isPhone ? '16px 0' : '20px 0',
-                    marginTop: isPhone ? 24 : 40,
+                    padding: '20px 0',
+                    marginTop: 40,
                     textAlign: 'center',
                 }}>
                     <div style={{
                         maxWidth: 1200,
                         margin: '0 auto',
-                        padding: isPhone ? '0 12px' : '0 20px',
+                        padding: '0 20px',
                         minWidth: 0,
                     }}>
-                        <p style={{ margin: 0, fontSize: isPhone ? 12 : 14, wordBreak: 'break-word' }}>
+                        <p style={{ margin: 0, fontSize: 14, wordBreak: 'break-word' }}>
                             © {new Date().getFullYear()} Stormi. {t('footer.allRightsReserved')}.
                             <span style={{ marginLeft: '20px', color: darkTheme.text.tertiary }}>
                                 {t('upload.spaceUsed')} : {formatFileSize(0)} / {t('upload.unlimited')}

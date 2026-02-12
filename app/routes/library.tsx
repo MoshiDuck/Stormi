@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { darkTheme } from '~/utils/ui/theme';
-import { CONTENT_PADDING } from '~/utils/ui/breakpoints';
+import { CONTENT_PADDING, CONTENT_MAX_WIDTH } from '~/utils/ui/breakpoints';
 import type { FileCategory } from '~/utils/file/fileClassifier';
 import { LibraryTabBar, type LibraryTab } from '~/components/ui/LibraryTabBar';
 import { formatFileSize, formatDate } from '~/utils/format';
@@ -441,7 +441,7 @@ export default function LibraryRoute() {
 
     if (loading && files.length === 0) {
         return (
-            <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1600, margin: '0 auto', minWidth: 0 }}>
+            <div style={{ padding: pad, maxWidth: CONTENT_MAX_WIDTH[breakpoint], margin: '0 auto', minWidth: 0 }}>
                 <LibraryTabBar selectedTab={selectedTab} onTabChange={setSelectedTab} />
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                     <LoadingSpinner size="large" message={t(`categories.${category}`)} />
@@ -452,7 +452,7 @@ export default function LibraryRoute() {
 
     if (error) {
         return (
-            <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1600, margin: '0 auto', minWidth: 0 }}>
+            <div style={{ padding: pad, maxWidth: CONTENT_MAX_WIDTH[breakpoint], margin: '0 auto', minWidth: 0 }}>
                 <LibraryTabBar selectedTab={selectedTab} onTabChange={setSelectedTab} />
                 <ErrorDisplay error={error} onRetry={fetchFiles} />
             </div>
@@ -464,7 +464,7 @@ export default function LibraryRoute() {
     const uploadFirstKey = `emptyStates.uploadFirst${category.charAt(0).toUpperCase() + category.slice(1)}` as keyof typeof t;
 
     return (
-        <div style={{ padding: breakpoint === 'phone' ? 0 : pad, maxWidth: breakpoint === 'phone' ? '100%' : 1600, margin: '0 auto', minWidth: 0 }}>
+        <div style={{ padding: pad, maxWidth: CONTENT_MAX_WIDTH[breakpoint], margin: '0 auto', minWidth: 0 }}>
             <LibraryTabBar selectedTab={selectedTab} onTabChange={setSelectedTab} />
             <h1 style={{ fontSize: '28px', fontWeight: '600', color: darkTheme.text.primary, marginBottom: '24px' }}>
                 {t(`categories.${category}`)} ({files.length})

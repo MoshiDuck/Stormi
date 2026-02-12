@@ -1,11 +1,10 @@
 // INFO : app/routes/info.tsx
-// Page d'info/détail style Netflix pour films et séries — responsive (téléphone, tablette, desktop)
+// Page d'info/détail style Netflix pour films et séries
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
 import { useConfig } from '~/hooks/useConfig';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { LoadingSpinner } from '~/components/ui/LoadingSpinner';
 import { ErrorDisplay } from '~/components/ui/ErrorDisplay';
 import { formatDuration } from '~/utils/format';
@@ -85,12 +84,9 @@ export default function InfoRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const { config } = useConfig();
-    const breakpoint = useBreakpoint();
     const navigate = useNavigate();
     const location = useLocation();
     const { category, fileId } = useParams<{ category: string; fileId: string }>();
-    const isPhone = breakpoint === 'phone';
-    const isTablet = breakpoint === 'tablet';
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -408,20 +404,20 @@ export default function InfoRoute() {
     const genres = file.genres ? JSON.parse(file.genres) : [];
     const displayName = file.title || file.filename?.replace(/\.[^/.]+$/, '') || 'Sans titre';
 
-    const heroPaddingH = isPhone ? 12 : isTablet ? 20 : 60;
-    const heroPaddingBottom = isPhone ? 24 : isTablet ? 48 : 80;
-    const heroTitleSize = isPhone ? 22 : isTablet ? 36 : 64;
-    const heroMetaSize = isPhone ? 13 : 18;
-    const heroDescSize = isPhone ? 14 : isTablet ? 17 : 20;
-    const sectionPadding = isPhone ? 16 : isTablet ? 24 : 40;
-    const sectionPaddingH = isPhone ? 12 : isTablet ? 20 : 60;
+    const heroPaddingH = 60;
+    const heroPaddingBottom = 80;
+    const heroTitleSize = 64;
+    const heroMetaSize = 18;
+    const heroDescSize = 20;
+    const sectionPadding = 40;
+    const sectionPaddingH = 60;
 
     return (
         <>
             <div style={{
                 minHeight: '100vh',
                 backgroundColor: netflixTheme.bg.primary,
-                paddingTop: isPhone ? 56 : 80,
+                paddingTop: 80,
                 overflowX: 'hidden',
             }}>
                 {/* Hero Section avec backdrop */}
@@ -439,8 +435,8 @@ export default function InfoRoute() {
                 <div style={{
                     position: 'relative',
                     width: '100%',
-                    height: isPhone ? 'auto' : '80vh',
-                    minHeight: isPhone ? 320 : 500,
+                    height: '80vh',
+                    minHeight: 500,
                     overflow: 'hidden',
                 }}>
                     {/* Backdrop Image */}
@@ -497,7 +493,7 @@ export default function InfoRoute() {
                             fontSize: heroTitleSize,
                             fontWeight: 700,
                             color: netflixTheme.text.primary,
-                            marginBottom: isPhone ? 8 : 16,
+                            marginBottom: 16,
                             textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                             wordBreak: 'break-word',
                             overflowWrap: 'break-word',
@@ -508,8 +504,8 @@ export default function InfoRoute() {
 
                         <div style={{
                             display: 'flex',
-                            gap: isPhone ? 8 : 16,
-                            marginBottom: isPhone ? 12 : 24,
+                            gap: 16,
+                            marginBottom: 24,
                             flexWrap: 'wrap',
                         }}>
                             {file.year && (
@@ -536,7 +532,7 @@ export default function InfoRoute() {
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
                                     whiteSpace: 'nowrap',
-                                    maxWidth: isPhone ? '100%' : undefined,
+                                    maxWidth: undefined,
                                 }}>
                                     {genres.join(' • ')}
                                 </span>
@@ -548,13 +544,13 @@ export default function InfoRoute() {
                                 color: netflixTheme.text.primary,
                                 fontSize: heroDescSize,
                                 lineHeight: 1.5,
-                                maxWidth: isPhone ? '100%' : 600,
-                                marginBottom: isPhone ? 16 : 24,
+                                maxWidth: 600,
+                                marginBottom: 24,
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
                                 wordBreak: 'break-word',
                                 overflowWrap: 'break-word',
                                 display: '-webkit-box',
-                                WebkitLineClamp: isPhone ? 4 : 6,
+                                WebkitLineClamp: 6,
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
                             }}>
@@ -577,8 +573,8 @@ export default function InfoRoute() {
                         {watchProgress && watchProgress.progress_percent > 5 && (
                             <div style={{
                                 width: '100%',
-                                maxWidth: isPhone ? '100%' : 600,
-                                marginBottom: isPhone ? 16 : 24,
+                                maxWidth: 600,
+                                marginBottom: 24,
                             }}>
                                 <div style={{
                                     width: '100%',
@@ -596,7 +592,7 @@ export default function InfoRoute() {
                                 </div>
                                 <div style={{
                                     color: netflixTheme.text.secondary,
-                                    fontSize: isPhone ? 12 : 14,
+                                    fontSize: 14,
                                     marginTop: 8,
                                 }}>
                                     Reprendre à {formatDuration(watchProgress.current_time)}
@@ -607,15 +603,15 @@ export default function InfoRoute() {
                         {/* Action buttons */}
                         <div style={{
                             display: 'flex',
-                            gap: isPhone ? 10 : 16,
+                            gap: 16,
                             alignItems: 'center',
                             flexWrap: 'wrap',
                         }}>
                             <button
                                 onClick={handlePlay}
                                 style={{
-                                    padding: isPhone ? '10px 20px' : '12px 32px',
-                                    fontSize: isPhone ? 15 : 18,
+                                    padding: '12px 32px',
+                                    fontSize: 18,
                                     fontWeight: 600,
                                     backgroundColor: netflixTheme.accent.red,
                                     color: '#fff',
@@ -637,8 +633,8 @@ export default function InfoRoute() {
 
                             <button
                                 style={{
-                                    padding: isPhone ? '10px 20px' : '12px 32px',
-                                    fontSize: isPhone ? 15 : 18,
+                                    padding: '12px 32px',
+                                    fontSize: 18,
                                     fontWeight: 600,
                                     backgroundColor: 'rgba(255,255,255,0.2)',
                                     color: '#fff',
@@ -676,7 +672,7 @@ export default function InfoRoute() {
                         minWidth: 0,
                     }}>
                         {/* Sélecteur de saison */}
-                        <div style={{ marginBottom: isPhone ? 16 : 24 }}>
+                        <div style={{ marginBottom: 24 }}>
                             <select
                                 value={selectedSeason}
                                 onChange={(e) => setSelectedSeason(parseInt(e.target.value))}
@@ -685,12 +681,12 @@ export default function InfoRoute() {
                                     color: netflixTheme.text.primary,
                                     border: '1px solid rgba(255,255,255,0.3)',
                                     borderRadius: 4,
-                                    padding: isPhone ? '10px 14px' : '12px 20px',
-                                    fontSize: isPhone ? 14 : 16,
+                                    padding: '12px 20px',
+                                    fontSize: 16,
                                     fontWeight: 600,
                                     cursor: 'pointer',
-                                    width: isPhone ? '100%' : undefined,
-                                    maxWidth: isPhone ? '100%' : 200,
+                                    width: undefined,
+                                    maxWidth: 200,
                                     boxSizing: 'border-box',
                                 }}
                             >
@@ -704,7 +700,7 @@ export default function InfoRoute() {
 
                         {/* Liste des épisodes */}
                         {seasons.find(s => s.seasonNumber === selectedSeason) && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: isPhone ? 8 : 12, minWidth: 0 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
                                 {seasons.find(s => s.seasonNumber === selectedSeason)!.episodes.map((episode, episodeIndex) => {
                                     const episodeThumbnail = getThumbnailUrl(episode.file);
                                     const episodeProgress = watchProgress?.file_id === episode.file.file_id ? watchProgress : null;
@@ -718,9 +714,9 @@ export default function InfoRoute() {
                                         });
                                     };
 
-                                    const epThumbWidth = isPhone ? '100%' : 280;
-                                    const epGap = isPhone ? 12 : 16;
-                                    const epPadding = isPhone ? 12 : 16;
+                                    const epThumbWidth = 280;
+                                    const epGap = 16;
+                                    const epPadding = 16;
 
                                     const episodeRow = (
                                         <div
@@ -737,7 +733,7 @@ export default function InfoRoute() {
                                             aria-label={`${t('actions.playEpisode')} ${episode.episodeNumber}: ${episode.title}`}
                                             style={{
                                                 display: 'flex',
-                                                flexDirection: isPhone ? 'column' : 'row',
+                                                flexDirection: 'row',
                                                 gap: epGap,
                                                 padding: epPadding,
                                                 backgroundColor: netflixTheme.bg.secondary,
@@ -753,30 +749,30 @@ export default function InfoRoute() {
                                             {/* Numéro + Thumbnail (sur mobile: numéro au-dessus de la thumb) */}
                                             <div style={{
                                                 display: 'flex',
-                                                flexDirection: isPhone ? 'column' : 'row',
+                                                flexDirection: 'row',
                                                 gap: epGap,
-                                                flex: isPhone ? undefined : undefined,
+                                                flex: undefined,
                                                 minWidth: 0,
-                                                width: isPhone ? '100%' : undefined,
+                                                width: undefined,
                                             }}>
                                                 <div style={{
-                                                    fontSize: isPhone ? 14 : 24,
+                                                    fontSize: 24,
                                                     fontWeight: 600,
                                                     color: netflixTheme.text.muted,
-                                                    width: isPhone ? undefined : 40,
-                                                    minWidth: isPhone ? undefined : 40,
+                                                    width: 40,
+                                                    minWidth: 40,
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    justifyContent: isPhone ? 'flex-start' : 'center',
+                                                    justifyContent: 'center',
                                                     flexShrink: 0,
                                                 }}>
-                                                    {isPhone ? `Ép. ${episode.episodeNumber}` : episode.episodeNumber}
+                                                    {episode.episodeNumber}
                                                 </div>
 
                                                 {/* Thumbnail */}
                                                 <div style={{
                                                     width: epThumbWidth,
-                                                    maxWidth: isPhone ? '100%' : 280,
+                                                    maxWidth: 280,
                                                     aspectRatio: '16/9',
                                                     backgroundColor: '#2a2a2a',
                                                     borderRadius: 4,
@@ -849,10 +845,10 @@ export default function InfoRoute() {
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 justifyContent: 'center',
-                                                gap: isPhone ? 4 : 8,
+                                                gap: 8,
                                             }}>
                                                 <div style={{
-                                                    fontSize: isPhone ? 15 : 18,
+                                                    fontSize: 18,
                                                     fontWeight: 600,
                                                     color: netflixTheme.text.primary,
                                                     overflow: 'hidden',
@@ -864,11 +860,11 @@ export default function InfoRoute() {
 
                                                 {(episode.file.episode_description || episode.file.description) && (
                                                     <div style={{
-                                                        fontSize: isPhone ? 12 : 14,
+                                                        fontSize: 14,
                                                         color: netflixTheme.text.secondary,
                                                         lineHeight: 1.5,
                                                         display: '-webkit-box',
-                                                        WebkitLineClamp: isPhone ? 2 : 2,
+                                                        WebkitLineClamp: 2,
                                                         WebkitBoxOrient: 'vertical',
                                                         overflow: 'hidden',
                                                     }}>
@@ -902,17 +898,17 @@ export default function InfoRoute() {
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    width: isPhone ? 40 : 48,
-                                                    height: isPhone ? 40 : 48,
+                                                    width: 48,
+                                                    height: 48,
                                                     borderRadius: '50%',
                                                     backgroundColor: netflixTheme.accent.red,
                                                     color: '#fff',
-                                                    fontSize: isPhone ? 16 : 20,
+                                                    fontSize: 20,
                                                     flexShrink: 0,
                                                     cursor: 'pointer',
                                                     transition: 'transform 0.2s',
                                                     border: 'none',
-                                                    alignSelf: isPhone ? 'flex-start' : 'center',
+                                                    alignSelf: 'center',
                                                 }}
                                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
                                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -952,17 +948,17 @@ export default function InfoRoute() {
                         minWidth: 0,
                     }}>
                         <h2 style={{
-                            fontSize: isPhone ? 18 : 24,
+                            fontSize: 24,
                             fontWeight: 700,
                             color: netflixTheme.text.primary,
-                            marginBottom: isPhone ? 16 : 24,
+                            marginBottom: 24,
                         }}>
                             Contenu similaire
                         </h2>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: isPhone ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
-                            gap: isPhone ? 10 : 16,
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
+                            gap: 16,
                             minWidth: 0,
                         }}>
                             {relatedFiles.map((relatedFile, index) => {

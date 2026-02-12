@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { usePlayer } from '~/contexts/PlayerContext';
 import { useLanguage } from '~/contexts/LanguageContext';
-import { useBreakpoint } from '~/hooks/useBreakpoint';
 import { TOUCH_TARGET_MIN } from '~/utils/ui/breakpoints';
 
 // Fonction utilitaire pour formater le temps
@@ -18,8 +17,6 @@ export function MiniPlayer() {
     const { state, pause, resume, stop, playNext, playPrevious, toggleMiniPlayer, audioRef, videoRef, canRestore, restoredState, restorePlayback, dismissRestore } = usePlayer();
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const breakpoint = useBreakpoint();
-    const isPhone = breakpoint === 'phone';
     const [isDragging, setIsDragging] = useState(false);
     const [position, setPosition] = useState({ x: 24, y: 24 }); // Position from bottom-right
     const [isClient, setIsClient] = useState(false);
@@ -61,18 +58,16 @@ export function MiniPlayer() {
 
     // Afficher la notification de restauration si disponible et pas de lecture en cours
     if (canRestore && restoredState && !state.fileUrl) {
-        const isPhoneRestore = breakpoint === 'phone';
         return (
             <div style={{
                 position: 'fixed',
-                ...(isPhoneRestore
-                    ? { left: 0, right: 0, bottom: 0, width: '100%', paddingBottom: 'env(safe-area-inset-bottom, 0)' }
-                    : { bottom: 24, right: 24, width: 360 }
-                ),
+                bottom: 24,
+                right: 24,
+                width: 360,
                 background: 'rgba(20, 20, 25, 0.95)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: isPhoneRestore ? '12px 12px 0 0' : '12px',
+                borderRadius: '12px',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)',
                 overflow: 'hidden',
                 zIndex: 9999,
@@ -253,9 +248,8 @@ export function MiniPlayer() {
 
     const isVideo = state.type === 'video';
     
-    // Drag handlers pour déplacer le mini player (désactivé sur mobile)
+    // Drag handlers pour déplacer le mini player
     const handleDragStart = (e: React.MouseEvent) => {
-        if (isPhone) return;
         if ((e.target as HTMLElement).tagName === 'BUTTON' || (e.target as HTMLElement).tagName === 'VIDEO') return;
         setIsDragging(true);
         dragStartRef.current = {
@@ -266,42 +260,22 @@ export function MiniPlayer() {
         };
     };
 
-    const miniPlayerContainerStyle: React.CSSProperties = isPhone
-        ? {
-            position: 'fixed',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100%',
-            maxWidth: '100%',
-            paddingBottom: 'env(safe-area-inset-bottom, 0)',
-            background: 'rgba(20, 20, 25, 0.98)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: '12px 12px 0 0',
-            boxShadow: '0 -4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08)',
-            overflow: 'hidden',
-            zIndex: 9999,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            cursor: 'default',
-            userSelect: 'none',
-        }
-        : {
-            position: 'fixed',
-            bottom: `${position.y}px`,
-            right: `${position.x}px`,
-            width: isVideo ? 400 : 360,
-            background: 'rgba(20, 20, 25, 0.95)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderRadius: 16,
-            boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)',
-            overflow: 'hidden',
-            zIndex: 9999,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            cursor: isDragging ? 'grabbing' : 'grab',
-            userSelect: 'none',
-        };
+    const miniPlayerContainerStyle: React.CSSProperties = {
+        position: 'fixed',
+        bottom: `${position.y}px`,
+        right: `${position.x}px`,
+        width: isVideo ? 400 : 360,
+        background: 'rgba(20, 20, 25, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderRadius: 16,
+        boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)',
+        overflow: 'hidden',
+        zIndex: 9999,
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        userSelect: 'none',
+    };
 
     return (
         <>

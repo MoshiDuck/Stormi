@@ -39,8 +39,7 @@ export default function CommunityRoute() {
     const { t } = useLanguage();
     const { theme } = useTheme();
     const breakpoint = useBreakpoint();
-
-    const gridCols = breakpoint === 'phone' ? 1 : breakpoint === 'tablet' ? 2 : 3;
+    const gridCols = breakpoint === 'narrow' ? 2 : 3;
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>

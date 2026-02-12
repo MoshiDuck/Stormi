@@ -96,7 +96,6 @@ export default function App() {
                     }
                 }
                 
-                /* Éviter le scroll horizontal sur mobile (contenu qui dépasse) */
                 html, body {
                     overflow-x: hidden;
                     max-width: 100vw;

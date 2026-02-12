@@ -1,4 +1,4 @@
-// INFO : app/routes/profile.tsx — Compte (infos personnelles, compte connecté) ; langue/déconnexion dans Gérer le profil. Responsive (téléphone, tablette, desktop).
+// INFO : app/routes/profile.tsx — Compte (infos personnelles, compte connecté) ; langue/déconnexion dans Gérer le profil.
 import React from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '~/hooks/useAuth';
@@ -19,10 +19,9 @@ export default function ProfileRoute() {
     const { user } = useAuth();
     const { t } = useLanguage();
     const breakpoint = useBreakpoint();
-    const isPhone = breakpoint === 'phone';
     const pad = CONTENT_PADDING[breakpoint];
-    const sectionPad = isPhone ? 16 : pad === 12 ? 20 : 30;
-    const gap = isPhone ? 16 : 30;
+    const sectionPad = breakpoint === 'narrow' ? 20 : breakpoint === 'desktop' ? 24 : 30;
+    const gap = breakpoint === 'narrow' ? 20 : 30;
 
     if (!user) {
         return null; // AuthGuard gère la redirection
@@ -32,19 +31,19 @@ export default function ProfileRoute() {
         <>
                     <div style={{
                         backgroundColor: darkTheme.background.secondary,
-                        borderRadius: isPhone ? 10 : 12,
-                        padding: isPhone ? 16 : 40,
+                        borderRadius: 12,
+                        padding: 40,
                         boxShadow: darkTheme.shadow.medium,
                         minWidth: 0,
                     }}>
-                        <div style={{ marginBottom: isPhone ? 16 : 24 }}>
+                        <div style={{ marginBottom: 24 }}>
                             <Link
                                 to="/manage-profile"
                                 prefetch="intent"
                                 style={{
                                     color: darkTheme.accent.blue,
                                     textDecoration: 'none',
-                                    fontSize: isPhone ? 13 : 14,
+                                    fontSize: 14,
                                     fontWeight: 500,
                                     marginBottom: 16,
                                     display: 'inline-block',
@@ -53,9 +52,9 @@ export default function ProfileRoute() {
                                 {t('profileMenu.manageProfile')} →
                             </Link>
                         </div>
-                        <div style={{ marginBottom: isPhone ? 24 : 40 }}>
+                        <div style={{ marginBottom: 40 }}>
                             <h1 style={{
-                                fontSize: isPhone ? 24 : 32,
+                                fontSize: 32,
                                 fontWeight: 'bold',
                                 marginBottom: 8,
                                 color: darkTheme.text.primary,
@@ -65,7 +64,7 @@ export default function ProfileRoute() {
                             </h1>
                             <p style={{
                                 color: darkTheme.text.secondary,
-                                fontSize: isPhone ? 14 : 16,
+                                fontSize: 16,
                                 wordBreak: 'break-word',
                             }}>
                                 {t('profile.subtitle')}
@@ -82,9 +81,9 @@ export default function ProfileRoute() {
                                 minWidth: 0,
                             }}>
                                 <h2 style={{
-                                    fontSize: isPhone ? 17 : 20,
+                                    fontSize: 20,
                                     fontWeight: 600,
-                                    marginBottom: isPhone ? 14 : 20,
+                                    marginBottom: 20,
                                     color: darkTheme.text.primary,
                                     display: 'flex',
                                     alignItems: 'center',
@@ -106,9 +105,9 @@ export default function ProfileRoute() {
 
                                 <div style={{
                                     display: 'flex',
-                                    flexDirection: isPhone ? 'column' : 'row',
-                                    gap: isPhone ? 16 : 30,
-                                    alignItems: isPhone ? 'center' : 'flex-start',
+                                    flexDirection: 'row',
+                                    gap: 30,
+                                    alignItems: 'flex-start',
                                     minWidth: 0,
                                 }}>
                                     {user.picture && (
@@ -117,27 +116,27 @@ export default function ProfileRoute() {
                                                 src={user.picture}
                                                 alt="avatar"
                                                 style={{
-                                                    width: isPhone ? 80 : 120,
-                                                    height: isPhone ? 80 : 120,
+                                                    width: 120,
+                                                    height: 120,
                                                     borderRadius: '50%',
-                                                    border: isPhone ? '3px solid #4285f4' : '4px solid #4285f4',
+                                                    border: '4px solid #4285f4',
                                                     objectFit: 'cover',
                                                 }}
                                             />
                                         </div>
                                     )}
 
-                                    <div style={{ flex: 1, minWidth: 0, width: isPhone ? '100%' : undefined }}>
+                                    <div style={{ flex: 1, minWidth: 0, width: undefined }}>
                                         <div style={{
                                             display: 'grid',
-                                            gridTemplateColumns: isPhone ? '1fr' : 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))',
-                                            gap: isPhone ? 14 : 20,
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))',
+                                            gap: 20,
                                             minWidth: 0,
                                         }}>
                                             <div>
                                                 <label style={{
                                                     display: 'block',
-                                                    fontSize: isPhone ? 13 : 14,
+                                                    fontSize: 14,
                                                     fontWeight: 500,
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: 6,
@@ -146,10 +145,10 @@ export default function ProfileRoute() {
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
-                                                    padding: isPhone ? '10px 12px' : '12px 16px',
+                                                    padding: '12px 16px',
                                                     borderRadius: 6,
                                                     border: `1px solid ${darkTheme.border.primary}`,
-                                                    fontSize: isPhone ? 14 : 16,
+                                                    fontSize: 16,
                                                     fontWeight: 500,
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis',
@@ -162,7 +161,7 @@ export default function ProfileRoute() {
                                             <div>
                                                 <label style={{
                                                     display: 'block',
-                                                    fontSize: isPhone ? 13 : 14,
+                                                    fontSize: 14,
                                                     fontWeight: 500,
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: 6,
@@ -171,10 +170,10 @@ export default function ProfileRoute() {
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
-                                                    padding: isPhone ? '10px 12px' : '12px 16px',
+                                                    padding: '12px 16px',
                                                     borderRadius: 6,
                                                     border: `1px solid ${darkTheme.border.primary}`,
-                                                    fontSize: isPhone ? 14 : 16,
+                                                    fontSize: 16,
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis',
                                                     wordBreak: 'break-all',
@@ -186,7 +185,7 @@ export default function ProfileRoute() {
                                             <div>
                                                 <label style={{
                                                     display: 'block',
-                                                    fontSize: isPhone ? 13 : 14,
+                                                    fontSize: 14,
                                                     fontWeight: 500,
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: 6,
@@ -195,10 +194,10 @@ export default function ProfileRoute() {
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
-                                                    padding: isPhone ? '10px 12px' : '12px 16px',
+                                                    padding: '12px 16px',
                                                     borderRadius: 6,
                                                     border: `1px solid ${darkTheme.border.primary}`,
-                                                    fontSize: isPhone ? 14 : 16,
+                                                    fontSize: 16,
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     gap: 8,
@@ -207,7 +206,7 @@ export default function ProfileRoute() {
                                                         <>
                               <span style={{
                                   color: '#34a853',
-                                  fontSize: isPhone ? 16 : 18,
+                                  fontSize: 18,
                               }}>✓</span>
                                                             <span style={{ color: '#34a853' }}>{t('profile.emailVerified')}</span>
                                                         </>
@@ -215,7 +214,7 @@ export default function ProfileRoute() {
                                                         <>
                               <span style={{
                                   color: '#f44336',
-                                  fontSize: isPhone ? 16 : 18,
+                                  fontSize: 18,
                               }}>✗</span>
                                                             <span style={{ color: '#f44336' }}>{t('profile.emailNotVerified')}</span>
                                                         </>
@@ -226,7 +225,7 @@ export default function ProfileRoute() {
                                             <div>
                                                 <label style={{
                                                     display: 'block',
-                                                    fontSize: isPhone ? 13 : 14,
+                                                    fontSize: 14,
                                                     fontWeight: 500,
                                                     color: darkTheme.text.secondary,
                                                     marginBottom: 6,
@@ -235,10 +234,10 @@ export default function ProfileRoute() {
                                                 </label>
                                                 <div style={{
                                                     backgroundColor: darkTheme.background.secondary,
-                                                    padding: isPhone ? '10px 12px' : '12px 16px',
+                                                    padding: '12px 16px',
                                                     borderRadius: 6,
                                                     border: `1px solid ${darkTheme.border.primary}`,
-                                                    fontSize: isPhone ? 12 : 14,
+                                                    fontSize: 14,
                                                     fontFamily: 'monospace',
                                                     wordBreak: 'break-all',
                                                     color: '#666',
@@ -262,9 +261,9 @@ export default function ProfileRoute() {
                                 minWidth: 0,
                             }}>
                                 <h2 style={{
-                                    fontSize: isPhone ? 17 : 20,
+                                    fontSize: 20,
                                     fontWeight: 600,
-                                    marginBottom: isPhone ? 14 : 20,
+                                    marginBottom: 20,
                                     color: darkTheme.text.primary,
                                     display: 'flex',
                                     alignItems: 'center',
@@ -287,15 +286,15 @@ export default function ProfileRoute() {
                                 <div style={{
                                     backgroundColor: darkTheme.background.secondary,
                                     borderRadius: 8,
-                                    padding: isPhone ? 14 : 20,
+                                    padding: 20,
                                     border: '1px solid #dee2e6',
                                     minWidth: 0,
                                 }}>
                                     <div style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: isPhone ? 12 : 16,
-                                        marginBottom: isPhone ? 12 : 16,
+                                        gap: 16,
+                                        marginBottom: 16,
                                         minWidth: 0,
                                     }}>
                                         <img
@@ -307,7 +306,7 @@ export default function ProfileRoute() {
                                             <p style={{
                                                 margin: 0,
                                                 fontWeight: 500,
-                                                fontSize: isPhone ? 14 : 16,
+                                                fontSize: 16,
                                                 wordBreak: 'break-word',
                                             }}>
                                                 {t('profile.googleAccount')}
@@ -315,7 +314,7 @@ export default function ProfileRoute() {
                                             <p style={{
                                                 margin: 0,
                                                 color: darkTheme.text.secondary,
-                                                fontSize: isPhone ? 12 : 14,
+                                                fontSize: 14,
                                                 wordBreak: 'break-word',
                                             }}>
                                                 {t('profile.connectedViaGoogle')}
@@ -324,10 +323,10 @@ export default function ProfileRoute() {
                                     </div>
 
                                     <div style={{
-                                        fontSize: isPhone ? 12 : 14,
+                                        fontSize: 14,
                                         color: darkTheme.text.secondary,
                                         backgroundColor: darkTheme.background.tertiary,
-                                        padding: isPhone ? 10 : 12,
+                                        padding: 12,
                                         borderRadius: 6,
                                         marginTop: 12,
                                         wordBreak: 'break-word',
@@ -344,17 +343,17 @@ export default function ProfileRoute() {
                 <footer style={{
                     backgroundColor: darkTheme.background.nav,
                     color: darkTheme.text.secondary,
-                    padding: isPhone ? '16px 0' : '20px 0',
-                    marginTop: isPhone ? 24 : 40,
+                    padding: '20px 0',
+                    marginTop: 40,
                     textAlign: 'center',
                 }}>
                     <div style={{
                         maxWidth: 1200,
                         margin: '0 auto',
-                        padding: isPhone ? '0 12px' : '0 20px',
+                        padding: '0 20px',
                         minWidth: 0,
                     }}>
-                        <p style={{ margin: 0, fontSize: isPhone ? 12 : 14, wordBreak: 'break-word' }}>
+                        <p style={{ margin: 0, fontSize: 14, wordBreak: 'break-word' }}>
                             © {new Date().getFullYear()} Stormi. {t('footer.allRightsReserved')}.
                         </p>
                     </div>

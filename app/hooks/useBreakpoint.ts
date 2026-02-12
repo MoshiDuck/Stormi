@@ -1,30 +1,19 @@
 // INFO : app/hooks/useBreakpoint.ts
-// Hook pour le breakpoint actif (phone | tablet | desktop | tv)
+// Hook pour le breakpoint desktop actif (narrow | desktop | wide) selon la largeur de fenêtre
 
 import { useMediaQuery } from './useMediaQuery';
 import { MEDIA_MIN } from '~/utils/ui/breakpoints';
 import type { BreakpointName } from '~/utils/ui/breakpoints';
 
 /**
- * Retourne le nom du breakpoint actif (mobile-first : plus grande largeur qui matche).
- * SSR : retourne 'phone'.
+ * Retourne le breakpoint actif : narrow (< 1280px), desktop (1280–1599px), wide (≥ 1600px).
+ * SSR : retourne 'desktop'.
  */
 export function useBreakpoint(): BreakpointName {
-    const isTablet = useMediaQuery(MEDIA_MIN.tablet);
     const isDesktop = useMediaQuery(MEDIA_MIN.desktop);
-    const isTv = useMediaQuery(MEDIA_MIN.tv);
+    const isWide = useMediaQuery(MEDIA_MIN.wide);
 
-    if (isTv) return 'tv';
+    if (isWide) return 'wide';
     if (isDesktop) return 'desktop';
-    if (isTablet) return 'tablet';
-    return 'phone';
-}
-
-/**
- * True si l'écran est considéré 10-foot (TV ou grand écran / pointer coarse).
- */
-export function useIsTenFoot(): boolean {
-    const isTv = useMediaQuery(MEDIA_MIN.tv);
-    const isCoarseDesktop = useMediaQuery('(pointer: coarse) and (min-width: 1024px)');
-    return isTv || isCoarseDesktop;
+    return 'narrow';
 }
